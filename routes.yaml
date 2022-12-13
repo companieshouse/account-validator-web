@@ -1,0 +1,6 @@
+app_name: account-validator-web
+group: web
+
+weight: 100
+routes:
+  1: ^/xbrl_validate/* # TODO: change
