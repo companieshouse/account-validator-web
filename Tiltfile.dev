@@ -1,0 +1,17 @@
+local_resource(
+  name = 'dev:account-validator-web',
+  cmd = 'npm --silent install && npm --silent run build',
+  deps = ['src', 'views']
+)
+
+custom_build(
+  ref = '169942020521.dkr.ecr.eu-west-1.amazonaws.com/local/account-validator-web',
+  command = 'DOCKER_BUILDKIT=0 docker build --build-arg SSH_PRIVATE_KEY="$(cat ~/.ssh/id_rsa)" --build-arg SSH_PRIVATE_KEY_PASSPHRASE --tag $EXPECTED_REF .',
+  live_update = [
+    sync(local_path = './dist', remote_path = '/app'),
+    restart_container()
+  ],
+  deps = [
+    './dist'
+  ]
+)

@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block pageTitle %}
+  File a confirmation statement - Companies House
+{% endblock %}
+
+<!-- No service name header-->
+{% block header %}
+  {{ govukHeader({
+    homepageUrl: "https://www.gov.uk",
+    containerClasses: "govuk-width-container"})
+  }}
+{% endblock %}
+
+{% block signoutBar %}
+{# Remove signout bar on this page by replacing it with nothing #}
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        {{ govukButton({
+            text: "Start now kjhdfjkh",
+            href: "/xbrl_validate/validate",
+            isStartButton: true
+        }) }}
+      </div>
+    </div>
+  {% endblock %}
