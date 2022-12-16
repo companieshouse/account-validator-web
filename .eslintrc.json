@@ -56,7 +56,7 @@
         ],
         "indent": [
             "error",
-            2,
+            4,
             {
                 "FunctionExpression": {
                     "parameters": "first"

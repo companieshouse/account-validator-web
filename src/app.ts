@@ -2,7 +2,6 @@ import express from "express";
 import * as nunjucks from "nunjucks";
 import * as path from "path";
 import { router } from "./routes/routes";
-import { sessionMiddleware } from "./middleware/session.middleware";
 import cookieParser from "cookie-parser";
 import { logger } from "./utils/logger";
 
