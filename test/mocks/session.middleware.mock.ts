@@ -11,10 +11,12 @@ const mockSessionMiddleware = sessionMiddleware as jest.Mock;
 export const session = new Session();
 
 // tell the mock what to return
-mockSessionMiddleware.mockImplementation((req: Request, res: Response, next: NextFunction) => {
-  req.session = session;
-  req.session.data.extra_data["payment-nonce"] = "123456";
-  next();
-});
+mockSessionMiddleware.mockImplementation(
+    (req: Request, res: Response, next: NextFunction) => {
+        req.session = session;
+        req.session.data.extra_data["payment-nonce"] = "123456";
+        next();
+    }
+);
 
 export default mockSessionMiddleware;

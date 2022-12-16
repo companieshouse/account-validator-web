@@ -2,8 +2,7 @@ import { Request, Response, Router } from "express";
 
 import { startController } from "../controllers";
 import { Templates } from "../types/template.paths";
-import { logger } from "../utils/logger"
-
+import { logger } from "../utils/logger";
 
 export const router: Router = Router();
 
@@ -13,7 +12,7 @@ export const router: Router = Router();
  * @param template the template name
  */
 const renderTemplate = (template: string) => (req: Request, res: Response) => {
-  return res.render(template);
+    return res.render(template);
 };
 
 router.get("/", startController.get);

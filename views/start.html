@@ -6,24 +6,24 @@
 
 <!-- No service name header-->
 {% block header %}
-  {{ govukHeader({
+    {{ govukHeader({
     homepageUrl: "https://www.gov.uk",
     containerClasses: "govuk-width-container"})
   }}
 {% endblock %}
 
 {% block signoutBar %}
-{# Remove signout bar on this page by replacing it with nothing #}
+    {# Remove signout bar on this page by replacing it with nothing #}
 {% endblock %}
 
 {% block content %}
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        {{ govukButton({
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ govukButton({
             text: "Start now kjhdfjkh",
             href: "/xbrl_validate/validate",
             isStartButton: true
         }) }}
-      </div>
+        </div>
     </div>
-  {% endblock %}
+{% endblock %}
