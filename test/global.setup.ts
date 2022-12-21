@@ -8,5 +8,4 @@ export default () => {
     process.env.API_URL = "http://localhost:8080";
     process.env.INTERNAL_API_URL = "http://localhost:9333";
     process.env.CHS_URL = "http://chs.local";
-    process.env.PIWIK_START_GOAL_ID = "3";
 };
