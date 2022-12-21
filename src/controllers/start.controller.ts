@@ -1,12 +1,11 @@
-import { Request, Response } from "express";
-import { CHS_URL, PIWIK_START_GOAL_ID, EWF_URL } from "../config";
+import { Handler } from "express";
+import { CHS_URL, PIWIK_START_GOAL_ID } from "../config";
 import { Templates } from "../types/template.paths";
 
-export const get = (req: Request, res: Response) => {
+export const get: Handler = (req, res) => {
     return res.render(Templates.START, {
         CHS_URL,
         PIWIK_START_GOAL_ID,
-        EWF_URL,
         templateName: Templates.START,
     });
 };

@@ -35,6 +35,4 @@ export const PIWIK_START_GOAL_ID = getEnvironmentVariable(
     "PIWIK_START_GOAL_ID"
 );
 
-export const EWF_URL = getEnvironmentVariable("EWF_URL");
-
 export const PORT = parseInt(getEnvironmentVariable("PORT", 3000));
