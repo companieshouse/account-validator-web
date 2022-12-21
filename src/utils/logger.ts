@@ -1,10 +1,12 @@
 import { createLogger } from "@companieshouse/structured-logging-node";
 import ApplicationLogger from "@companieshouse/structured-logging-node/lib/ApplicationLogger";
 
-export const logger: ApplicationLogger = createLogger("confirmation-statement-web");
+export const logger: ApplicationLogger = createLogger(
+    "confirmation-statement-web"
+);
 
 export const createAndLogError = (description: string): Error => {
-  const error = new Error (description);
-  logger.error(`${error.stack}`);
-  return error;
+    const error = new Error(description);
+    logger.error(`${error.stack}`);
+    return error;
 };

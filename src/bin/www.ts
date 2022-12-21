@@ -34,21 +34,21 @@ server.on("error", onError);
  */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 function onError(error: any) {
-  if (error.syscall !== "listen") {
-    throw error;
-  }
-
-  // handle specific listen errors with friendly messages
-  switch (error.code) {
-      case "EACCES":
-        logger.error(config.PORT + " requires elevated privileges");
-        process.exit(1);
-        break;
-      case "EADDRINUSE":
-        logger.error(config.PORT + " is already in use");
-        process.exit(1);
-        break;
-      default:
+    if (error.syscall !== "listen") {
         throw error;
-  }
+    }
+
+    // handle specific listen errors with friendly messages
+    switch (error.code) {
+        case "EACCES":
+            logger.error(config.PORT + " requires elevated privileges");
+            process.exit(1);
+            break;
+        case "EADDRINUSE":
+            logger.error(config.PORT + " is already in use");
+            process.exit(1);
+            break;
+        default:
+            throw error;
+    }
 }

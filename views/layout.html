@@ -1,43 +1,41 @@
 {% extends "govuk/template.njk" %}
 
 {% from "govuk/components/back-link/macro.njk"           import govukBackLink %}
-{% from "govuk/components/button/macro.njk"              import govukButton %}
-{% from "govuk/components/details/macro.njk"             import govukDetails %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
 {% from "govuk/components/error-summary/macro.njk"       import govukErrorSummary %}
 {% from "govuk/components/inset-text/macro.njk"          import govukInsetText %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% from "govuk/components/phase-banner/macro.njk"        import govukPhaseBanner %}
 {% from "govuk/components/summary-list/macro.njk"        import govukSummaryList %}
 {% from "govuk/components/warning-text/macro.njk"        import govukWarningText %}
-{% from "govuk/components/radios/macro.njk"              import govukRadios %}
-{% from "govuk/components/table/macro.njk"               import govukTable %}
-{% from "govuk/components/tag/macro.njk"                 import govukTag %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
 
 {% block head %}
 
-  <link href="{{assetPath}}/stylesheets/services/confirmation-statement/application.css" rel="stylesheet" />
+    <link href="{{assetPath}}/stylesheets/services/confirmation-statement/application.css" rel="stylesheet"/>
 
-  <!--[if !IE 8]><!-->
-  <link href="{{assetPath}}/stylesheets/govuk-frontend/v3.11.0/govuk-frontend-3.11.0.min.css" rel="stylesheet" />
-  <!--<![endif]-->
+    <!--[if !IE 8]><!-->
+    <link href="{{assetPath}}/stylesheets/govuk-frontend/v3.11.0/govuk-frontend-3.11.0.min.css" rel="stylesheet"/>
+    <!--<![endif]-->
 
-  {# For Internet Explorer 8, you need to compile specific stylesheet #}
-  {# see https://github.com/alphagov/govuk-frontend/blob/master/docs/installation/supporting-internet-explorer-8.md #}
-  <!--[if IE 8]>
+    {# For Internet Explorer 8, you need to compile specific stylesheet #}
+    {# see https://github.com/alphagov/govuk-frontend/blob/master/docs/installation/supporting-internet-explorer-8.md #}
+    <!--[if IE 8]>
   <link href="{{assetPath}}/stylesheets/govuk-frontend/v3.11.0/govuk-frontend-ie8-3.11.0.min.css" rel="stylesheet" />
   <![endif]-->
 
-
-  {% block download %}
-  {% endblock %}
+    {% block download %}{% endblock %}
 {% endblock %}
 
 {% block bodyStart %}
-  {% include "includes/cookie-consent-banner.html" %}
+    {% include "includes/cookie-consent-banner.html" %}
 {% endblock %}
 
 {% block header %}
-  {{ govukHeader({
+    {{ govukHeader({
     homepageUrl: "https://www.gov.uk",
     serviceName: "File a confirmation statement",
     serviceUrl: "/confirmation-statement",
@@ -46,25 +44,24 @@
 {% endblock %}
 
 {% block beforeContent %}
-  {{ govukPhaseBanner({
+    {{ govukPhaseBanner({
     tag: {
       text: "beta"
     },
     html: 'This is a new service - Help us improve it by providing <a class="govuk-link" href="https://www.smartsurvey.co.uk/s/fileconfstmnt-feedback/" data-event-id="feedback-banner-link" target="_blank" rel="noopener noreferrer">feedback <span class="govuk-visually-hidden">(This link opens in a new window)</span></a>'
   }) }}
 
-  {% block signoutBar %}
-    {% include "includes/signout-bar.html" %}
-  {% endblock %}
+    {% block signoutBar %}
+        {% include "includes/signout-bar.html" %}
+    {% endblock %}
 
-  {% block backLink %}
-  {% endblock %}
+    {% block backLink %}{% endblock %}
 {% endblock %}
 
 {% set mainClasses = mainClasses | default("govuk-main-wrapper--auto-spacing govuk-body") %}
 
 {% block footer %}
-  {{ govukFooter({
+    {{ govukFooter({
     meta: {
       items: [
         {
@@ -93,8 +90,12 @@
 {% endblock %}
 
 {% block bodyEnd %}
-  {# Run JavaScript at end of the <body>, to avoid blocking the initial render. #}
-  <script src="{{assetPath}}/javascripts/govuk-frontend/v3.11.0/govuk-frontend-3.11.0.min.js"></script>
-  <script>window.GOVUKFrontend.initAll()</script>
-  {# {% include "includes/piwik-scripts.html" %} #}
+    {# Run JavaScript at end of the <body>, to avoid blocking the initial render. #}
+    <script src="{{assetPath}}/javascripts/govuk-frontend/v3.11.0/govuk-frontend-3.11.0.min.js"></script>
+    <script>
+        window
+            .GOVUKFrontend
+            .initAll()
+    </script>
+    {# {% include "includes/piwik-scripts.html" %} #}
 {% endblock %}

@@ -3,4 +3,4 @@ group: web
 
 weight: 100
 routes:
-  1: ^/xbrl_validate/* # TODO: change
+    1: ^/xbrl_validate/* # TODO: change
