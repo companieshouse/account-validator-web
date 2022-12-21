@@ -12,7 +12,8 @@
         "sonarqube-base-branch": "sonar-scanner",
         "sonarqube-pull-request": "sonar-scanner -D sonar.pullrequest.base=main",
         "sonarqube": "branch=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD); if [[ $branch == \"HEAD\" ]]; then echo $branch && npm run sonarqube-base-branch; else echo $branch && npm run sonarqube-pull-request; fi;",
-        "coverage": "jest --coverage --passWithNoTests"
+        "coverage": "jest --coverage --passWithNoTests",
+        "prepare": "husky install"
     },
     "dependencies": {
         "@companieshouse/api-sdk-node": "^1.0.89",
@@ -38,6 +39,7 @@
         "@typescript-eslint/eslint-plugin": "^4.27.0",
         "@typescript-eslint/parser": "^4.27.0",
         "eslint": "^7.28.0",
+        "husky": "^8.0.2",
         "jest": "^27.3.1",
         "sonarqube-scanner": "^2.8.1",
         "supertest": "^6.1.3",
