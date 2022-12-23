@@ -12,7 +12,7 @@ clean:
 	rm -f ./build.log
 
 .PHONY: build
-build: update_submodules
+build:
 	npm ci
 	npm run build
 
@@ -49,7 +49,3 @@ endif
 
 .PHONY: dist
 dist: lint test clean package
-
-.PHONY: update_submodules
-update_submodules:
-	test -f ./api-enumerations/constants.yml || git submodule update --init --recursive -- api-enumerations

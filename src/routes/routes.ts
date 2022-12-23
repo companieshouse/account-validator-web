@@ -1,8 +1,7 @@
 import { Router } from "express";
 
-import { startController } from "../controllers";
+import { startController } from "../controllers/start.controller";
 
 export const router = Router();
 
-router.get("/", startController.get);
-router.post("/", startController.post);
+router.use('/', startController);

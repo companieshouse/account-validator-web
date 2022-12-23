@@ -1,4 +1,6 @@
 {% extends "layout.html" %}
+{% from "govuk/components/file-upload/macro.njk" import govukFileUpload %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 
 {% block pageTitle %}
   XBRL Company Accounts Validator
@@ -16,12 +18,19 @@
     {# Remove signout bar on this page by replacing it with nothing #}
 {% endblock %}
 
+
+
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl">
                 XBRL Company Accounts Validator
             </h1>
+
+
+            {{ errorSummary() }}
+            {{ showValidationResult() }}
+            
 
             <p class="govuk-body">
                 This is a service that checks your instance document for conformance to the XBRL specification and to business validation rules (this validation may be performed for both inline XBRL and 'raw' XBRL documents).
@@ -47,10 +56,14 @@
 
             <div class="govuk-form-group">
                 <form method="POST" enctype='multipart/form-data'>
-                    <label class="govuk-label" for="file">
-                        Upload a XHTML file
-                    </label>
-                    <input class="govuk-file-upload" id="file" name="file" type="file">
+                    {{ govukFileUpload({
+                        id: "file",
+                        name: "file",
+                        errorMessage: formValidationResult.getErrorForField("file"),
+                        label: {
+                            text: "Upload a XHTML file"
+                        }
+                    }) }}
                     <br />
 
                     {{ govukButton({
@@ -64,3 +77,11 @@
         </div>
     </div>
 {% endblock %}
+
+
+{# Assumes accountValidationResult is not undefined! #}
+{% macro showValidationResult() %}
+    {% if accountValidationResult %}
+        {% include "start/account.validation." + accountValidationResult.status + ".html" %}
+    {% endif %}
+{% endmacro %}
