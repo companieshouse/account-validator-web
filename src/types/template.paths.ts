@@ -1,3 +1,3 @@
 export enum Templates {
-    START = "start",
+    START = "start/start",
 }

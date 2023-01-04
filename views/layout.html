@@ -1,17 +1,17 @@
 {% extends "govuk/template.njk" %}
 
-{% from "govuk/components/back-link/macro.njk"           import govukBackLink %}
-{% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "govuk/components/details/macro.njk" import govukDetails %}
-{% from "govuk/components/error-summary/macro.njk"       import govukErrorSummary %}
-{% from "govuk/components/inset-text/macro.njk"          import govukInsetText %}
-{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
-{% from "govuk/components/phase-banner/macro.njk"        import govukPhaseBanner %}
-{% from "govuk/components/summary-list/macro.njk"        import govukSummaryList %}
-{% from "govuk/components/warning-text/macro.njk"        import govukWarningText %}
-{% from "govuk/components/radios/macro.njk" import govukRadios %}
-{% from "govuk/components/table/macro.njk" import govukTable %}
-{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/back-link/macro.njk"              import govukBackLink %}
+{% from "govuk/components/button/macro.njk"                 import govukButton %}
+{% from "govuk/components/details/macro.njk"                import govukDetails %}
+{% from "govuk/components/error-summary/macro.njk"          import govukErrorSummary %}
+{% from "govuk/components/inset-text/macro.njk"             import govukInsetText %}
+{% from "govuk/components/notification-banner/macro.njk"    import govukNotificationBanner %}
+{% from "govuk/components/phase-banner/macro.njk"           import govukPhaseBanner %}
+{% from "govuk/components/summary-list/macro.njk"           import govukSummaryList %}
+{% from "govuk/components/warning-text/macro.njk"           import govukWarningText %}
+{% from "govuk/components/radios/macro.njk"                 import govukRadios %}
+{% from "govuk/components/table/macro.njk"                  import govukTable %}
+{% from "govuk/components/tag/macro.njk"                    import govukTag %}
 
 {% block head %}
 
@@ -27,6 +27,14 @@
   <link href="{{assetPath}}/stylesheets/govuk-frontend/v3.11.0/govuk-frontend-ie8-3.11.0.min.css" rel="stylesheet" />
   <![endif]-->
 
+    <style>
+        {# Temporary hack to get a failure banner. This should be placed in the CDN #}
+        .govuk-notification-banner--failure {
+            border-color: #d4351c !important;
+            background-color: #d4351c !important;
+        }
+    </style>
+
     {% block download %}{% endblock %}
 {% endblock %}
 
@@ -37,8 +45,8 @@
 {% block header %}
     {{ govukHeader({
     homepageUrl: "https://www.gov.uk",
-    serviceName: "File a confirmation statement",
-    serviceUrl: "/confirmation-statement",
+    serviceName: "Validate an XBRL accounts",
+    serviceUrl: "/xbrl_validate",
     containerClasses: "govuk-width-container"})
   }}
 {% endblock %}
@@ -99,3 +107,12 @@
     </script>
     {# {% include "includes/piwik-scripts.html" %} #}
 {% endblock %}
+
+{% macro errorSummary() %}
+    {% if formValidationResult.hasErrors %}
+        {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: formValidationResult.errors
+        }) }}
+    {% endif %}
+{% endmacro %}

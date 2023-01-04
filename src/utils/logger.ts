@@ -2,7 +2,7 @@ import { createLogger } from "@companieshouse/structured-logging-node";
 import ApplicationLogger from "@companieshouse/structured-logging-node/lib/ApplicationLogger";
 
 export const logger: ApplicationLogger = createLogger(
-    "confirmation-statement-web"
+    "account-validator-web"
 );
 
 export const createAndLogError = (description: string): Error => {

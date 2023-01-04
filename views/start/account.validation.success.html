@@ -1,0 +1,15 @@
+{% set html %}
+    <h3 class="govuk-notification-banner__heading">
+        The validation of the document '{{ fileName }}'  has been successful
+    </h3>
+
+    {% if accountValidationResult.imageUrl %}
+        <p class="govuk-body"><a class="govuk-notification-banner__link" href="{{ accountValidationResult.imageUrl }}">Download generated image.</a></p>
+    {% endif %}
+{% endset %}
+
+{{ govukNotificationBanner({
+    titleText: 'Success',
+    type: 'success',
+    html: html
+}) }}

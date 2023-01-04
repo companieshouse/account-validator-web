@@ -1,7 +1,7 @@
 local_resource(
   name = 'dev:account-validator-web',
   cmd = 'npm --silent install && npm --silent run build',
-  deps = ['src', 'views']
+  deps = ['src', 'views' ]
 )
 
 custom_build(
