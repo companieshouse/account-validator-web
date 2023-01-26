@@ -54,7 +54,7 @@ function validateForm(file?: Express.Multer.File) {
 }
 
 const allowedFileExtensions = [
-    "zip", "xbrl"
+    "zip", "xhtml"
 ];
 
 function extention(filename: string) {
