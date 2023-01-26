@@ -35,11 +35,11 @@ export class DummyValidator implements AccountValidationService {
             ? result
             : {
                 status: 'failure',
-                reasons: [ 'I don\'t like it']
+                reasons: [ 'Validation failure reason' ]
             };
 
         return new Promise(resolve => resolve(result));
     }
 }
 
-export const accountValidatorService = new DummyValidator({ 'example.xbrl': { status: 'success', imageUrl: 'https://www.google.co.uk' } });
+export const accountValidatorService = new DummyValidator({ 'accounts_success.zip': { status: 'success', imageUrl: 'https://www.google.co.uk' } });
