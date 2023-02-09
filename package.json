@@ -16,7 +16,6 @@
         "prepare": "husky install"
     },
     "dependencies": {
-        "@companieshouse/api-sdk-node": "^1.0.89",
         "@companieshouse/node-session-handler": "^4.1.6",
         "@companieshouse/structured-logging-node": "^1.0.4",
         "@companieshouse/web-security-node": "^2.0.0",
