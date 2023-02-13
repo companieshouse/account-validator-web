@@ -1,78 +1,164 @@
-import { Resource } from "@companieshouse/api-sdk-node/dist";
-import ApiClient from "@companieshouse/api-sdk-node/dist/client";
-import { AccountValidatorResponse } from "@companieshouse/api-sdk-node/dist/services/account-validator/types";
+import { Resource } from "@companieshouse/api-sdk-node/src";
+import ApiClient from "@companieshouse/api-sdk-node/src/client";
+import { AccountValidatorResponse } from "@companieshouse/api-sdk-node/src/services/account-validator/types";
+import { logger } from "../utils/logger";
 import { createPublicApiKeyClient } from "./api.service";
+import { performance } from "perf_hooks";
 
 export interface AccountValidationService {
-    submit(file: Express.Multer.File): Promise<AccountValidationResult>
+    submit(file: Express.Multer.File): Promise<AccountValidationResult>;
+    check(id: string): Promise<AccountValidationResult>;
 }
 
 interface SuccessValidationResult {
-    status: 'success'
-    imageUrl?: string
+    status: "success";
+    fileId: string;
+    imageUrl?: string;
 }
 
 interface FailureValidationResult {
-    status: 'failure'
-    reasons: string[]
+    status: "failure";
+    fileId: string;
+    reasons: string[];
 }
 
-export type AccountValidationResult
-    = SuccessValidationResult
-    | FailureValidationResult;
+interface PendingValidationResult {
+    status: "pending";
+    fileId: string;
+}
 
-export function mapResponseType(accountValidatorResource: Resource<AccountValidatorResponse>): AccountValidationResult{
-    const accountValidatorResponse = (accountValidatorResource as Resource<AccountValidatorResponse>).resource!;
+export type AccountValidationResult =
+    | SuccessValidationResult
+    | FailureValidationResult
+    | PendingValidationResult;
 
-    switch (accountValidatorResponse.requestStatus.status){
-            case "OK": return { status: "success" };
-            case "FAILED":  return { status: "failure", reasons: accountValidatorResponse.requestStatus.result.errorMessages };
-            default: throw "This is not possbile. Only possible options are OK and FAILED";
+export function mapResponseType(
+    accountValidatorResource: Resource<AccountValidatorResponse>
+): AccountValidationResult {
+    const accountValidatorResponse = (
+        accountValidatorResource as Resource<AccountValidatorResponse>
+    ).resource!;
+
+    if (accountValidatorResponse.status === "pending") {
+        return {
+            status: "pending",
+            fileId: accountValidatorResponse.fileId,
+        };
+    }
+
+    const result = accountValidatorResponse.result;
+    switch (result.validationStatus) {
+            case "OK":
+                return {
+                    status: "success",
+                    fileId: accountValidatorResponse.fileId,
+                };
+            case "FAILED":
+                return {
+                    status: "failure",
+                    reasons: result.errorMessages,
+                    fileId: accountValidatorResponse.fileId,
+                };
     }
 }
-// TODO: implement an API based validator that will upload a file to S3 then forward the url to the API to validate.
 
-// Only used for testing. Should be removed once API based validator is implemented
-export class DummyValidator implements AccountValidationService {
-    constructor(private resultMap: Record<string, AccountValidationResult> = {}) {
-
-    }
-
-    addFile(name: string, result: AccountValidationResult) {
-        this.resultMap[name] = result;
-    }
-
-    submit(file: Express.Multer.File): Promise<AccountValidationResult> {
-        let result = this.resultMap[file.originalname];
-        result = result !== undefined
-            ? result
-            : {
-                status: 'failure',
-                reasons: [ 'Validation failure reason' ]
-            };
-
-        return new Promise(resolve => resolve(result));
-    }
-}
+const idMap = {
+    "success.xhtml": "1f105de5-1ace-46df-84e4-15bfb9d1411a",
+    "failure_duplicate_facts.xhtml": "2a089d94-785e-42a9-97cf-c85c26ee83ca",
+};
 
 export class AccountValidator implements AccountValidationService {
+    constructor(private apiClient: ApiClient = createPublicApiKeyClient()) {}
 
-    constructor(private apiClient: ApiClient = createPublicApiKeyClient()) {
-
-    }
-
-    async submit(file: Express.Multer.File): Promise<any> {
-        // TODO: Upload to S3 using File Transfer Service(FTS)
-        const fileId = "fileId"; // Replace this with the actual fileId returned from FTS
-        const requestPayload = { "fileName": file.filename, "id": fileId };
+    async check(id: string): Promise<AccountValidationResult> {
         const accountValidatorService = this.apiClient.accountValidatorService;
-        const accountValidatorResponse = await accountValidatorService.postFileForValidation(requestPayload);
-
-        if (accountValidatorResponse.httpStatusCode !== 200){
+        const accountValidatorResponse =
+            await accountValidatorService.getFileValidationStatus(id);
+        if (accountValidatorResponse.httpStatusCode !== 200) {
             throw accountValidatorResponse; // If the status code is not 200, the return type is ApiErrorResponse
         }
-        return mapResponseType(accountValidatorResponse as Resource<AccountValidatorResponse>);
+
+        return mapResponseType(
+            accountValidatorResponse as Resource<AccountValidatorResponse>
+        );
+    }
+
+    async submit(file: Express.Multer.File): Promise<AccountValidationResult> {
+        // TODO: Upload to S3 using File Transfer Service(FTS)
+        const fileId = this.simulateFTSUpload(file);
+
+        const requestPayload = { fileName: file.originalname, id: fileId };
+        const accountValidatorService = this.apiClient.accountValidatorService;
+
+        const accountValidatorResponse =
+            await accountValidatorService.postFileForValidation(requestPayload);
+
+        if (accountValidatorResponse.httpStatusCode !== 200) {
+            throw accountValidatorResponse; // If the status code is not 200, the return type is ApiErrorResponse
+        }
+
+        return mapResponseType(
+            accountValidatorResponse as Resource<AccountValidatorResponse>
+        );
+    }
+
+    private simulateFTSUpload(file: Express.Multer.File): string {
+        const fileId = idMap[file.originalname]; // Replace this with the actual fileId returned from FTS
+        if (!fileId) {
+            throw new Error(
+                `Unknown file ${
+                    file.originalname
+                }. Must be one of ${Object.keys(idMap)}`
+            );
+        }
+
+        return fileId;
     }
 }
 
-export const accountValidatorService = new AccountValidator();
+class SingleRequestFacade implements AccountValidationService {
+    constructor(private multiRequestValidator: AccountValidationService) {}
+
+    async check(id: string): Promise<AccountValidationResult> {
+        return await this.multiRequestValidator.check(id);
+    }
+
+    async submit(file: Express.Multer.File): Promise<AccountValidationResult> {
+        const res = await this.multiRequestValidator.submit(file); // Will throw if error
+
+        const result = await this.waitForComplete(res.fileId);
+
+        return result;
+    }
+
+    private async waitForComplete(
+        id: string
+    ): Promise<AccountValidationResult> {
+        let value: AccountValidationResult;
+        const startTime = performance.now();
+        let elapsedMs = 0;
+        const tenSeconds = 10_000;
+
+        do {
+            logger.debug(
+                `SingleRequestFacade. Checking if request complete yet.`
+            );
+
+            if (elapsedMs > tenSeconds) {
+                throw new Error(`SingleRequestFacade.waitForComplete: Timeout reached.`);
+            }
+
+            await sleep(500);
+            value = await this.multiRequestValidator.check(id);
+            elapsedMs = performance.now() - startTime;
+        } while (value.status === "pending");
+
+        return value;
+    }
+}
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+export const accountValidatorService = new SingleRequestFacade(
+    new AccountValidator()
+);

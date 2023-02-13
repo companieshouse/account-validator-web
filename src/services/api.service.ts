@@ -4,8 +4,8 @@ import { SignInInfoKeys } from "@companieshouse/node-session-handler/lib/session
 import { AccessTokenKeys } from "@companieshouse/node-session-handler/lib/session/keys/AccessTokenKeys";
 import { API_URL, CHS_API_KEY } from "../config";
 import { createAndLogError } from "../utils/logger";
-import { createApiClient } from "@companieshouse/api-sdk-node/dist";
-import ApiClient from "@companieshouse/api-sdk-node/dist/client";
+import { createApiClient } from "@companieshouse/api-sdk-node/src/index";
+import ApiClient from "@companieshouse/api-sdk-node/src/client";
 
 export const createPublicOAuthApiClient = (session: Session): ApiClient => {
     const oAuth = session.data?.[SessionKey.SignInInfo]?.[SignInInfoKeys.AccessToken]?.[AccessTokenKeys.AccessToken];
