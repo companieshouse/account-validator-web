@@ -37,7 +37,14 @@ export function mapResponseType(
 ): AccountValidationResult {
     const accountValidatorResponse = (
         accountValidatorResource as Resource<AccountValidatorResponse>
-    ).resource!;
+    ).resource;
+    if (accountValidatorResponse === undefined) {
+        throw new Error(
+            `Resource inside accountValidatorResource is undefined. `
+            + `This shouldn't happen. `
+            + `It means the response body from the http request was also undefined.`
+        );
+    }
 
     if (accountValidatorResponse.status === "pending") {
         return {
