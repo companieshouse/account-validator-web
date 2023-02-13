@@ -1,6 +1,6 @@
-import { Resource } from "@companieshouse/api-sdk-node/src";
-import ApiClient from "@companieshouse/api-sdk-node/src/client";
-import { AccountValidatorResponse } from "@companieshouse/api-sdk-node/src/services/account-validator/types";
+import { Resource } from "@companieshouse/api-sdk-node";
+import ApiClient from "@companieshouse/api-sdk-node/dist/client";
+import { AccountValidatorResponse } from "@companieshouse/api-sdk-node/dist/services/account-validator";
 import { logger } from "../utils/logger";
 import { createPublicApiKeyClient } from "./api.service";
 import { performance } from "perf_hooks";
@@ -270,7 +270,7 @@ class SynchronousValidator implements AccountValidationService {
 
         do {
             logger.debug(
-                `SingleRequestFacade. Checking if request complete yet.`
+                `SynchronousValidator. Checking if request complete yet.`
             );
 
             value = await this.multiRequestValidator.check(id);
@@ -278,7 +278,7 @@ class SynchronousValidator implements AccountValidationService {
             if (elapsedMs > timeout) {
                 if (errOnTimeout) {
                     throw new Error(
-                        `SingleRequestFacade.waitForComplete: Timeout reached.`
+                        `SynchronousValidator.waitForComplete: Timeout reached.`
                     );
                 } else {
                     break;
