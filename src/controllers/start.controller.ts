@@ -4,6 +4,8 @@ import { Templates } from "../types/template.paths";
 import multer from "multer";
 import { ValidationResult } from "../validation/validation.result";
 import { AccountValidationResult, accountValidatorService } from "../services/account.validation.service";
+import { logger } from "../utils/logger";
+import { handleErrors } from "../middleware/error.handler";
 
 interface StartPageRequest extends Request {
     formValidationResult?: ValidationResult;
@@ -66,6 +68,7 @@ function isZipOrXBRLFile(filename: string): boolean {
     return allowedFileExtensions.includes(extention(filename));
 }
 
+
 async function submitFileForValidation(req: StartPageRequest, res: Response, next: NextFunction) {
     const fileValidationResult = validateForm(req.file);
     req.formValidationResult = fileValidationResult;
@@ -78,8 +81,10 @@ async function submitFileForValidation(req: StartPageRequest, res: Response, nex
         return;
     }
 
+    logger.debug(`Submitting file to account-validator-api for validation`);
     // We know the file is not undefined since if the validation did not succeed we wouldn't have made it to this point
     req.accountValidationResult = await accountValidatorService.submit(req.file!); // eslint-disable-line @typescript-eslint/no-non-null-assertion
+    logger.debug(`Response recieved from account-validator-api`);
 
     next();
 }
@@ -92,6 +97,6 @@ startController.get("/", renderStartPage);
 startController.post(
     "/",
     parseMultipartForm.single("file"),
-    submitFileForValidation,
+    handleErrors(submitFileForValidation),
     renderStartPage
 );
