@@ -1,4 +1,4 @@
 export enum Templates {
     START = "start/start",
-    ERROR = "error/error"
+    ERROR = "error/service-offline"
 }
