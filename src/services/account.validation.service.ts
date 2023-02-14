@@ -217,7 +217,7 @@ const defaultSynchronousValidatorOptions: SynchronousValidatorOptions = {
  * This implementation is useful for cases where waiting for a response before taking further action is necessary,
  * and allows for a more straightforward flow of control in the application.
  */
-class SynchronousValidator implements AccountValidationService {
+export class SynchronousValidator implements AccountValidationService {
     /**
      * Constructs a new instance of the SynchronousValidator.
      * @param multiRequestValidator The underlying `AccountValidator` instance that will be used to make validation requests.

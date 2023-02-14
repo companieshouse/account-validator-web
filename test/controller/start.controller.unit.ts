@@ -32,7 +32,7 @@ describe("Start controller tests", () => {
     it(`Should render success result when validation succeeds`, async () => {
         const response = await request(app)
             .post('/xbrl_validate')
-            .attach('file', Buffer.from(''), { filename: 'success.xbrl' } );
+            .attach('file', Buffer.from(''), { filename: 'success.xhtml' } );
 
         expect(response.status).toBe(200);
         expect(response.text).toContain('govuk-notification-banner--success');
@@ -41,7 +41,7 @@ describe("Start controller tests", () => {
     it(`Should render image url when one is present`, async () => {
         const response = await request(app)
             .post('/xbrl_validate')
-            .attach('file', Buffer.from(''), { filename: 'success_with_image.xbrl' } );
+            .attach('file', Buffer.from(''), { filename: 'success.xhtml' } );
 
         expect(response.status).toBe(200);
         expect(response.text).toContain('govuk-notification-banner--success');
