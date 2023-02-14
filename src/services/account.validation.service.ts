@@ -263,7 +263,7 @@ class SynchronousValidator implements AccountValidationService {
     private async waitForComplete(
         id: string
     ): Promise<AccountValidationResult> {
-        let value: AccountValidationResult;
+        let value: AccountValidationResult = { status: 'pending', fileId: id };
         const startTime = performance.now();
         let elapsedMs = 0;
         const { timeoutMs: timeout, errOnTimeout } = this.options;
@@ -272,8 +272,6 @@ class SynchronousValidator implements AccountValidationService {
             logger.debug(
                 `SynchronousValidator. Checking if request complete yet.`
             );
-
-            value = await this.multiRequestValidator.check(id);
 
             if (elapsedMs > timeout) {
                 if (errOnTimeout) {
@@ -286,6 +284,9 @@ class SynchronousValidator implements AccountValidationService {
             }
 
             await sleep(500);
+
+            value = await this.multiRequestValidator.check(id);
+
             elapsedMs = performance.now() - startTime;
         } while (value.status === "pending");
 
