@@ -4,6 +4,7 @@ import * as path from "path";
 import { router } from "./routes/routes";
 import cookieParser from "cookie-parser";
 import { logger } from "./utils/logger";
+import { errorHandler } from "./middleware/error.handler";
 
 const app = express();
 app.disable("x-powered-by");
@@ -37,6 +38,7 @@ app.set("view engine", "html");
 app.use(cookieParser());
 
 app.use("/xbrl_validate", router);
+app.use(errorHandler); // Needs to be after the router so that it is the final handler in the chain
 
 logger.info("Account Validator Web has started");
 export default app;

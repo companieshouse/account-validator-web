@@ -4,15 +4,18 @@ import { AccountValidationResult, accountValidatorService } from "../../src/serv
 
 
 const mockFiles: Record<string, AccountValidationResult> = {
-    'success.xbrl': {
-        status: 'success'
-    },
-    'success_with_image.xbrl': {
+    'success.xhtml': {
         status: 'success',
-        imageUrl: 'image.jpeg'
+        fileId: ''
     },
-    'failure.xbrl': {
+    'success_with_image.xhtml': {
+        status: 'success',
+        imageUrl: 'image.jpeg',
+        fileId: ''
+    },
+    'failure_duplicate_facts.xhtml': {
         status: 'failure',
+        fileId: '',
         reasons: [ 'failure reason' ]
     }
 };
