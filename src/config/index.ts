@@ -15,23 +15,17 @@ const getEnvironmentVariable = (key: string, defaultValue?: any): string => {
     return value || (defaultValue as string);
 };
 
-export const COOKIE_NAME = getEnvironmentVariable("COOKIE_NAME");
-
-export const COOKIE_DOMAIN = getEnvironmentVariable("COOKIE_DOMAIN");
-
-export const COOKIE_SECRET = getEnvironmentVariable("COOKIE_SECRET");
-
-export const CACHE_SERVER = getEnvironmentVariable("CACHE_SERVER");
-
-export const CHS_API_KEY = getEnvironmentVariable("CHS_API_KEY");
-
-export const CHS_URL = getEnvironmentVariable("CHS_URL");
-
 export const API_URL = getEnvironmentVariable("API_URL");
-
+export const CACHE_SERVER = getEnvironmentVariable("CACHE_SERVER");
+export const CDN_HOST = getEnvironmentVariable("CDN_HOST");
+export const CHS_API_KEY = getEnvironmentVariable("CHS_API_KEY");
+export const CHS_URL = getEnvironmentVariable("CHS_URL");
+export const COOKIE_DOMAIN = getEnvironmentVariable("COOKIE_DOMAIN");
+export const COOKIE_NAME = getEnvironmentVariable("COOKIE_NAME");
+export const COOKIE_SECRET = getEnvironmentVariable("COOKIE_SECRET");
 export const INTERNAL_API_URL = getEnvironmentVariable("INTERNAL_API_URL");
-
 export const PORT = parseInt(getEnvironmentVariable("PORT", 3000));
+export const RESULT_RELOAD_DURATION_SECONDS = parseFloat(getEnvironmentVariable("RESULT_RELOAD_DURATION_SECONDS", 1));
 
 /**
  * Parses a file size string and returns the equivalent number of bytes.

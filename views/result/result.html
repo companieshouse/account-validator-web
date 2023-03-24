@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% from "govuk/components/file-upload/macro.njk" import govukFileUpload %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+
+{% block pageTitle %}
+  XBRL Company Accounts Validator
+{% endblock %}
+
+<!-- No service name header-->
+{% block header %}
+    {{ govukHeader({
+    homepageUrl: "https://www.gov.uk",
+    containerClasses: "govuk-width-container"})
+  }}
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ showValidationResult() }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block backLink %}
+    {{ govukBackLink({
+        text: "Back",
+        href: BASE_URL
+    }) }}
+{% endblock %}
+
+{# Assumes accountValidationResult is not undefined! #}
+{% macro showValidationResult() %}
+    {% if accountValidationResult %}
+        {% include "result/account.validation." + accountValidationResult.status + ".html" %}
+    {% endif %}
+{% endmacro %}

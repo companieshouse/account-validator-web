@@ -1,4 +1,4 @@
-artifact_name       := confirmation-statement-web
+artifact_name       := account-validator-web
 version             := "unversioned"
 
 .PHONY: all

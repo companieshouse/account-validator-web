@@ -1,11 +1,11 @@
 {% set html %}
     <h3 class="govuk-notification-banner__heading">
-        The validation of your Instance document has been not been successful
+        The validation of your Instance document '{{accountValidationResult.fileName}}' has been not been successful
     </h3>
     <p class="govuk-body">The validation failed with the following errors:</p>
     <ul class="govuk-list govuk-list--bullet">
         {% for reason in accountValidationResult.reasons %}
-            <li>{{ reason }}
+            <li>{{ reason }}</li>
         {% endfor %}
     </ul>
 {% endset %}
