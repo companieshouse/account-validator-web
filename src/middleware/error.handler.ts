@@ -1,6 +1,6 @@
 import { Handler, NextFunction, Request, Response } from "express";
 import { logger } from "../utils/logger";
-import { Templates } from "../types/template.paths";
+import { Templates } from "../constants";
 
 /**
  * Error handling middleware so that any un-caught exceptions will show an error screen.

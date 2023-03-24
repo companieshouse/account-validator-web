@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Start script for confirmation-statement-web
+# Start script for account-validator-web
 
 APP_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 

@@ -1,6 +1,6 @@
 import { Response, Request, Router, NextFunction } from "express";
-import { CHS_URL, MAX_FILE_SIZE } from "../config";
-import { Templates } from "../types/template.paths";
+import { MAX_FILE_SIZE } from "../config";
+import { Templates } from "../constants";
 import multer from "multer";
 import { ValidationResult } from "../validation/validation.result";
 import { AccountValidationResult, accountValidatorService } from "../services/account.validation.service";
@@ -29,7 +29,6 @@ const parseMultipartForm = multer({
 
 function renderStartPage(req: StartPageRequest, res: Response) {
     return res.render(Templates.START, {
-        CHS_URL,
         templateName: Templates.START,
         formValidationResult: req.formValidationResult,
         accountValidationResult: req.accountValidationResult,
@@ -68,14 +67,12 @@ function isZipOrXBRLFile(filename: string): boolean {
     return allowedFileExtensions.includes(extention(filename));
 }
 
-
 async function submitFileForValidation(req: StartPageRequest, res: Response, next: NextFunction) {
     const fileValidationResult = validateForm(req.file);
     req.formValidationResult = fileValidationResult;
 
     // Check that the file is okay to submit to the API for validation
     if (fileValidationResult.hasErrors) {
-        console.log(`Validation errors: ${JSON.stringify(fileValidationResult.errors)}`);
         res.status(400);
         next();
         return;
@@ -98,5 +95,11 @@ startController.post(
     "/",
     parseMultipartForm.single("file"),
     handleErrors(submitFileForValidation),
-    renderStartPage
+    (req: StartPageRequest, res: Response) => {
+        if (req.formValidationResult?.hasErrors) {
+            return renderStartPage(req, res);
+        } else {
+            return res.redirect('/xbrl_validate/' + req.accountValidationResult?.fileId + '/result');
+        }
+    }
 );

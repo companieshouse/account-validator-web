@@ -14,9 +14,6 @@
 {% from "govuk/components/tag/macro.njk"                    import govukTag %}
 
 {% block head %}
-
-    <link href="{{assetPath}}/stylesheets/services/confirmation-statement/application.css" rel="stylesheet"/>
-
     <!--[if !IE 8]><!-->
     <link href="{{assetPath}}/stylesheets/govuk-frontend/v3.11.0/govuk-frontend-3.11.0.min.css" rel="stylesheet"/>
     <!--<![endif]-->
@@ -27,13 +24,8 @@
   <link href="{{assetPath}}/stylesheets/govuk-frontend/v3.11.0/govuk-frontend-ie8-3.11.0.min.css" rel="stylesheet" />
   <![endif]-->
 
-    <style>
-        {# Temporary hack to get a failure banner. This should be placed in the CDN #}
-        .govuk-notification-banner--failure {
-            border-color: #d4351c !important;
-            background-color: #d4351c !important;
-        }
-    </style>
+    <link href="{{assetPath}}/stylesheets/services/account-validator-web/app.css" rel="stylesheet"/>
+    <script src="{{assetPath}}/javascripts/app/account-validator-web/status-update.js"></script>
 
     {% block download %}{% endblock %}
 {% endblock %}
@@ -87,10 +79,6 @@
         {
           href: "https://developer.companieshouse.gov.uk/",
           text: "Developers"
-        },
-        {
-          href: "/confirmation-statement/accessibility-statement",
-          text: "Accessibility statement"
         }
       ]
     }

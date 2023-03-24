@@ -1,6 +1,6 @@
 {% set html %}
     <h3 class="govuk-notification-banner__heading">
-        The validation of the document '{{ fileName }}'  has been successful
+        The validation of the document '{{accountValidationResult.fileName}}' has been successful
     </h3>
 
     {% if accountValidationResult.imageUrl %}

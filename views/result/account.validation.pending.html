@@ -1,0 +1,21 @@
+{% set html %}
+    <h3 class="govuk-notification-banner__heading">
+        The validation of your document '{{accountValidationResult.fileName}}' is in progress
+    </h3>
+    <p class="govuk-body">The is in progress. This page will automatically update when it is complete.</p>
+
+    <div class="gds-loading-icon-container">
+        <div class="gds-loading-icon"></div>
+    </div>
+
+    <script>
+        console.log("Reloading in {{resultReloadDurationSeconds}} seconds")
+        setTimeout(() => location.reload(), {{resultReloadDurationSeconds}}000);
+    </script>
+{% endset %}
+
+{{ govukNotificationBanner({
+    titleText: 'Pending',
+    classes: 'govuk-notification-banner--pending',
+    html: html
+}) }}
