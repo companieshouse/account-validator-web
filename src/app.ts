@@ -5,6 +5,8 @@ import { router } from "./routes/routes";
 import cookieParser from "cookie-parser";
 import { logger } from "./utils/logger";
 import { errorHandler } from "./middleware/error.handler";
+import { Urls } from "./constants";
+import { CDN_HOST, CHS_URL } from "./config";
 
 const app = express();
 app.disable("x-powered-by");
@@ -22,9 +24,9 @@ const nunjucksEnv = nunjucks.configure(
     }
 );
 
-nunjucksEnv.addGlobal("assetPath", process.env.CDN_HOST);
-// nunjucksEnv.addGlobal("PIWIK_URL", process.env.PIWIK_URL);
-// nunjucksEnv.addGlobal("PIWIK_SITE_ID", process.env.PIWIK_SITE_ID);
+nunjucksEnv.addGlobal("assetPath", CDN_HOST);
+nunjucksEnv.addGlobal("CHS_URL", CHS_URL);
+nunjucksEnv.addGlobal("BASE_URL", Urls.BASE);
 
 app.enable("trust proxy");
 app.use(express.json());
@@ -37,7 +39,7 @@ app.set("view engine", "html");
 // apply middleware
 app.use(cookieParser());
 
-app.use("/xbrl_validate", router);
+app.use(Urls.BASE, router);
 app.use(errorHandler); // Needs to be after the router so that it is the final handler in the chain
 
 logger.info("Account Validator Web has started");

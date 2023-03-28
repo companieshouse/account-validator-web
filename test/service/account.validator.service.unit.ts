@@ -1,9 +1,7 @@
 import ApiClient from "@companieshouse/api-sdk-node/dist/client";
 import {
-    AccountValidationResult,
     AccountValidationService,
     AccountValidator,
-    SynchronousValidator,
 } from "../../src/services/account.validation.service";
 import { Resource } from "@companieshouse/api-sdk-node";
 import { AccountValidatorResponse } from "@companieshouse/api-sdk-node/dist/services/account-validator";
@@ -20,6 +18,7 @@ function createAccountValidatorResponse(
     httpStatusCode: number,
     status: "complete" | "pending",
     fileId: string,
+    fileName: string,
     validationStatus: "OK" | "FAILED"
 ): Resource<AccountValidatorResponse> {
     return {
@@ -36,6 +35,7 @@ function createAccountValidatorResponse(
                 validationStatus: validationStatus,
             },
             fileId: fileId,
+            fileName: fileName,
         },
     };
 }
@@ -74,6 +74,7 @@ describe("AccountValidator", () => {
             200,
             "pending",
             "fileId",
+            file.originalname,
             "OK"
         );
         mockPostForValidation.mockResolvedValue(resource);
@@ -153,6 +154,7 @@ describe("AccountValidator", () => {
             200,
             "complete",
             fileId,
+            "",
             "OK"
         );
         mockGetFileValidationStatus.mockResolvedValueOnce(resource);
@@ -172,6 +174,7 @@ describe("AccountValidator", () => {
             200,
             "complete",
             fileId,
+            "",
             "FAILED"
         );
         mockGetFileValidationStatus.mockResolvedValueOnce(resource);
@@ -184,70 +187,4 @@ describe("AccountValidator", () => {
         expect(resp.fileId).toBe(fileId);
     });
 
-});
-
-
-describe('SynchronousValidator', () => {
-    const mockMultiRequestValidator = {
-        check: jest.fn(),
-        submit: jest.fn()
-    };
-
-    const mockFile = {
-        originalname: "success.xhtml",
-    } as Express.Multer.File;
-
-    const defaultSynchronousValidatorOptions = {
-        errOnTimeout: true,
-        timeoutMs: 60000,
-    };
-
-    let syncValidator: SynchronousValidator;
-
-    beforeEach(() => {
-        mockMultiRequestValidator.check.mockReset();
-        mockMultiRequestValidator.submit.mockReset();
-        syncValidator = new SynchronousValidator(
-            mockMultiRequestValidator,
-            defaultSynchronousValidatorOptions
-        );
-    });
-
-    describe('check', () => {
-        it('should call the check method of the multi-request validator and return its result', async () => {
-            // Given
-            const expectedResponse: AccountValidationResult = {
-                fileId: 'test-file-id',
-                status: 'success'
-            };
-            mockMultiRequestValidator.check.mockResolvedValueOnce(expectedResponse);
-
-            // When
-            const response = await syncValidator.check(expectedResponse.fileId);
-
-            // Then
-            expect(mockMultiRequestValidator.check).toHaveBeenCalledWith(expectedResponse.fileId);
-            expect(response).toEqual(expectedResponse);
-        });
-    });
-
-    describe('submit', () => {
-        it('should call the submit method of the multi-request validator and wait for the validation result', async () => {
-            // Given
-            const expectedResponse: AccountValidationResult = {
-                fileId: 'test-file-id',
-                status: 'success'
-            };
-            mockMultiRequestValidator.submit.mockResolvedValueOnce(expectedResponse);
-            mockMultiRequestValidator.check.mockResolvedValueOnce(expectedResponse);
-
-            // When
-            const response = await syncValidator.submit(mockFile);
-
-            // Then
-            expect(mockMultiRequestValidator.submit).toHaveBeenCalledWith(mockFile);
-            expect(mockMultiRequestValidator.check).toHaveBeenCalledWith(expectedResponse.fileId);
-            expect(response).toEqual(expectedResponse);
-        });
-    });
 });
