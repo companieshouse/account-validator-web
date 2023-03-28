@@ -21,6 +21,7 @@
         "@companieshouse/node-session-handler": "^4.1.6",
         "@companieshouse/structured-logging-node": "^1.0.4",
         "@companieshouse/web-security-node": "^2.0.0",
+        "private-api-sdk-node": "git+ssh://git@github.com/companieshouse/private-api-sdk-node.git#0.1.67",
         "cookie-parser": "^1.4.6",
         "express": "^4.17.1",
         "govuk-frontend": "^3.14.0",

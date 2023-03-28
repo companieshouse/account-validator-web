@@ -2,8 +2,9 @@ import { Resource } from "@companieshouse/api-sdk-node";
 import ApiClient from "@companieshouse/api-sdk-node/dist/client";
 import { AccountValidatorResponse } from "@companieshouse/api-sdk-node/dist/services/account-validator";
 import { logger } from "../utils/logger";
-import { createPublicApiKeyClient } from "./api.service";
+import { createPublicApiKeyClient, createPrivateApiKeyClient } from "./api.service";
 import { performance } from "perf_hooks";
+import PrivateApiClient from "private-api-sdk-node/dist/client";
 
 /**
  * Interface representing the account validation service
@@ -108,10 +109,6 @@ export function mapResponseType(
     }
 }
 
-const idMap = {
-    "success.xhtml": "1f105de5-1ace-46df-84e4-15bfb9d1411a",
-    "failure_duplicate_facts.xhtml": "2a089d94-785e-42a9-97cf-c85c26ee83ca",
-};
 
 /**
  * Class representing the AccountValidator.  The validation is performed by
@@ -123,7 +120,10 @@ export class AccountValidator implements AccountValidationService {
      * @param apiClient The API client to use for making requests. This parameter is for dependency injection.
      * The default value is automatically configured from the environment.
      */
-    constructor(private apiClient: ApiClient = createPublicApiKeyClient()) {}
+    constructor(
+        private apiClient: ApiClient = createPublicApiKeyClient(),
+        private privateApiClient: PrivateApiClient = createPrivateApiKeyClient(),
+    ) {}
 
     /**
      * Check the status of a validation request
@@ -151,8 +151,9 @@ export class AccountValidator implements AccountValidationService {
      * @throws If the API returns a non-200 status code, the returned value is an instance of `ApiErrorResponse`
      */
     async submit(file: Express.Multer.File): Promise<AccountValidationResult> {
-        // TODO: Upload to S3 using File Transfer Service(FTS)
-        const fileId = this.simulateFTSUpload(file);
+
+        const fileTransferService = this.privateApiClient.fileTransferService;
+        const fileId = this.uploadToS3;
 
         const requestPayload = { fileName: file.originalname, id: fileId };
         const accountValidatorService = this.apiClient.accountValidatorService;
@@ -170,21 +171,12 @@ export class AccountValidator implements AccountValidationService {
     }
 
     /**
-     * Simulate the file upload to S3 using the File Transfer Service (FTS)
+     * Upload the file to S3 using the File Transfer Service (FTS)
      * @param file The file to be uploaded
      * @returns string The id of the uploaded file
-     * @throws If the original file name is not one of the keys in the `idMap` object, an error is thrown
      */
-    private simulateFTSUpload(file: Express.Multer.File): string {
-        const fileId = idMap[file.originalname]; // Replace this with the actual fileId returned from FTS
-        if (!fileId) {
-            throw new Error(
-                `Unknown file ${
-                    file.originalname
-                }. Must be one of ${Object.keys(idMap)}`
-            );
-        }
-
+    private uploadToS3(file: Express.Multer.File): string {
+        const fileId = fileTransferService.upload(file);
         return fileId;
     }
 }
