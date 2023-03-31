@@ -5,7 +5,8 @@ import { logger } from "../utils/logger";
 import { createPublicApiKeyClient, createPrivateApiKeyClient } from "./api.service";
 import { performance } from "perf_hooks";
 import PrivateApiClient from "private-api-sdk-node/dist/client";
-import { createPublicApiKeyClient } from "./api.service";
+// import File from "private-api-sdk-node/dist/client";
+import File from "/Users/rmcmurray/dev/private-api-sdk-node/dist/services/file-transfer/types"
 
 /**
  * Interface representing the account validation service
@@ -159,8 +160,7 @@ export class AccountValidator implements AccountValidationService {
      */
     async submit(file: Express.Multer.File): Promise<AccountValidationResult> {
 
-        const fileTransferService = this.privateApiClient.fileTransferService;
-        const fileId = this.uploadToS3;
+        const fileId = this.uploadToS3(file);
 
         const requestPayload = { fileName: file.originalname, id: fileId };
         const accountValidatorService = this.apiClient.accountValidatorService;
@@ -182,8 +182,13 @@ export class AccountValidator implements AccountValidationService {
      * @param file The file to be uploaded
      * @returns string The id of the uploaded file
      */
-    private uploadToS3(file: Express.Multer.File): string {
-        const fileId = fileTransferService.upload(file);
+    private uploadToS3(file: Express.Multer.File) {
+
+        let fileDetails : import("/Users/rmcmurray/dev/private-api-sdk-node/dist/services/file-transfer/types").File = 
+        {fileName: file.filename, body: file.buffer, mimeType: file.mimetype, size: file.size, extension: '.xtml'};
+
+        const fileTransferService = this.privateApiClient.fileTransferService;
+        const fileId = fileTransferService.upload(fileDetails);
         return fileId;
     }
 }
