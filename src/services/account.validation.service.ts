@@ -5,8 +5,8 @@ import { logger } from "../utils/logger";
 import { createPublicApiKeyClient, createPrivateApiKeyClient } from "./api.service";
 import { performance } from "perf_hooks";
 import PrivateApiClient from "private-api-sdk-node/dist/client";
-// import File from "private-api-sdk-node/dist/client";
-import File from "/Users/rmcmurray/dev/private-api-sdk-node/dist/services/file-transfer/types"
+import { File, Id } from "private-api-sdk-node/dist/services/file-transfer/types"
+import { ApiErrorResponse } from "@companieshouse/api-sdk-node/dist/services/resource";
 
 /**
  * Interface representing the account validation service
@@ -160,21 +160,26 @@ export class AccountValidator implements AccountValidationService {
      */
     async submit(file: Express.Multer.File): Promise<AccountValidationResult> {
 
-        const fileId = this.uploadToS3(file);
+        const fileId = (await this.uploadToS3(file)) as Resource<Id>;
 
-        const requestPayload = { fileName: file.originalname, id: fileId };
-        const accountValidatorService = this.apiClient.accountValidatorService;
+        if (fileId.resource?.id) {
 
-        const accountValidatorResponse =
-            await accountValidatorService.postFileForValidation(requestPayload);
+            const requestPayload = { fileName: file.originalname, id: fileId.resource?.id};
+            const accountValidatorService = this.apiClient.accountValidatorService;
 
-        if (accountValidatorResponse.httpStatusCode !== 200) {
-            throw accountValidatorResponse; // If the status code is not 200, the return type is ApiErrorResponse
+            const accountValidatorResponse =
+                await accountValidatorService.postFileForValidation(requestPayload);
+
+            if (accountValidatorResponse.httpStatusCode !== 200) {
+                throw accountValidatorResponse; // If the status code is not 200, the return type is ApiErrorResponse
+            }
+
+            return mapResponseType(
+                accountValidatorResponse as Resource<AccountValidatorResponse>
+            );
+        } else {
+            throw new Error('Upload to S3 failed: no file id returned');
         }
-
-        return mapResponseType(
-            accountValidatorResponse as Resource<AccountValidatorResponse>
-        );
     }
 
     /**
@@ -182,15 +187,16 @@ export class AccountValidator implements AccountValidationService {
      * @param file The file to be uploaded
      * @returns string The id of the uploaded file
      */
-    private uploadToS3(file: Express.Multer.File) {
+    private uploadToS3(file: Express.Multer.File): Promise<Resource<Id> | ApiErrorResponse>{
 
-        let fileDetails : import("/Users/rmcmurray/dev/private-api-sdk-node/dist/services/file-transfer/types").File = 
-        {fileName: file.filename, body: file.buffer, mimeType: file.mimetype, size: file.size, extension: '.xtml'};
+        let fileDetails : File =  {fileName: file.filename, body: file.buffer, mimeType: file.mimetype, size: file.size, extension: '.xtml'};
 
         const fileTransferService = this.privateApiClient.fileTransferService;
         const fileId = fileTransferService.upload(fileDetails);
         return fileId;
     }
+
+
 }
 
 export const accountValidatorService = new AccountValidator();
