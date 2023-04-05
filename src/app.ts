@@ -26,7 +26,7 @@ const nunjucksEnv = nunjucks.configure(
 
 nunjucksEnv.addGlobal("assetPath", CDN_HOST);
 nunjucksEnv.addGlobal("CHS_URL", CHS_URL);
-nunjucksEnv.addGlobal("BASE_URL", Urls.BASE);
+nunjucksEnv.addGlobal("Urls", Urls);
 
 app.enable("trust proxy");
 app.use(express.json());

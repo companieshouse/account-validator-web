@@ -21,10 +21,10 @@ describe('Result controller tests', () => {
         (accountValidatorService.check as jest.Mock).mockResolvedValue(mockResult);
 
         const response = await request(app)
-            .get(`/xbrl_validate/${fileId}/result`);
+            .get(`/xbrl_validate/result/${fileId}`);
 
         expect(response.status).toBe(200);
-        expect(response.text).toContain('has been successful');
+        expect(response.text).toContain('meets the iXBRL specification and business validation rules.');
         expect(response.text).toContain(mockResult.fileName);
     });
 });

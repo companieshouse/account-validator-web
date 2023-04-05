@@ -1,8 +1,10 @@
 {% set html %}
     <h3 class="govuk-notification-banner__heading">
-        The validation of your Instance document '{{accountValidationResult.fileName}}' has been not been successful
+        Your file is not valid 
     </h3>
-    <p class="govuk-body">The validation failed with the following errors:</p>
+    <p class="govuk-body">
+        Your iXBRL accounts file '{{accountValidationResult.fileName}}' is not valid because:
+    </p>
     <ul class="govuk-list govuk-list--bullet">
         {% for reason in accountValidationResult.reasons %}
             <li>{{ reason }}</li>
@@ -15,3 +17,6 @@
     classes: 'govuk-notification-banner--failure',
     html: html
 }) }}
+
+<h2 class="govuk-heading-m">What happens next</h2>
+<p><a href="account-submission">Check another iXBRL accounts file</a> or close the browser if you've finished checking files.</p>

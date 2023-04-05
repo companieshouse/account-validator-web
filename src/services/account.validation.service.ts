@@ -114,8 +114,8 @@ export function mapResponseType(
 }
 
 const idMap = {
-    "success.xhtml": "50023f7a-8e66-461e-a9c8-230e6d8b598a",
-    "failure_duplicate_facts.xhtml": "1ae4f847-97be-43d2-add4-0a8e7fbcdf73",
+    "success.xhtml": "c8792ccd-0057-480b-b97a-fa4437c313ab",
+    "failure_duplicate_facts.xhtml": "3e198e94-e803-4680-9432-5a2ecca82cf7",
 };
 
 /**
