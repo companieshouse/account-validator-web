@@ -6,6 +6,7 @@ import {
 import { Resource } from "@companieshouse/api-sdk-node";
 import { AccountValidatorResponse } from "@companieshouse/api-sdk-node/dist/services/account-validator";
 import { ApiErrorResponse } from "@companieshouse/api-sdk-node/dist/services/resource";
+import { Id } from "private-api-sdk-node/dist/services/file-transfer/types";
 
 const mockApiClient = {
     accountValidatorService: {
@@ -54,6 +55,19 @@ export const createApiErrorResponse = (
     };
 };
 
+function createFileIdResource(
+    httpStatusCode: number,
+    id: string
+
+): Resource<Id> {
+    return {
+        httpStatusCode: httpStatusCode,
+        resource: {
+            id: id
+        },
+    };
+}
+
 let accountValidator: AccountValidationService;
 const mockPostForValidation = mockApiClient.accountValidatorService
     .postFileForValidation as jest.Mock;
@@ -70,20 +84,18 @@ describe("AccountValidator", () => {
             originalname: "success.xhtml",
         } as Express.Multer.File;
 
-        const resource = createAccountValidatorResponse(
+        const resource = createFileIdResource(
             200,
-            "pending",
-            "fileId",
-            file.originalname,
-            "OK"
+            'fileId'
         );
+
         mockPostForValidation.mockResolvedValue(resource);
 
         // When
         const resp = await accountValidator.submit(file);
 
         // Then
-        expect(resp.status).toBe("pending");
+        expect(resp.status).toBe("success");
         expect(resp.fileId).toBe("fileId");
     });
 

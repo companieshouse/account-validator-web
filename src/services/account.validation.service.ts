@@ -5,7 +5,7 @@ import { logger } from "../utils/logger";
 import { createPublicApiKeyClient, createPrivateApiKeyClient } from "./api.service";
 import { performance } from "perf_hooks";
 import PrivateApiClient from "private-api-sdk-node/dist/client";
-import { File, Id } from "private-api-sdk-node/dist/services/file-transfer/types"
+import { File, Id } from "private-api-sdk-node/dist/services/file-transfer/types";
 import { ApiErrorResponse } from "@companieshouse/api-sdk-node/dist/services/resource";
 
 /**
@@ -160,11 +160,16 @@ export class AccountValidator implements AccountValidationService {
      */
     async submit(file: Express.Multer.File): Promise<AccountValidationResult> {
 
-        const fileId = (await this.uploadToS3(file)) as Resource<Id>;
+        const uploadS3Response = (await this.uploadToS3(file));
 
-        if (fileId.resource?.id) {
-
-            const requestPayload = { fileName: file.originalname, id: fileId.resource?.id};
+        var errorProperty = 'error';
+        // If response has an error property, the return type is ApiErrorResponse
+        if (uploadS3Response.hasOwnProperty(errorProperty))
+         {
+            throw uploadS3Response;
+        // If response does not have an error property, the return type is Resource<Id>
+        } else {
+            const requestPayload = { fileName: file.originalname, id: uploadS3Response['id'] };
             const accountValidatorService = this.apiClient.accountValidatorService;
 
             const accountValidatorResponse =
@@ -177,8 +182,6 @@ export class AccountValidator implements AccountValidationService {
             return mapResponseType(
                 accountValidatorResponse as Resource<AccountValidatorResponse>
             );
-        } else {
-            throw new Error('Upload to S3 failed: no file id returned');
         }
     }
 
@@ -189,13 +192,12 @@ export class AccountValidator implements AccountValidationService {
      */
     private uploadToS3(file: Express.Multer.File): Promise<Resource<Id> | ApiErrorResponse>{
 
-        let fileDetails : File =  {fileName: file.filename, body: file.buffer, mimeType: file.mimetype, size: file.size, extension: '.xtml'};
+        const fileDetails: File =  { fileName: file.filename, body: file.buffer, mimeType: file.mimetype, size: file.size, extension: '.xtml' };
 
         const fileTransferService = this.privateApiClient.fileTransferService;
         const fileId = fileTransferService.upload(fileDetails);
         return fileId;
     }
-
 
 }
 
