@@ -160,28 +160,16 @@ export class AccountValidator implements AccountValidationService {
      */
     async submit(file: Express.Multer.File): Promise<AccountValidationResult> {
 
-        const uploadS3Response = (await this.uploadToS3(file));
+        const uploadS3Response = await this.uploadToS3(file);
 
-        var errorProperty = 'error';
-        // If response has an error property, the return type is ApiErrorResponse
-        if (uploadS3Response.hasOwnProperty(errorProperty))
-         {
-            throw uploadS3Response;
-        // If response does not have an error property, the return type is Resource<Id>
-        } else {
-            const requestPayload = { fileName: file.originalname, id: uploadS3Response['id'] };
+        if (uploadS3Response.httpStatusCode === 200){
+            const fileId = (uploadS3Response as Resource<Id>).resource?.id as string; 
+            const requestPayload = { fileName: file.originalname, id: fileId };
             const accountValidatorService = this.apiClient.accountValidatorService;
-
-            const accountValidatorResponse =
-                await accountValidatorService.postFileForValidation(requestPayload);
-
-            if (accountValidatorResponse.httpStatusCode !== 200) {
-                throw accountValidatorResponse; // If the status code is not 200, the return type is ApiErrorResponse
-            }
-
-            return mapResponseType(
-                accountValidatorResponse as Resource<AccountValidatorResponse>
-            );
+            const accountValidatorResponse = await accountValidatorService.postFileForValidation(requestPayload);
+            return mapResponseType(accountValidatorResponse as Resource<AccountValidatorResponse>);
+        } else {
+            return mapResponseType(uploadS3Response as Resource<AccountValidatorResponse>);
         }
     }
 

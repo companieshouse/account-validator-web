@@ -95,7 +95,7 @@ describe("AccountValidator", () => {
         const resp = await accountValidator.submit(file);
 
         // Then
-        expect(resp.status).toBe("success");
+        expect(resp.status).toBe("pending");
         expect(resp.fileId).toBe("fileId");
     });
 
