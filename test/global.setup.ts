@@ -9,4 +9,6 @@ export default () => {
     process.env.COOKIE_NAME = "cookie_name";
     process.env.COOKIE_SECRET = "123456789012345678901234";
     process.env.INTERNAL_API_URL = "http://localhost:9333";
+    process.env.CHS_INTERNAL_API_KEY = "g9yZIA81Zo9J46Kzp3JPbfld6kOqxR47EAYqXbRV";
+
 };
