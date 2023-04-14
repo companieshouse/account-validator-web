@@ -1,11 +1,9 @@
 import { Resource } from "@companieshouse/api-sdk-node";
 import ApiClient from "@companieshouse/api-sdk-node/dist/client";
-import { AccountValidatorResponse } from "@companieshouse/api-sdk-node/dist/services/account-validator";
-import { logger } from "../utils/logger";
+import { AccountValidatorResponse } from "private-api-sdk-node/dist/services/account-validator/types";
 import { createPublicApiKeyClient, createPrivateApiKeyClient } from "./api.service";
-import { performance } from "perf_hooks";
 import PrivateApiClient from "private-api-sdk-node/dist/client";
-import { File, Id } from "private-api-sdk-node/dist/services/file-transfer/types"
+import { File, Id } from "private-api-sdk-node/dist/services/file-transfer/types";
 import { ApiErrorResponse } from "@companieshouse/api-sdk-node/dist/services/resource";
 
 /**
@@ -140,7 +138,7 @@ export class AccountValidator implements AccountValidationService {
      * @throws If the API returns a non-200 status code, the returned value is an instance of `ApiErrorResponse`
      */
     async check(id: string): Promise<AccountValidationResult> {
-        const accountValidatorService = this.apiClient.accountValidatorService;
+        const accountValidatorService = this.privateApiClient.accountValidorService;
         const accountValidatorResponse =
             await accountValidatorService.getFileValidationStatus(id);
         if (accountValidatorResponse.httpStatusCode !== 200) {
@@ -164,8 +162,8 @@ export class AccountValidator implements AccountValidationService {
 
         if (fileId.resource?.id) {
 
-            const requestPayload = { fileName: file.originalname, id: fileId.resource?.id};
-            const accountValidatorService = this.apiClient.accountValidatorService;
+            const requestPayload = { fileName: file.originalname, id: fileId.resource?.id };
+            const accountValidatorService = this.privateApiClient.accountValidorService;
 
             const accountValidatorResponse =
                 await accountValidatorService.postFileForValidation(requestPayload);
@@ -187,12 +185,12 @@ export class AccountValidator implements AccountValidationService {
      * @param file The file to be uploaded
      * @returns string The id of the uploaded file
      */
-    private uploadToS3(file: Express.Multer.File): Promise<Resource<Id> | ApiErrorResponse>{
+    private async uploadToS3(file: Express.Multer.File): Promise<Resource<Id> | ApiErrorResponse>{
 
-        let fileDetails : File =  {fileName: file.filename, body: file.buffer, mimeType: file.mimetype, size: file.size, extension: '.xtml'};
+        const fileDetails: File =  { fileName: file.originalname, body: file.buffer.toString("base64"), mimeType: file.mimetype, size: file.size, extension: '.xtml' };
 
         const fileTransferService = this.privateApiClient.fileTransferService;
-        const fileId = fileTransferService.upload(fileDetails);
+        const fileId = await fileTransferService.upload(fileDetails);
         return fileId;
     }
 

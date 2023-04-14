@@ -1,4 +1,4 @@
-FROM node:14
+FROM node:18
 ARG SSH_KEY
 ENV SSH_KEY=$SSH_KEY
 
@@ -25,3 +25,4 @@ RUN npm install
 COPY . .
 
 CMD [ "npm", "run", "dev" ]
+# ENTRYPOINT [ "bash" ]

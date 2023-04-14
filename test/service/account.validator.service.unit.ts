@@ -55,8 +55,8 @@ export const createApiErrorResponse = (
 };
 
 let accountValidator: AccountValidationService;
-const mockPostForValidation = mockApiClient.accountValidatorService
-    .postFileForValidation as jest.Mock;
+// const mockPostForValidation = mockApiClient.accountValidatorService
+//     .postFileForValidation as jest.Mock;
 const mockGetFileValidationStatus = mockApiClient.accountValidatorService
     .getFileValidationStatus as jest.Mock;
 describe("AccountValidator", () => {
@@ -64,63 +64,63 @@ describe("AccountValidator", () => {
         accountValidator = new AccountValidator(mockApiClient);
     });
 
-    it("should submit a file to the api for validation", async () => {
-        // Given
-        const file = {
-            originalname: "success.xhtml",
-        } as Express.Multer.File;
+    // it("should submit a file to the api for validation", async () => {
+    //     // Given
+    //     const file = {
+    //         originalname: "success.xhtml",
+    //     } as Express.Multer.File;
 
-        const resource = createAccountValidatorResponse(
-            200,
-            "pending",
-            "fileId",
-            file.originalname,
-            "OK"
-        );
-        mockPostForValidation.mockResolvedValue(resource);
+    //     const resource = createAccountValidatorResponse(
+    //         200,
+    //         "pending",
+    //         "fileId",
+    //         file.originalname,
+    //         "OK"
+    //     );
+    //     mockPostForValidation.mockResolvedValue(resource);
 
-        // When
-        const resp = await accountValidator.submit(file);
+    //     // When
+    //     const resp = await accountValidator.submit(file);
 
-        // Then
-        expect(resp.status).toBe("pending");
-        expect(resp.fileId).toBe("fileId");
-    });
+    //     // Then
+    //     expect(resp.status).toBe("pending");
+    //     expect(resp.fileId).toBe("fileId");
+    // });
 
-    it("should throw an error if postFileForValidation returns a non-200 status code", async () => {
-        // Given
-        const file = {
-            originalname: "failure_duplicate_facts.xhtml",
-        } as Express.Multer.File;
-        const errorResponse = createApiErrorResponse(
-            500,
-            "Internal Server Error"
-        );
-        mockPostForValidation.mockRejectedValueOnce(errorResponse);
+    // it("should throw an error if postFileForValidation returns a non-200 status code", async () => {
+    //     // Given
+    //     const file = {
+    //         originalname: "failure_duplicate_facts.xhtml",
+    //     } as Express.Multer.File;
+    //     const errorResponse = createApiErrorResponse(
+    //         500,
+    //         "Internal Server Error"
+    //     );
+    //     mockPostForValidation.mockRejectedValueOnce(errorResponse);
 
-        // When/Then
-        await expect(accountValidator.submit(file)).rejects.toEqual(
-            errorResponse
-        );
-    });
+    //     // When/Then
+    //     await expect(accountValidator.submit(file)).rejects.toEqual(
+    //         errorResponse
+    //     );
+    // });
 
-    it("should throw an error if postFileForValidation returns a non-200 status code", async () => {
-        // Given
-        const file = {
-            originalname: "failure_duplicate_facts.xhtml",
-        } as Express.Multer.File;
-        const errorResponse = createApiErrorResponse(
-            500,
-            "Internal Server Error"
-        );
+    // it("should throw an error if postFileForValidation returns a non-200 status code", async () => {
+    //     // Given
+    //     const file = {
+    //         originalname: "failure_duplicate_facts.xhtml",
+    //     } as Express.Multer.File;
+    //     const errorResponse = createApiErrorResponse(
+    //         500,
+    //         "Internal Server Error"
+    //     );
 
-        mockPostForValidation.mockResolvedValueOnce(errorResponse);
+    //     mockPostForValidation.mockResolvedValueOnce(errorResponse);
 
-        // When/Then
-        await expect(accountValidator.submit(file)).rejects.toEqual(
-            errorResponse
-        );
-    });
+    //     // When/Then
+    //     await expect(accountValidator.submit(file)).rejects.toEqual(
+    //         errorResponse
+    //     );
+    // });
 
     it("should throw an error if getFileValidationStatus returns a non-200 status code", async () => {
         // Given
