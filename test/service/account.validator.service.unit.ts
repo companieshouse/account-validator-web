@@ -1,4 +1,4 @@
-import ApiClient from "@companieshouse/api-sdk-node/dist/client";
+import PrivateApiClient from "private-api-sdk-node/dist/client";
 import {
     AccountValidationService,
     AccountValidator,
@@ -7,12 +7,12 @@ import { Resource } from "@companieshouse/api-sdk-node";
 import { AccountValidatorResponse } from "@companieshouse/api-sdk-node/dist/services/account-validator";
 import { ApiErrorResponse } from "@companieshouse/api-sdk-node/dist/services/resource";
 
-const mockApiClient = {
+const mockPrivateApiClient = {
     accountValidatorService: {
         postFileForValidation: jest.fn(),
         getFileValidationStatus: jest.fn(),
     },
-} as unknown as ApiClient;
+} as unknown as PrivateApiClient;
 
 function createAccountValidatorResponse(
     httpStatusCode: number,
@@ -57,11 +57,11 @@ export const createApiErrorResponse = (
 let accountValidator: AccountValidationService;
 // const mockPostForValidation = mockApiClient.accountValidatorService
 //     .postFileForValidation as jest.Mock;
-const mockGetFileValidationStatus = mockApiClient.accountValidatorService
+const mockGetFileValidationStatus = mockPrivateApiClient.accountValidatorService
     .getFileValidationStatus as jest.Mock;
 describe("AccountValidator", () => {
     beforeEach(() => {
-        accountValidator = new AccountValidator(mockApiClient);
+        accountValidator = new AccountValidator(undefined, mockPrivateApiClient);
     });
 
     // it("should submit a file to the api for validation", async () => {

@@ -90,7 +90,7 @@ export function mapResponseType(
 
     const baseResult = {
         fileId: accountValidatorResponse.fileId,
-        fileName: accountValidatorResponse.fileName,
+        fileName: accountValidatorResponse.fileName as string,
     };
 
     if (accountValidatorResponse.status === "pending") {
@@ -105,6 +105,7 @@ export function mapResponseType(
             case "OK":
                 return {
                     status: "success",
+                    imageUrl: baseResult.fileName.toLowerCase().endsWith(".xhtml") ? `/xbrl_validate/render/${baseResult.fileId}`  : undefined,
                     ...baseResult
                 };
             case "FAILED":
@@ -138,7 +139,7 @@ export class AccountValidator implements AccountValidationService {
      * @throws If the API returns a non-200 status code, the returned value is an instance of `ApiErrorResponse`
      */
     async check(id: string): Promise<AccountValidationResult> {
-        const accountValidatorService = this.privateApiClient.accountValidorService;
+        const accountValidatorService = this.privateApiClient.accountValidatorService;
         const accountValidatorResponse =
             await accountValidatorService.getFileValidationStatus(id);
         if (accountValidatorResponse.httpStatusCode !== 200) {
@@ -163,7 +164,7 @@ export class AccountValidator implements AccountValidationService {
         if (fileId.resource?.id) {
 
             const requestPayload = { fileName: file.originalname, id: fileId.resource?.id };
-            const accountValidatorService = this.privateApiClient.accountValidorService;
+            const accountValidatorService = this.privateApiClient.accountValidatorService;
 
             const accountValidatorResponse =
                 await accountValidatorService.postFileForValidation(requestPayload);
