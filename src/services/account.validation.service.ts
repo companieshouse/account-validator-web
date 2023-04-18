@@ -105,6 +105,7 @@ export function mapResponseType(
             case "OK":
                 return {
                     status: "success",
+                    imageUrl: accountValidatorResponse.fileName.endsWith('zip') ? undefined : '/',
                     ...baseResult
                 };
             case "FAILED":
