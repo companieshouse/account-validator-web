@@ -1,7 +1,6 @@
 import { Resource } from "@companieshouse/api-sdk-node";
-import ApiClient from "@companieshouse/api-sdk-node/dist/client";
 import { AccountValidatorResponse } from "private-api-sdk-node/dist/services/account-validator/types";
-import { createPublicApiKeyClient, createPrivateApiKeyClient } from "./api.service";
+import { createPrivateApiKeyClient } from "./api.service";
 import PrivateApiClient from "private-api-sdk-node/dist/client";
 import { File, Id } from "private-api-sdk-node/dist/services/file-transfer/types";
 import { ApiErrorResponse } from "@companieshouse/api-sdk-node/dist/services/resource";
@@ -127,7 +126,6 @@ export class AccountValidator implements AccountValidationService {
      * The default value is automatically configured from the environment.
      */
     constructor(
-        private apiClient: ApiClient = createPublicApiKeyClient(),
         private privateApiClient: PrivateApiClient = createPrivateApiKeyClient(),
     ) {}
 
@@ -187,6 +185,7 @@ export class AccountValidator implements AccountValidationService {
      */
     private async uploadToS3(file: Express.Multer.File): Promise<Resource<Id> | ApiErrorResponse>{
 
+        // TODO: Change body type to string
         const fileDetails: File =  { fileName: file.originalname, body: file.buffer.toString("base64"), mimeType: file.mimetype, size: file.size, extension: '.xtml' };
 
         const fileTransferService = this.privateApiClient.fileTransferService;
