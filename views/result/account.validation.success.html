@@ -16,23 +16,23 @@
 {% block content %}
     <h2 class="govuk-heading-m">What happens next</h2>
     <p class="govuk-body">You can select show image to preview the image that will be published on the Companies House register</p>
-      {#  {% if accountValidationResult.imageUrl %} #}
-    <div>
-        {{ govukButton({
-            text: "Show image",
-            classes: "govuk-button--secondary",
-            href:"https://design-system.service.gov.uk/components/button/"
-          }) }} 
-    </div>
+     {# {% if not (accountValidatorResult.imageUrl is undefined or accountValidatorResult.imageUrl is empty) %} #}
+        <div>
+            {{ govukButton({
+                text: "Show image",
+                classes: "govuk-button--secondary",
+                href:"https://design-system.service.gov.uk/components/button/"
+            }) }} 
+             {# href:{{BASE_URL}} +"/"+ accountValidationResult.imageUrl #}
+        </div>
+    {# {% endif %} #}
     
     <p class="govuk-body">
-        You can <a href="account-submission">validate another single file or zip file.</a>
+        You can <a href={{BASE_URL}}>validate another single file or zip file.</a>
     </p>
     <p class="govuk-body">
-        You can return to <a href="account-submission">Companies House home page.</a>
+        You can return to <a href={{CHS_URL}}>Companies House home page.</a>
     </p>
-    
-   {# {% endif %} #}
 
 {% endblock %}
 
