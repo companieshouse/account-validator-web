@@ -5,10 +5,10 @@ import {
 import { Resource } from "@companieshouse/api-sdk-node";
 import { ApiErrorResponse } from "@companieshouse/api-sdk-node/dist/services/resource";
 import { File } from "private-api-sdk-node/dist/services/file-transfer/types";
-import LocalAPIClient from "../../src/http/arraybuffer.request.client";
+import LocalAPIClient from "../../src/services/render.api.service";
 
 const mockLocalAPIClient = {
-    arrayBufferRequestClient: {
+    renderAPIService: {
         rawGetRenderedPDF: jest.fn()
     }
 } as unknown as LocalAPIClient;
@@ -57,7 +57,7 @@ export const createApiErrorResponse = (
 };
 
 let imageRender: ImageRenderService;
-const mockRawGetRenderedPDF = mockLocalAPIClient.arrayBufferRequestClient
+const mockRawGetRenderedPDF = mockLocalAPIClient.renderAPIService
     .rawGetRenderedPDF as jest.Mock;
 describe("ImageRender", () => {
     beforeEach(() => {

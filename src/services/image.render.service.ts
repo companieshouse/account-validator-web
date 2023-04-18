@@ -1,7 +1,6 @@
 import { Resource } from "@companieshouse/api-sdk-node";
 import { File } from "private-api-sdk-node/dist/services/file-transfer/types";
-import { createLocalAPIClient } from "../http/arraybuffer.request.client";
-import LocalAPIClient from "../http/arraybuffer.request.client";
+import LocalAPIClient, { createLocalAPIClient } from "./render.api.service";
 
 export interface ImageRenderService {
     render(id: string): Promise<File>
@@ -21,7 +20,7 @@ export class ImageRender implements ImageRenderService {
     async render(id: string): Promise<File> {
         const onlyAllowedMimeType = "application/pdf";
         const accountValidatorResponse =
-            await this.localApiClient.arrayBufferRequestClient.rawGetRenderedPDF(id);
+            await this.localApiClient.renderAPIService.rawGetRenderedPDF(id);
 
         if (accountValidatorResponse.httpStatusCode !== 200) {
             throw accountValidatorResponse;
