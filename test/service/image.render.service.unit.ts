@@ -1,4 +1,3 @@
-import PrivateApiClient from "private-api-sdk-node/dist/client";
 import {
     ImageRender,
     ImageRenderService,
@@ -6,12 +5,13 @@ import {
 import { Resource } from "@companieshouse/api-sdk-node";
 import { ApiErrorResponse } from "@companieshouse/api-sdk-node/dist/services/resource";
 import { File } from "private-api-sdk-node/dist/services/file-transfer/types";
+import LocalAPIClient from "../../src/http/arraybuffer.request.client";
 
-const mockPrivateApiClient = {
-    accountValidatorService: {
-        getRenderedPDF: jest.fn()
-    },
-} as unknown as PrivateApiClient;
+const mockLocalAPIClient = {
+    arrayBufferRequestClient: {
+        rawGetRenderedPDF: jest.fn()
+    }
+} as unknown as LocalAPIClient;
 
 function createAccountValidatorResponse(
     httpStatusCode: number,
@@ -57,10 +57,11 @@ export const createApiErrorResponse = (
 };
 
 let imageRender: ImageRenderService;
-const mockGetRenderedPDF = mockPrivateApiClient.accountValidatorService.getRenderedPDF as jest.Mock;
+const mockRawGetRenderedPDF = mockLocalAPIClient.arrayBufferRequestClient
+    .rawGetRenderedPDF as jest.Mock;
 describe("ImageRender", () => {
     beforeEach(() => {
-        imageRender = new ImageRender(mockPrivateApiClient);
+        imageRender = new ImageRender(mockLocalAPIClient);
     });
 
     it("should throw an error if getRenderPDF returns a non-200 status code", async () => {
@@ -70,7 +71,7 @@ describe("ImageRender", () => {
             500,
             "Internal Server Error"
         );
-        mockGetRenderedPDF.mockRejectedValueOnce(errorResponse);
+        mockRawGetRenderedPDF.mockRejectedValueOnce(errorResponse);
 
         // When/Then
         await expect(imageRender.render(fileId)).rejects.toEqual(
@@ -82,7 +83,7 @@ describe("ImageRender", () => {
         // Given
         const fileId = "fileId";
         const error = new Error("Some error");
-        mockGetRenderedPDF.mockRejectedValueOnce(error);
+        mockRawGetRenderedPDF.mockRejectedValueOnce(error);
 
         // When/Then
         await expect(imageRender.render(fileId)).rejects.toEqual(error);
@@ -100,7 +101,7 @@ describe("ImageRender", () => {
             0,
             ".pdf"
         );
-        mockGetRenderedPDF.mockResolvedValueOnce(resource);
+        mockRawGetRenderedPDF.mockResolvedValueOnce(resource);
 
         // When
         const resp = await imageRender.render(fileId);
@@ -117,7 +118,7 @@ describe("ImageRender", () => {
         const resource = createEmptyAccountValidatorResponse(
             200
         );
-        mockGetRenderedPDF.mockResolvedValueOnce(resource);
+        mockRawGetRenderedPDF.mockResolvedValueOnce(resource);
 
         // When
         try {

@@ -4,11 +4,11 @@ import {
     AccountValidator,
 } from "../../src/services/account.validation.service";
 import { Resource } from "@companieshouse/api-sdk-node";
-import { AccountValidatorResponse } from "@companieshouse/api-sdk-node/dist/services/account-validator";
 import { ApiErrorResponse } from "@companieshouse/api-sdk-node/dist/services/resource";
+import { AccountValidatorResponse } from "private-api-sdk-node/dist/services/account-validator/types";
 
 const mockPrivateApiClient = {
-    accountValidatorService: {
+    accountValidorService: {
         postFileForValidation: jest.fn(),
         getFileValidationStatus: jest.fn(),
     },
@@ -57,7 +57,7 @@ export const createApiErrorResponse = (
 let accountValidator: AccountValidationService;
 // const mockPostForValidation = mockApiClient.accountValidatorService
 //     .postFileForValidation as jest.Mock;
-const mockGetFileValidationStatus = mockPrivateApiClient.accountValidatorService
+const mockGetFileValidationStatus = mockPrivateApiClient.accountValidorService
     .getFileValidationStatus as jest.Mock;
 describe("AccountValidator", () => {
     beforeEach(() => {
