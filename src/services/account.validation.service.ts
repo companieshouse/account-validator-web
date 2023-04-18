@@ -139,7 +139,7 @@ export class AccountValidator implements AccountValidationService {
      * @throws If the API returns a non-200 status code, the returned value is an instance of `ApiErrorResponse`
      */
     async check(id: string): Promise<AccountValidationResult> {
-        const accountValidatorService = this.privateApiClient.accountValidatorService;
+        const accountValidatorService = this.privateApiClient.accountValidorService;
         const accountValidatorResponse =
             await accountValidatorService.getFileValidationStatus(id);
         if (accountValidatorResponse.httpStatusCode !== 200) {
@@ -159,12 +159,13 @@ export class AccountValidator implements AccountValidationService {
      */
     async submit(file: Express.Multer.File): Promise<AccountValidationResult> {
 
-        const fileId = (await this.uploadToS3(file)) as Resource<Id>;
+        const fileId = (
+            await this.uploadToS3(file)) as Resource<Id>;
 
         if (fileId.resource?.id) {
 
             const requestPayload = { fileName: file.originalname, id: fileId.resource?.id };
-            const accountValidatorService = this.privateApiClient.accountValidatorService;
+            const accountValidatorService = this.privateApiClient.accountValidorService;
 
             const accountValidatorResponse =
                 await accountValidatorService.postFileForValidation(requestPayload);
