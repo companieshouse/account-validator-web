@@ -8,7 +8,7 @@ import { ApiErrorResponse } from "@companieshouse/api-sdk-node/dist/services/res
 import { AccountValidatorResponse } from "private-api-sdk-node/dist/services/account-validator/types";
 
 const mockPrivateApiClient = {
-    accountValidorService: {
+    accountValidorService: { // TODO: fix typo
         postFileForValidation: jest.fn(),
         getFileValidationStatus: jest.fn(),
     },
@@ -61,7 +61,7 @@ const mockGetFileValidationStatus = mockPrivateApiClient.accountValidorService
     .getFileValidationStatus as jest.Mock;
 describe("AccountValidator", () => {
     beforeEach(() => {
-        accountValidator = new AccountValidator(undefined, mockPrivateApiClient);
+        accountValidator = new AccountValidator(mockPrivateApiClient);
     });
 
     // it("should submit a file to the api for validation", async () => {
