@@ -35,8 +35,8 @@ ifndef version
 endif
 	$(info Packaging version: $(version))
 	$(eval tmpdir := $(shell mktemp -d build-XXXXXXXXXX))
-	mkdir $(tmpdir)/api-enumerations
-	cp ./api-enumerations/*.yml $(tmpdir)/api-enumerations
+	# mkdir $(tmpdir)/api-enumerations
+	# cp ./api-enumerations/*.yml $(tmpdir)/api-enumerations
 	cp -r ./dist/* $(tmpdir)
 	cp -r ./package.json $(tmpdir)
 	cp -r ./package-lock.json $(tmpdir)
