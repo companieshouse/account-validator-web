@@ -17,9 +17,10 @@
         "prepare": "husky install"
     },
     "dependencies": {
-        "@companieshouse/node-session-handler": "^4.1.6",
+        "@companieshouse/api-sdk-node": "^2.0.70",
         "@companieshouse/structured-logging-node": "^1.0.4",
         "@companieshouse/web-security-node": "^2.0.0",
+        "axios": "^0.21.4",
         "cookie-parser": "^1.4.6",
         "express": "^4.17.1",
         "govuk-frontend": "^3.14.0",
@@ -27,14 +28,13 @@
         "luxon": "^2.1.1",
         "multer": "^1.4.5-lts.1",
         "nunjucks": "^3.2.3",
-        "private-api-sdk-node": "github:companieshouse/private-api-sdk-node#0.1.71",
+        "private-api-sdk-node": "github:companieshouse/private-api-sdk-node#0.1.82",
         "reflect-metadata": "^0.1.13",
         "uuid": "^8.3.2",
         "yargs": "^15.4.1"
     },
     "devDependencies": {
         "@swc/core": "^1.3.34",
-        "@swc/helpers": "^0.4.14",
         "@types/cookie-parser": "^1.4.3",
         "@types/express": "^4.17.1",
         "@types/jest": "^27.0.3",

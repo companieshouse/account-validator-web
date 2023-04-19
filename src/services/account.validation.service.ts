@@ -1,10 +1,10 @@
 import { Resource } from "@companieshouse/api-sdk-node";
-import ApiClient from "@companieshouse/api-sdk-node/dist/client";
 import { AccountValidatorResponse } from "private-api-sdk-node/dist/services/account-validator/types";
-import { createPublicApiKeyClient, createPrivateApiKeyClient } from "./api.service";
+import { createPrivateApiKeyClient } from "./api.service";
 import PrivateApiClient from "private-api-sdk-node/dist/client";
 import { File, Id } from "private-api-sdk-node/dist/services/file-transfer/types";
 import { ApiErrorResponse } from "@companieshouse/api-sdk-node/dist/services/resource";
+import { Urls, AllowedRenderExtensions } from "../constants";
 
 /**
  * Interface representing the account validation service
@@ -90,7 +90,7 @@ export function mapResponseType(
 
     const baseResult = {
         fileId: accountValidatorResponse.fileId,
-        fileName: accountValidatorResponse.fileName,
+        fileName: accountValidatorResponse.fileName as string,
     };
 
     if (accountValidatorResponse.status === "pending") {
@@ -105,7 +105,7 @@ export function mapResponseType(
             case "OK":
                 return {
                     status: "success",
-                    imageUrl: accountValidatorResponse.fileName.endsWith('zip') ? undefined : '/',
+                    imageUrl: validFileForRendering(baseResult.fileName) ? `${Urls.RENDER}/${baseResult.fileId}` : undefined,
                     ...baseResult
                 };
             case "FAILED":
@@ -115,6 +115,15 @@ export function mapResponseType(
                     ...baseResult
                 };
     }
+}
+
+/**
+ * Check whether file is a valid type to be rendered.
+ * @param fileName
+ * @returns
+ */
+export function validFileForRendering(fileName: string){
+    return AllowedRenderExtensions.some(extension => fileName.toLowerCase().endsWith(extension));
 }
 
 /**
@@ -128,7 +137,6 @@ export class AccountValidator implements AccountValidationService {
      * The default value is automatically configured from the environment.
      */
     constructor(
-        private apiClient: ApiClient = createPublicApiKeyClient(),
         private privateApiClient: PrivateApiClient = createPrivateApiKeyClient(),
     ) {}
 
@@ -139,7 +147,7 @@ export class AccountValidator implements AccountValidationService {
      * @throws If the API returns a non-200 status code, the returned value is an instance of `ApiErrorResponse`
      */
     async check(id: string): Promise<AccountValidationResult> {
-        const accountValidatorService = this.privateApiClient.accountValidorService;
+        const accountValidatorService = this.apiClient.accountValidatorService;
         const accountValidatorResponse =
             await accountValidatorService.getFileValidationStatus(id);
         if (accountValidatorResponse.httpStatusCode !== 200) {
@@ -159,12 +167,13 @@ export class AccountValidator implements AccountValidationService {
      */
     async submit(file: Express.Multer.File): Promise<AccountValidationResult> {
 
-        const fileId = (await this.uploadToS3(file)) as Resource<Id>;
+        const fileId = (
+            await this.uploadToS3(file)) as Resource<Id>;
 
         if (fileId.resource?.id) {
 
             const requestPayload = { fileName: file.originalname, id: fileId.resource?.id };
-            const accountValidatorService = this.privateApiClient.accountValidorService;
+            const accountValidatorService = this.apiClient.accountValidatorService;
 
             const accountValidatorResponse =
                 await accountValidatorService.postFileForValidation(requestPayload);
@@ -188,6 +197,7 @@ export class AccountValidator implements AccountValidationService {
      */
     private async uploadToS3(file: Express.Multer.File): Promise<Resource<Id> | ApiErrorResponse>{
 
+        // TODO: Change body type to string
         const fileDetails: File =  { fileName: file.originalname, body: file.buffer.toString("base64"), mimeType: file.mimetype, size: file.size, extension: '.xtml' };
 
         const fileTransferService = this.privateApiClient.fileTransferService;
