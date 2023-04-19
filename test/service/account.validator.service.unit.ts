@@ -2,6 +2,7 @@ import PrivateApiClient from "private-api-sdk-node/dist/client";
 import {
     AccountValidationService,
     AccountValidator,
+    validFileForRendering,
 } from "../../src/services/account.validation.service";
 import { Resource } from "@companieshouse/api-sdk-node";
 import { ApiErrorResponse } from "@companieshouse/api-sdk-node/dist/services/resource";
@@ -53,6 +54,30 @@ export const createApiErrorResponse = (
         ],
     };
 };
+
+describe("validFileForRendering", () => {
+    it("should return true if file end with ixbrl", () => {
+        // Given
+        const fileName = "fileId.ixbrl";
+
+        // When/Then
+        expect(validFileForRendering(fileName)).toEqual(true);
+    });
+    it("should return true if file end with xhtml", () => {
+        // Given
+        const fileName = "fileId.xhtml";
+
+        // When/Then
+        expect(validFileForRendering(fileName)).toEqual(true);
+    });
+    it("should return false if file end with zip", () => {
+        // Given
+        const fileName = "fileId.zip";
+
+        // When/Then
+        expect(validFileForRendering(fileName)).toEqual(false);
+    });
+});
 
 let accountValidator: AccountValidationService;
 // const mockPostForValidation = mockApiClient.accountValidatorService

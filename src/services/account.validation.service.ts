@@ -4,6 +4,7 @@ import { createPrivateApiKeyClient } from "./api.service";
 import PrivateApiClient from "private-api-sdk-node/dist/client";
 import { File, Id } from "private-api-sdk-node/dist/services/file-transfer/types";
 import { ApiErrorResponse } from "@companieshouse/api-sdk-node/dist/services/resource";
+import { Urls, AllowedRenderExtensions } from "../constants";
 
 /**
  * Interface representing the account validation service
@@ -104,7 +105,7 @@ export function mapResponseType(
             case "OK":
                 return {
                     status: "success",
-                    imageUrl: baseResult.fileName.toLowerCase().endsWith(".xhtml") ? `/xbrl_validate/render/${baseResult.fileId}`  : undefined,
+                    imageUrl: validFileForRendering(baseResult.fileName) ? `${Urls.RENDER}/${baseResult.fileId}` : undefined,
                     ...baseResult
                 };
             case "FAILED":
@@ -114,6 +115,15 @@ export function mapResponseType(
                     ...baseResult
                 };
     }
+}
+
+/**
+ * Check whether file is a valid type to be rendered.
+ * @param fileName
+ * @returns
+ */
+export function validFileForRendering(fileName: string){
+    return AllowedRenderExtensions.some(extension => fileName.toLowerCase().endsWith(extension));
 }
 
 /**

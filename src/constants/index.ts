@@ -6,5 +6,8 @@ export enum Templates {
 }
 
 export enum Urls {
-    BASE = "/xbrl_validate"
+    BASE = "/xbrl_validate",
+    RENDER = `/xbrl_validate/render`,
 }
+
+export const AllowedRenderExtensions = ['xhtml', 'ixbrl'];
