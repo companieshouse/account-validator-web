@@ -2,7 +2,7 @@
 
 {% set html %}
     <h3 class="govuk-notification-banner__heading">
-        The validation of the document '{{accountValidationResult.fileName}}' has been successful - Mohit
+        The validation of the document '{{accountValidationResult.fileName}}' has been successful
     </h3>
 
 {% endset %}
@@ -21,9 +21,8 @@
             {{ govukButton({
                 text: "Show image",
                 classes: "govuk-button--secondary",
-                href:"https://design-system.service.gov.uk/components/button/"
+                href: accountValidationResult.imageUrl
             }) }} 
-             {# href:{{BASE_URL}} +"/"+ accountValidationResult.imageUrl #}
         </div>
     {# {% endif %} #}
     
