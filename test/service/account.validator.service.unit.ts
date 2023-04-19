@@ -8,7 +8,7 @@ import { AccountValidatorResponse } from "private-api-sdk-node/dist/services/acc
 import { ApiErrorResponse } from "@companieshouse/api-sdk-node/dist/services/resource";
 
 const mockApiClient = {
-    accountValidorService: { // TODO: fix typo
+    accountValidatorService: {
         postFileForValidation: jest.fn(),
         getFileValidationStatus: jest.fn(),
     },
@@ -57,7 +57,7 @@ export const createApiErrorResponse = (
 let accountValidator: AccountValidationService;
 // const mockPostForValidation = mockApiClient.accountValidatorService
 //     .postFileForValidation as jest.Mock;
-const mockGetFileValidationStatus = mockApiClient.accountValidorService.getFileValidationStatus as jest.Mock;
+const mockGetFileValidationStatus = mockApiClient.accountValidatorService.getFileValidationStatus as jest.Mock;
 describe("AccountValidator", () => {
     beforeEach(() => {
         accountValidator = new AccountValidator(mockApiClient);
