@@ -4,6 +4,12 @@ import Mapping from "@companieshouse/api-sdk-node/dist/mapping/mapping";
 import { ApiErrorResponse } from "@companieshouse/api-sdk-node/dist/services/resource";
 import { ArrayBufferRequestClient } from "../http/arraybuffer.request.client";
 
+/**
+ * This class is required because api-sdk-node only offers response type of json,
+ * however this service requires response type of array buffer, as well as json.
+ * The file only deals with requests requiring response type array buffer
+ */
+
 export const createLocalAPIClient = (): LocalAPIClient => {
     return new LocalAPIClient(new ArrayBufferRequestClient());
 };

@@ -3,9 +3,9 @@ import { CHS_INTERNAL_API_KEY, INTERNAL_API_URL } from "../config";
 
 
 /**
- * TODO: find a better way of getting this functionality into the ecosystem,
- * rather than in this service. This was added because we need 'get' request
- * using that returns arrayBuffer rather than json.
+ * This class is required because api-sdk-node only offers response type of json,
+ * however this service requires response type of array buffer, as well as json.
+ * This class deals with offering 'get' request with response type array buffer.
  */
 export class ArrayBufferRequestClient {
 
