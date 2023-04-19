@@ -1,18 +1,19 @@
-import ApiClient from "private-api-sdk-node/dist/client";
+import PrivateApiClient from "private-api-sdk-node/dist/client";
 import {
     AccountValidationService,
     AccountValidator,
+    validFileForRendering,
 } from "../../src/services/account.validation.service";
 import { Resource } from "@companieshouse/api-sdk-node";
-import { AccountValidatorResponse } from "private-api-sdk-node/dist/services/account-validator/types";
 import { ApiErrorResponse } from "@companieshouse/api-sdk-node/dist/services/resource";
+import { AccountValidatorResponse } from "private-api-sdk-node/dist/services/account-validator/types";
 
-const mockApiClient = {
-    accountValidatorService: {
+const mockPrivateApiClient = {
+    accountValidorService: { // TODO: fix typo
         postFileForValidation: jest.fn(),
         getFileValidationStatus: jest.fn(),
     },
-} as unknown as ApiClient;
+} as unknown as PrivateApiClient;
 
 function createAccountValidatorResponse(
     httpStatusCode: number,
@@ -54,13 +55,38 @@ export const createApiErrorResponse = (
     };
 };
 
+describe("validFileForRendering", () => {
+    it("should return true if file end with ixbrl", () => {
+        // Given
+        const fileName = "fileId.ixbrl";
+
+        // When/Then
+        expect(validFileForRendering(fileName)).toEqual(true);
+    });
+    it("should return true if file end with xhtml", () => {
+        // Given
+        const fileName = "fileId.xhtml";
+
+        // When/Then
+        expect(validFileForRendering(fileName)).toEqual(true);
+    });
+    it("should return false if file end with zip", () => {
+        // Given
+        const fileName = "fileId.zip";
+
+        // When/Then
+        expect(validFileForRendering(fileName)).toEqual(false);
+    });
+});
+
 let accountValidator: AccountValidationService;
 // const mockPostForValidation = mockApiClient.accountValidatorService
 //     .postFileForValidation as jest.Mock;
-const mockGetFileValidationStatus = mockApiClient.accountValidatorService.getFileValidationStatus as jest.Mock;
+const mockGetFileValidationStatus = mockPrivateApiClient.accountValidorService
+    .getFileValidationStatus as jest.Mock;
 describe("AccountValidator", () => {
     beforeEach(() => {
-        accountValidator = new AccountValidator(mockApiClient);
+        accountValidator = new AccountValidator(mockPrivateApiClient);
     });
 
     // it("should submit a file to the api for validation", async () => {
