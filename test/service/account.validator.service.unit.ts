@@ -9,7 +9,7 @@ import { ApiErrorResponse } from "@companieshouse/api-sdk-node/dist/services/res
 import { AccountValidatorResponse } from "private-api-sdk-node/dist/services/account-validator/types";
 
 const mockPrivateApiClient = {
-    accountValidorService: { // TODO: fix typo
+    accountValidatorService: {
         postFileForValidation: jest.fn(),
         getFileValidationStatus: jest.fn(),
     },
@@ -82,7 +82,7 @@ describe("validFileForRendering", () => {
 let accountValidator: AccountValidationService;
 // const mockPostForValidation = mockApiClient.accountValidatorService
 //     .postFileForValidation as jest.Mock;
-const mockGetFileValidationStatus = mockPrivateApiClient.accountValidorService
+const mockGetFileValidationStatus = mockPrivateApiClient.accountValidatorService
     .getFileValidationStatus as jest.Mock;
 describe("AccountValidator", () => {
     beforeEach(() => {
