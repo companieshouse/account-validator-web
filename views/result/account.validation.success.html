@@ -16,15 +16,18 @@
 {% block content %}
     <h2 class="govuk-heading-m">What happens next</h2>
     <p class="govuk-body">You can select show image to preview the image that will be published on the Companies House register</p>
-     {# {% if not (accountValidatorResult.imageUrl is undefined or accountValidatorResult.imageUrl is empty) %} #}
+     {% if accountValidationResult.imageUrl %}
         <div>
             {{ govukButton({
                 text: "Show image",
                 classes: "govuk-button--secondary",
-                href: accountValidationResult.imageUrl
+                href: accountValidationResult.imageUrl,
+                attributes:{
+                    "target":"_blank"
+                }
             }) }} 
         </div>
-    {# {% endif %} #}
+    {% endif %}
     
     <p class="govuk-body">
         You can <a href={{BASE_URL}}>validate another single file or zip file.</a>
