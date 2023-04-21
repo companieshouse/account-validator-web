@@ -13,7 +13,6 @@
     html: html
 }) }}
 
-{% block content %}
     <h2 class="govuk-heading-m">What happens next</h2>
     <p class="govuk-body">You can select show image to preview the image that will be published on the Companies House register</p>
      {% if accountValidationResult.imageUrl %}
@@ -35,7 +34,5 @@
     <p class="govuk-body">
         You can return to <a href={{CHS_URL}}>Companies House home page.</a>
     </p>
-
-{% endblock %}
 
 
