@@ -11,7 +11,7 @@ async function renderPDF(req: Request, res: Response) {
     const imageRenderFile = await imageRenderService.render(fileId);
     logger.debug(`Image Render has rendered the requested file.`);
     res.contentType(imageRenderFile.mimeType);
-    res.send(Buffer.from(imageRenderFile.body));
+    res.send(Buffer.from(imageRenderFile.body, 'base64'));
 }
 
 renderController.get('/', handleErrors(renderPDF));

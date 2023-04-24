@@ -1,7 +1,7 @@
 import request from "supertest";
 import app from '../../src/app';
 import { imageRenderService } from "../../src/services/image.render.service";
-import { File } from "private-api-sdk-node/dist/services/file-transfer/types";
+import { BufferFile } from "../../src/types";
 
 
 jest.mock('../../src/services/image.render.service');
@@ -14,7 +14,7 @@ describe('Result controller tests', () => {
     it('should return pdf buffer', async () => {
         const fileId = 'file123';
         const body = Buffer.from("", "binary").buffer;
-        const mockResult: File = {
+        const mockResult: BufferFile = {
             fileName: "",
             body: body,
             mimeType: "application/pdf",

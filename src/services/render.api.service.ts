@@ -28,7 +28,7 @@ export default class LocalAPIClient {
  * rather than in this service. This was added because we need 'get' request
  * using that returns arrayBuffer rather than json.
  */
-class RenderAPIService {
+export class RenderAPIService {
 
     constructor (private readonly client: ArrayBufferRequestClient) {}
 
@@ -63,9 +63,9 @@ class RenderAPIService {
 
         const pdf: File = {
             fileName: fileNameTemplate,
-            body: resp.body,
+            body: resp.body.toString('base64'),
             mimeType: mimeType,
-            size: resp.headers.byteLength,
+            size: headers?.["contentLength"],
             extension: extension
         };
 
