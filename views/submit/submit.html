@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+{% from "govuk/components/file-upload/macro.njk" import govukFileUpload %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+
+{% block pageTitle %}
+  XBRL Company Accounts Validator
+{% endblock %}
+
+<!-- No service name header-->
+{% block header %}
+    {{ govukHeader({
+    homepageUrl: "https://www.gov.uk",
+    containerClasses: "govuk-width-container"})
+  }}
+{% endblock %}
+
+{% block backLink %}
+    {# Go back to the start page #}
+    {{ govukBackLink({
+    text: "Back",
+    href: Urls.BASE
+    }) }}
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">
+                Upload your accounts file
+            </h1>
+            
+            {{ errorSummary() }}
+
+            <form method="POST" enctype="multipart/form-data">
+                {{ govukFileUpload({
+                    id: "file",
+                    name: "file",
+                    errorMessage: formValidationResult.getErrorForField("file"),
+                    label: {
+                        text: "Upload a XHTML file"
+                    }
+                }) }}
+
+                <p class="govuk-body">The validation process may take a few minutes.</p>
+
+                {{ govukButton({
+                    text: "Validate",
+                    type: "submit"
+                }) }}
+
+            </form>
+        </div>
+    </div>
+{% endblock %}
+

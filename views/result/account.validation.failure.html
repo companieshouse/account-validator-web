@@ -1,13 +1,15 @@
 {% set html %}
-    <h3 class="govuk-notification-banner__heading">
-        The validation of your Instance document '{{accountValidationResult.fileName}}' has been not been successful
+<h3 class="govuk-notification-banner__heading">
+        Your file is not valid 
     </h3>
-    <p class="govuk-body">The validation failed with the following errors:</p>
-    <ul class="govuk-list govuk-list--bullet">
-        {% for reason in accountValidationResult.reasons %}
-            <li>{{ reason }}</li>
-        {% endfor %}
-    </ul>
+<p class="govuk-body">
+        Your iXBRL accounts file '{{accountValidationResult.fileName}}' is not valid because:
+    </p>
+<ul class="govuk-list govuk-list--bullet">
+    {% for reason in accountValidationResult.reasons %}
+        <li>{{ reason }}</li>
+    {% endfor %}
+</ul>
 {% endset %}
 
 {{ govukNotificationBanner({
@@ -16,10 +18,10 @@
     html: html
 }) }}
 
-    <h2 class="govuk-heading-m">What happens next</h2>
-    <p class="govuk-body">
+<h2 class="govuk-heading-m">What happens next</h2>
+<p class="govuk-body">
         You can <a href={{BASE_URL}}>validate another single file or zip file.</a>
-    </p>
-    <p class="govuk-body">
+</p>
+<p class="govuk-body">
         You can return to <a href={{CHS_URL}}>Companies House home page.</a>
-    </p>
+</p>
