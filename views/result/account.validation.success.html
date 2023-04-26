@@ -1,10 +1,22 @@
-{% from "govuk/components/button/macro.njk"  import govukButton %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% set html %}
-    <h3 class="govuk-notification-banner__heading">
-        The validation of the document '{{accountValidationResult.fileName}}' has been successful
-    </h3>
+<h3 class="govuk-notification-banner__heading">
+    Your file is valid
+</h3>
 
+<p>
+    Your iXBRL accounts file '{{accountValidationResult.fileName}}' meets the iXBRL specification and business validation rules.
+</p>
+
+{% if accountValidationResult.imageUrl %}
+    <p class="govuk-body">Preview the image that will be published on the Companies House register.</p>
+    <div>
+        <button class="govuk-button govuk-button--secondary" data-module="govuk-button">
+            Show image
+            </button>
+    </div>
+{% endif %}
 {% endset %}
 
 {{ govukNotificationBanner({
@@ -13,26 +25,24 @@
     html: html
 }) }}
 
-    <h2 class="govuk-heading-m">What happens next</h2>
-    <p class="govuk-body">You can select show image to preview the image that will be published on the Companies House register</p>
-     {% if accountValidationResult.imageUrl %}
-        <div>
-            {{ govukButton({
+<h2 class="govuk-heading-m">What happens next</h2>
+<p class="govuk-body">You can select show image to preview the image that will be published on the Companies House register</p>
+{% if accountValidationResult.imageUrl %}
+    <div>
+        {{ govukButton({
                 text: "Show image",
                 classes: "govuk-button--secondary",
                 href: accountValidationResult.imageUrl,
                 attributes:{
                     "target":"_blank"
                 }
-            }) }} 
-        </div>
-    {% endif %}
-    
-    <p class="govuk-body">
-        You can <a href={{BASE_URL}}>validate another single file or zip file.</a>
-    </p>
-    <p class="govuk-body">
-        You can return to <a href={{CHS_URL}}>Companies House home page.</a>
-    </p>
+            }) }}
+    </div>
+{% endif %}
 
-
+<p class="govuk-body">
+    You can <a href={{BASE_URL}}>validate another single file or zip file.</a>
+</p>
+<p class="govuk-body">
+    You can return to <a href={{CHS_URL}}>Companies House home page.</a>
+</p>
