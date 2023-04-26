@@ -2,12 +2,12 @@
 
 {% set html %}
 <h3 class="govuk-notification-banner__heading">
-        Your file is valid
-    </h3>
+    Your file is valid
+</h3>
 
 <p>
-        Your iXBRL accounts file '{{accountValidationResult.fileName}}' meets the iXBRL specification and business validation rules.
-    </p>
+    Your iXBRL accounts file '{{accountValidationResult.fileName}}' meets the iXBRL specification and business validation rules.
+</p>
 
 {% if accountValidationResult.imageUrl %}
     <p class="govuk-body">Preview the image that will be published on the Companies House register.</p>
@@ -41,8 +41,8 @@
 {% endif %}
 
 <p class="govuk-body">
-        You can <a href={{BASE_URL}}>validate another single file or zip file.</a>
+    You can <a href={{BASE_URL}}>validate another single file or zip file.</a>
 </p>
 <p class="govuk-body">
-        You can return to <a href={{CHS_URL}}>Companies House home page.</a>
+    You can return to <a href={{CHS_URL}}>Companies House home page.</a>
 </p>

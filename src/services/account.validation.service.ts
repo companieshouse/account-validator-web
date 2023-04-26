@@ -112,7 +112,7 @@ export function mapResponseType(
             case "FAILED":
                 return {
                     status: "failure",
-                    reasons: result.errorMessages,
+                    reasons: result.errorMessages.map(em => em['errorMessage']),
                     ...baseResult
                 };
     }
