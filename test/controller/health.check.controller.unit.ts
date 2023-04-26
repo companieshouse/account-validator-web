@@ -3,9 +3,6 @@ import app from '../../src/app';
 import { Urls } from "../../src/constants";
 
 describe('Health check controller tests', () => {
-    afterEach(() => {
-        jest.resetAllMocks();
-    });
 
     it('should return 200', async () => {
         const response = await request(app)
