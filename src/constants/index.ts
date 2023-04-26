@@ -16,6 +16,8 @@ export enum Urls {
     SUBMIT = "/xbrl_validate/submit",
     RESULT_SUFFIX = "/result",
     RESULT = "/xbrl_validate/result",
+    HEALTH_CHECK_SUFFIX = "/health-check",
+    HEALTH_CHECK = "/xbrl_validate/health-check",
 }
 
 export const AllowedRenderExtensions = ['xhtml', 'ixbrl'];
