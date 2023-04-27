@@ -13,7 +13,7 @@ describe('Result controller tests', () => {
 
     it('should return pdf buffer', async () => {
         const fileId = 'file123';
-        const body = Buffer.from("", "binary").buffer;
+        const body = "";
         const mockResult: File = {
             fileName: "",
             body: body,

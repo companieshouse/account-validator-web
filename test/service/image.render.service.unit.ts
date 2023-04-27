@@ -15,7 +15,7 @@ const mockLocalAPIClient = {
 
 function createAccountValidatorResponse(
     httpStatusCode: number,
-    body: ArrayBuffer,
+    body: "",
     fileId: string,
     mimeType: string,
     size: number,
@@ -92,7 +92,7 @@ describe("ImageRender", () => {
     it("should return an AccountValidationResult if the request is successful", async () => {
         // Given
         const fileId = "fileId";
-        const body = Buffer.from("").buffer;
+        const body = "";
         const resource = createAccountValidatorResponse(
             200,
             body,
