@@ -3,7 +3,10 @@ import { MAX_FILE_SIZE } from "../config";
 import { Templates, Urls } from "../constants";
 import multer from "multer";
 import { ValidationResult } from "../validation/validation.result";
-import { AccountValidationResult, accountValidatorService } from "../services/account.validation.service";
+import {
+    AccountValidationResult,
+    accountValidatorService,
+} from "../services/account.validation.service";
 import { logger } from "../utils/logger";
 import { handleErrors } from "../middleware/error.handler";
 
@@ -12,8 +15,13 @@ interface SubmitPageRequest extends Request {
     accountValidationResult?: AccountValidationResult;
 }
 
-function addFormValidationResult(req: SubmitPageRequest, res: Response, next: NextFunction) {
-    req.formValidationResult = req.formValidationResult ?? new ValidationResult;
+function addFormValidationResult(
+    req: SubmitPageRequest,
+    res: Response,
+    next: NextFunction
+) {
+    req.formValidationResult =
+        req.formValidationResult ?? new ValidationResult();
 
     next();
 }
@@ -32,7 +40,7 @@ function renderSubmitPage(req: SubmitPageRequest, res: Response) {
         templateName: Templates.SUBMIT,
         formValidationResult: req.formValidationResult,
         accountValidationResult: req.accountValidationResult,
-        fileName: req.file?.originalname
+        fileName: req.file?.originalname,
     });
 }
 
@@ -40,11 +48,8 @@ function validateForm(file?: Express.Multer.File) {
     const validationResult = new ValidationResult();
 
     if (file === undefined) {
-        validationResult.addError(
-            "file",
-            "Select an accounts file."
-        );
-    } else if (!isZipOrXBRLFile(file.originalname)) {
+        validationResult.addError("file", "Select an accounts file.");
+    } else if (!isZipOrXBRLFile(file)) {
         validationResult.addError(
             "file",
             "The selected file must be a XHTML or ZIP."
@@ -54,20 +59,45 @@ function validateForm(file?: Express.Multer.File) {
     return validationResult;
 }
 
-const allowedFileExtensions = [
-    "zip", "xhtml", "html"
-];
-
-function extention(filename: string) {
-    return filename.split('.').pop()?.toLowerCase() ?? '';
+/**
+ * Extracts the file extension from a given filename.
+ * @param filename - The name of the file to extract the extension from.
+ * @returns The file extension in lowercase or an empty string if not found.
+ */
+function extention(filename: string): string {
+    return filename.split(".").pop()?.toLowerCase() ?? "";
 }
 
-function isZipOrXBRLFile(filename: string): boolean {
-    // TODO: this probably isn't the best way to check file type.
-    return allowedFileExtensions.includes(extention(filename));
+/**
+ * Checks if a given file is a ZIP file or a valid iXBRL file.
+ * @param file - An Express.Multer.File object representing the file to be checked.
+ * @returns A boolean indicating if the file is a ZIP or a valid iXBRL file.
+ */
+function isZipOrXBRLFile(file: Express.Multer.File): boolean {
+    return extention(file.originalname) === "zip" || isValidIXBRLFile(file);
 }
 
-async function submitFileForValidation(req: SubmitPageRequest, res: Response, next: NextFunction) {
+/**
+ * Checks if a given file is a valid iXBRL file by analyzing its first bytes.
+ *
+ * See https://github.com/companieshouse/chl-perl/blob/e852c9599d71b2fe7df5951ec1ff2084f9afc5f7/websystems/htdocs/efiling/handlers/xbrl_validator#L177-L180
+ *
+ * @param file - An Express.Multer.File object representing the file to be checked.
+ * @returns A boolean indicating if the file is a valid iXBRL file.
+ */
+function isValidIXBRLFile(file: Express.Multer.File): boolean {
+    const firstBytes: string = Uint8Array.prototype.slice.call(file.buffer, 0, 50).toString('utf-8');
+    const xmlPattern: RegExp = /^\s*<\?xml/i;
+    const htmlPattern: RegExp = /^\s*<html/i;
+
+    return xmlPattern.test(firstBytes) || htmlPattern.test(firstBytes);
+}
+
+async function submitFileForValidation(
+    req: SubmitPageRequest,
+    res: Response,
+    next: NextFunction
+) {
     const fileValidationResult = validateForm(req.file);
     req.formValidationResult = fileValidationResult;
 
@@ -80,7 +110,9 @@ async function submitFileForValidation(req: SubmitPageRequest, res: Response, ne
 
     logger.debug(`Submitting file to account-validator-api for validation`);
     // We know the file is not undefined since if the validation did not succeed we wouldn't have made it to this point
-    req.accountValidationResult = await accountValidatorService.submit(req.file!); // eslint-disable-line @typescript-eslint/no-non-null-assertion
+    req.accountValidationResult = await accountValidatorService.submit(
+        req.file! // eslint-disable-line @typescript-eslint/no-non-null-assertion
+    );
     logger.debug(`Response recieved from account-validator-api`);
 
     next();
@@ -99,7 +131,9 @@ submitController.post(
         if (req.formValidationResult?.hasErrors) {
             return renderSubmitPage(req, res);
         } else {
-            return res.redirect(`${Urls.RESULT}/${req.accountValidationResult?.fileId}`);
+            return res.redirect(
+                `${Urls.RESULT}/${req.accountValidationResult?.fileId}`
+            );
         }
     }
 );
