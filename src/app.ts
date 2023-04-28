@@ -6,7 +6,7 @@ import cookieParser from "cookie-parser";
 import { logger } from "./utils/logger";
 import { errorHandler } from "./middleware/error.handler";
 import { Urls } from "./constants";
-import { CDN_HOST, CHS_URL } from "./config";
+import { CDN_HOST, CHS_URL, SURVEY_LINK } from "./config";
 
 const app = express();
 app.disable("x-powered-by");
@@ -27,6 +27,7 @@ const nunjucksEnv = nunjucks.configure(
 nunjucksEnv.addGlobal("assetPath", CDN_HOST);
 nunjucksEnv.addGlobal("CHS_URL", CHS_URL);
 nunjucksEnv.addGlobal("Urls", Urls);
+nunjucksEnv.addGlobal("SURVEY_LINK", SURVEY_LINK);
 
 app.enable("trust proxy");
 app.use(express.json());
