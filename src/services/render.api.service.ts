@@ -46,7 +46,7 @@ export class RenderAPIService {
         const mimeType = "application/pdf";
         const fileNameTemplate = `${fileId}`;
         const extension = "pdf";
-        const resp = await this.client.rawGetArrayBuffer(`/validate/render/${fileId}`);
+        const resp = await this.client.rawGetArrayBuffer(`/account-validator/validate/render/${fileId}`);
 
         if (resp.status !== 200) {
             return {

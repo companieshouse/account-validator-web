@@ -1,0 +1,9 @@
+{% macro showValidationResult() %}
+    {% if accountValidationResult %}
+        {% include "result/account.validation." + accountValidationResult.status + ".html" %}
+    {% endif %}
+{% endmacro %}
+
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+
+{{ showValidationResult() }}

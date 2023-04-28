@@ -5,6 +5,7 @@ import PrivateApiClient from "private-api-sdk-node/dist/client";
 import { File, Id } from "private-api-sdk-node/dist/services/file-transfer/types";
 import { ApiErrorResponse } from "@companieshouse/api-sdk-node/dist/services/resource";
 import { Urls, AllowedRenderExtensions } from "../constants";
+import { logger } from "../utils/logger";
 
 /**
  * Interface representing the account validation service
@@ -111,7 +112,7 @@ export function mapResponseType(
             case "FAILED":
                 return {
                     status: "failure",
-                    reasons: result.errorMessages,
+                    reasons: result.errorMessages.map(em => em['errorMessage']),
                     ...baseResult
                 };
     }
@@ -186,6 +187,7 @@ export class AccountValidator implements AccountValidationService {
                 accountValidatorResponse as Resource<AccountValidatorResponse>
             );
         } else {
+            logger.error(`Got unexpected response from file-transfer-service ${JSON.stringify(fileId, null, 2)}`);
             throw new Error('Upload to S3 failed: no file id returned');
         }
     }
@@ -197,11 +199,16 @@ export class AccountValidator implements AccountValidationService {
      */
     private async uploadToS3(file: Express.Multer.File): Promise<Resource<Id> | ApiErrorResponse>{
 
+
         // TODO: Change body type to string
         const fileDetails: File =  { fileName: file.originalname, body: file.buffer.toString("base64"), mimeType: file.mimetype, size: file.size, extension: '.xtml' };
 
         const fileTransferService = this.privateApiClient.fileTransferService;
+        logger.debug(`Uploading file ${fileDetails.fileName} to S3.`);
+
         const fileId = await fileTransferService.upload(fileDetails);
+
+        logger.debug(`File ${fileDetails.fileName} has been uploaded to S3 with ID ${fileId}`);
         return fileId;
     }
 

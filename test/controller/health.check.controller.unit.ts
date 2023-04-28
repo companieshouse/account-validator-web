@@ -2,11 +2,13 @@ import request from "supertest";
 import app from '../../src/app';
 import { Urls } from "../../src/constants";
 
-describe('Start controller tests', () => {
-    it('Should render the start page', async () => {
+describe('Health check controller tests', () => {
+
+    it('should return 200', async () => {
         const response = await request(app)
-            .get(Urls.BASE.toString());
+            .get(Urls.HEALTH_CHECK);
 
         expect(response.status).toBe(200);
+        expect(response.text).toEqual("OK");
     });
 });

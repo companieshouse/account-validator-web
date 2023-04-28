@@ -40,6 +40,7 @@ endif
 	cp -r ./dist/* $(tmpdir)
 	cp -r ./package.json $(tmpdir)
 	cp -r ./package-lock.json $(tmpdir)
+	cp -r ./.git $(tmpdir)
 	cp ./start.sh $(tmpdir)
 	cp ./routes.yaml $(tmpdir)
 	cd $(tmpdir) && npm ci --production
