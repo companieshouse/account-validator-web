@@ -1,5 +1,5 @@
 app_name: account-validator-web
-group: web
+group: standalone
 
 weight: 100
 routes:
