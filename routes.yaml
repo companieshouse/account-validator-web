@@ -1,6 +1,8 @@
-app_name: account-validator-web
-group: standalone
+# Removed as it not required for standalone appications
 
-weight: 100
-routes:
-    1: ^/xbrl_validate/* # TODO: change
+# app_name: account-validator-web
+# group: standalone
+
+# weight: 100
+# routes:
+#     1: ^/xbrl_validate/* # TODO: change
