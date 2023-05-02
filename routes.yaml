@@ -1,4 +1,4 @@
-# Removed as it not required for standalone appications
+#File not used when routes via standalone
 
 # app_name: account-validator-web
 # group: standalone

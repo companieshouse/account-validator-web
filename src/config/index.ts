@@ -5,7 +5,7 @@
  */
 
 const getEnvironmentVariable = (key: string, defaultValue?: any): string => {
-    const isMandatory = !defaultValue;
+    const isMandatory = defaultValue === undefined;
     const value: string = process.env[key] || "";
 
     if (!value && isMandatory) {
@@ -27,6 +27,7 @@ export const INTERNAL_API_URL = getEnvironmentVariable("INTERNAL_API_URL");
 export const CHS_INTERNAL_API_KEY = getEnvironmentVariable("CHS_INTERNAL_API_KEY");
 export const PORT = parseInt(getEnvironmentVariable("PORT", 3000));
 export const RESULT_RELOAD_DURATION_SECONDS = parseFloat(getEnvironmentVariable("RESULT_RELOAD_DURATION_SECONDS", 1));
+export const SURVEY_LINK = getEnvironmentVariable("SURVEY_LINK", "");
 
 /**
  * Parses a file size string and returns the equivalent number of bytes.
