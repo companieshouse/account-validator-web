@@ -9,14 +9,6 @@
     Your iXBRL accounts file '{{accountValidationResult.fileName}}' meets the iXBRL specification and business validation rules.
 </p>
 
-{% if accountValidationResult.imageUrl %}
-    <p class="govuk-body">Preview the image that will be published on the Companies House register.</p>
-    <div>
-        <button class="govuk-button govuk-button--secondary" data-module="govuk-button">
-            Show image
-            </button>
-    </div>
-{% endif %}
 {% endset %}
 
 {{ govukNotificationBanner({
@@ -25,8 +17,8 @@
     html: html
 }) }}
 
-<h2 class="govuk-heading-m">What happens next</h2>
-<p class="govuk-body">You can select show image to preview the image that will be published on the Companies House register</p>
+<p class="govuk-body">Preview the image that will be published on the Companies House register.</p>
+
 {% if accountValidationResult.imageUrl %}
     <div>
         {{ govukButton({
@@ -40,9 +32,8 @@
     </div>
 {% endif %}
 
+<h2 class="govuk-heading-m">What happens next</h2>
+
 <p class="govuk-body">
-    You can <a href={{BASE_URL}}>validate another single file or zip file.</a>
-</p>
-<p class="govuk-body">
-    You can return to <a href={{CHS_URL}}>Companies House home page.</a>
+    <a href={{BASE_URL}}>Check another iXBRL accounts file</a>  or close the browser if you've finished checking files.
 </p>
