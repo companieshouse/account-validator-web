@@ -1,0 +1,5 @@
+app_name: account-validator-web
+group: standalone
+
+weight: 100
+routes: {}
