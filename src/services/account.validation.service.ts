@@ -4,7 +4,7 @@ import { createPrivateApiKeyClient } from "./api.service";
 import PrivateApiClient from "private-api-sdk-node/dist/client";
 import { File, Id } from "private-api-sdk-node/dist/services/file-transfer/types";
 import { ApiErrorResponse } from "@companieshouse/api-sdk-node/dist/services/resource";
-import { Urls, AllowedRenderExtensions } from "../constants";
+import { Urls } from "../constants";
 import { logger } from "../utils/logger";
 
 /**
@@ -62,13 +62,18 @@ interface PendingValidationResult extends ValidationResultCommon {
     status: "pending";
 }
 
+interface ErrorValidationResult extends ValidationResultCommon {
+    status: "error";
+}
+
 /**
  * Type representing the possible validation results
  */
 export type AccountValidationResult =
     | SuccessValidationResult
     | FailureValidationResult
-    | PendingValidationResult;
+    | PendingValidationResult
+    | ErrorValidationResult;
 
 /**
  * Map the response type from the API to the `AccountValidationResult` type
@@ -94,11 +99,15 @@ export function mapResponseType(
         fileName: accountValidatorResponse.fileName as string,
     };
 
-    if (accountValidatorResponse.status === "pending") {
-        return {
-            status: "pending",
-            ...baseResult
-        };
+    switch (accountValidatorResponse.status) {
+            case "pending":
+                return {
+                    status: "pending",
+                    ...baseResult
+                };
+            case "error":
+                logger.error(`Error validating document. Showing error page.`);
+                throw `Error validating file ${JSON.stringify(accountValidatorResponse)}`;
     }
 
     const result = accountValidatorResponse.result;
@@ -119,12 +128,15 @@ export function mapResponseType(
 }
 
 /**
- * Check whether file is a valid type to be rendered.
- * @param fileName
- * @returns
+ * Check whether file is a valid type to be rendered. Only single submissions are valid for rendering. So if the extension !== 'zip' then it is valid.
+ * @param fileName the name of the file.
+ * @returns true if not a zip file.
  */
-export function validFileForRendering(fileName: string){
-    return AllowedRenderExtensions.some(extension => fileName.toLowerCase().endsWith(extension));
+export function validFileForRendering(fileName: string) {
+    const lastDotPosition = fileName.lastIndexOf('.');
+    if (lastDotPosition === -1) {return false;}
+    const extension = fileName.substring(lastDotPosition + 1);
+    return extension !== 'zip';
 }
 
 /**
@@ -211,8 +223,6 @@ export class AccountValidator implements AccountValidationService {
         logger.debug(`File ${fileDetails.fileName} has been uploaded to S3 with ID ${fileId}`);
         return fileId;
     }
-
-
 }
 
 export const accountValidatorService = new AccountValidator();
