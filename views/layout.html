@@ -50,11 +50,15 @@
 {% endblock %}
 
 {% block beforeContent %}
+    {% set survey_link_html = '' %}
+    {% if SURVEY_LINK and SURVEY_LINK != "" %}
+        {% set survey_link_html = ' - Help us improve it by providing <a class="govuk-link" href="' + SURVEY_LINK + '" data-event-id="feedback-banner-link" target="_blank" rel="noopener noreferrer">feedback <span class="govuk-visually-hidden">(This link opens in a new window)</span></a>' %}
+    {% endif %}
    {{ govukPhaseBanner({
     tag: {
       text: "beta"
     },
-    html: 'This is a new service' + ((SURVEY_LINK and SURVEY_LINK != "") ? ' - Help us improve it by providing <a class="govuk-link" href="' + SURVEY_LINK + '" data-event-id="feedback-banner-link" target="_blank" rel="noopener noreferrer">feedback <span class="govuk-visually-hidden">(This link opens in a new window)</span></a>' : '')
+    html: 'This is a new service' + survey_link_html
   }) }}
 
 
