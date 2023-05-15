@@ -213,7 +213,9 @@ export class AccountValidator implements AccountValidationService {
 
 
         // TODO: Change body type to string
-        const fileDetails: File =  { fileName: file.originalname, body: file.buffer.toString("base64"), mimeType: file.mimetype, size: file.size, extension: '.xtml' };
+        const body = file.buffer.toString("base64");
+        logger.debug(`Body size: ${body.length} Sample ${body.slice(0, 10)}`);
+        const fileDetails: File =  { fileName: file.originalname, body: body, mimeType: file.mimetype, size: file.size, extension: '.xtml' };
 
         const fileTransferService = this.privateApiClient.fileTransferService;
         logger.debug(`Uploading file ${fileDetails.fileName} to S3.`);
