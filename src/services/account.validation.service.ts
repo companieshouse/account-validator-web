@@ -33,7 +33,7 @@ interface ValidationResultCommon {
     /** The name of the file */
     fileName: string;
     /** The progress */
-    progress: number;
+    percent: string;
 }
 
 /**
@@ -97,39 +97,41 @@ export function mapResponseType(
         );
     }
 
+    const result = accountValidatorResponse.result;
+
     const baseResult = {
         fileId: accountValidatorResponse.fileId,
         fileName: accountValidatorResponse.fileName as string,
+        percent: getProgress(result.validationStatus),
     };
 
     switch (accountValidatorResponse.status) {
             case "pending":
                 return {
                     status: "pending",
-                    ...baseResult,
-                    progress: 10,
+                    ...baseResult
                 };
             case "error":
                 logger.error(`Error validating document. Showing error page.`);
                 throw `Error validating file ${JSON.stringify(accountValidatorResponse)}`;
     }
 
-    const result = accountValidatorResponse.result;
     switch (result.validationStatus) {
             case validationStatus.ValidationStatusTypeString(validationStatus.ValidationStatusType.OK):
                 return {
                     status: "success",
                     imageUrl: validFileForRendering(baseResult.fileName) ? `${Urls.RENDER}/${baseResult.fileId}` : undefined,
-                    ...baseResult,
-                    progress: 100,
+                    ...baseResult
                 };
             case validationStatus.ValidationStatusTypeString(validationStatus.ValidationStatusType.FAILED):
                 return {
                     status: "failure",
                     reasons: result.errorMessages.map(em => em['errorMessage']),
-                    ...baseResult,
-                    progress: 20,
+                    ...baseResult
                 };
+            default:
+                throw new Error('Unexcepted validation status detected');
+
     }
 }
 
@@ -234,3 +236,7 @@ export class AccountValidator implements AccountValidationService {
 }
 
 export const accountValidatorService = new AccountValidator();
+
+export function getProgress(status: string): string {
+    return validationStatus.ValidationStatusType[status].toString()
+}

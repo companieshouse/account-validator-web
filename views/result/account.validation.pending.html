@@ -9,11 +9,11 @@
     </div>
 
     <script defer>
-        const eventSource = new EventSource("/xbrl_validate/result/{{fileId}}/sse");
+        const eventSource = new EventSource("{{Urls.RESULT}}/{{fileId}}/sse");
 
         eventSource.addEventListener('message', (event) => {
             const data = JSON.parse(event.data);
-            if(data.message.status == "success"){
+            if(data.message.percent === '100'){
                 location.reload();
             }
         });
