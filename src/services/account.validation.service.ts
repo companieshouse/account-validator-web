@@ -32,8 +32,6 @@ interface ValidationResultCommon {
     fileId: string;
     /** The name of the file */
     fileName: string;
-    /** The progress */
-    percent: string;
 }
 
 /**
@@ -63,6 +61,8 @@ interface FailureValidationResult extends ValidationResultCommon {
 interface PendingValidationResult extends ValidationResultCommon {
     /** The status of the validation result */
     status: "pending";
+    /** The progress */
+    percent: string;
 }
 
 interface ErrorValidationResult extends ValidationResultCommon {
@@ -238,5 +238,5 @@ export class AccountValidator implements AccountValidationService {
 export const accountValidatorService = new AccountValidator();
 
 export function getProgress(status: string): string {
-    return validationStatus.ValidationStatusType[status].toString()
+    return validationStatus.ValidationStatusType[status].toString();
 }
