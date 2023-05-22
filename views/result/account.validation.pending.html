@@ -8,10 +8,19 @@
         <div class="gds-loading-icon"></div>
     </div>
 
-    <script>
-        console.log("Reloading in {{resultReloadDurationSeconds}} seconds")
-        setTimeout(() => location.reload(), {{resultReloadDurationSeconds}}000);
+    <script defer>
+        const eventSource = new EventSource("/xbrl_validate/result/{{fileId}}/sse");
+
+        eventSource.addEventListener('message', (event) => {
+            const data = JSON.parse(event.data);
+            if(data.message.status == "success"){
+                location.reload();
+            }
+        });
+        {# console.log("Reloading in {{resultReloadDurationSeconds}} seconds")
+        setTimeout(() => location.reload(), {{resultReloadDurationSeconds}}000); #}
     </script>
+
 {% endset %}
 
 {{ govukNotificationBanner({

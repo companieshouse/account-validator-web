@@ -6,6 +6,7 @@ import { File, Id } from "private-api-sdk-node/dist/services/file-transfer/types
 import { ApiErrorResponse } from "@companieshouse/api-sdk-node/dist/services/resource";
 import { Urls } from "../constants";
 import { logger } from "../utils/logger";
+import * as validationStatus from "../utils/validationStatusType";
 
 /**
  * Interface representing the account validation service
@@ -31,6 +32,8 @@ interface ValidationResultCommon {
     fileId: string;
     /** The name of the file */
     fileName: string;
+    /** The progress */
+    progress: number;
 }
 
 /**
@@ -103,7 +106,8 @@ export function mapResponseType(
             case "pending":
                 return {
                     status: "pending",
-                    ...baseResult
+                    ...baseResult,
+                    progress: 10,
                 };
             case "error":
                 logger.error(`Error validating document. Showing error page.`);
@@ -112,17 +116,19 @@ export function mapResponseType(
 
     const result = accountValidatorResponse.result;
     switch (result.validationStatus) {
-            case "OK":
+            case validationStatus.ValidationStatusTypeString(validationStatus.ValidationStatusType.OK):
                 return {
                     status: "success",
                     imageUrl: validFileForRendering(baseResult.fileName) ? `${Urls.RENDER}/${baseResult.fileId}` : undefined,
-                    ...baseResult
+                    ...baseResult,
+                    progress: 100,
                 };
-            case "FAILED":
+            case validationStatus.ValidationStatusTypeString(validationStatus.ValidationStatusType.FAILED):
                 return {
                     status: "failure",
                     reasons: result.errorMessages.map(em => em['errorMessage']),
-                    ...baseResult
+                    ...baseResult,
+                    progress: 20,
                 };
     }
 }
