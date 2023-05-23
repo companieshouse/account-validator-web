@@ -6,6 +6,7 @@ import { File, Id } from "private-api-sdk-node/dist/services/file-transfer/types
 import { ApiErrorResponse } from "@companieshouse/api-sdk-node/dist/services/resource";
 import { Urls } from "../constants";
 import { logger } from "../utils/logger";
+import * as validationStatus from "../utils/validationStatusType";
 
 /**
  * Interface representing the account validation service
@@ -60,6 +61,8 @@ interface FailureValidationResult extends ValidationResultCommon {
 interface PendingValidationResult extends ValidationResultCommon {
     /** The status of the validation result */
     status: "pending";
+    /** The progress */
+    percent: string;
 }
 
 interface ErrorValidationResult extends ValidationResultCommon {
@@ -94,9 +97,12 @@ export function mapResponseType(
         );
     }
 
+    const result = accountValidatorResponse.result;
+
     const baseResult = {
         fileId: accountValidatorResponse.fileId,
         fileName: accountValidatorResponse.fileName as string,
+        percent: getProgress(result.validationStatus),
     };
 
     switch (accountValidatorResponse.status) {
@@ -110,20 +116,22 @@ export function mapResponseType(
                 throw `Error validating file ${JSON.stringify(accountValidatorResponse)}`;
     }
 
-    const result = accountValidatorResponse.result;
     switch (result.validationStatus) {
-            case "OK":
+            case validationStatus.ValidationStatusTypeString(validationStatus.ValidationStatusType.OK):
                 return {
                     status: "success",
                     imageUrl: validFileForRendering(baseResult.fileName) ? `${Urls.RENDER}/${baseResult.fileId}` : undefined,
                     ...baseResult
                 };
-            case "FAILED":
+            case validationStatus.ValidationStatusTypeString(validationStatus.ValidationStatusType.FAILED):
                 return {
                     status: "failure",
                     reasons: result.errorMessages.map(em => em['errorMessage']),
                     ...baseResult
                 };
+            default:
+                throw new Error('Unexcepted validation status detected');
+
     }
 }
 
@@ -228,3 +236,7 @@ export class AccountValidator implements AccountValidationService {
 }
 
 export const accountValidatorService = new AccountValidator();
+
+export function getProgress(status: string): string {
+    return validationStatus.ValidationStatusType[status].toString();
+}

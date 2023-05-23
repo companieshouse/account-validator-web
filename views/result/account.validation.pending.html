@@ -1,17 +1,25 @@
 {% set html %}
-    <h3 class="govuk-notification-banner__heading">
-        The validation of your document '{{accountValidationResult.fileName}}' is in progress
-    </h3>
-    <p class="govuk-body">Validation in progress. This page will automatically update when it is complete.</p>
-
-    <div class="gds-loading-icon-container">
-        <div class="gds-loading-icon"></div>
+    <div class="govuk-width-container">
+        <div class="gds-loading-icon-container">
+            <div class="spinner"></div>
+        </div>
+        <h1 class="govuk-heading-l .govuk-text-align-centre">Validation in progress</h1>
+        <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-8 .govuk-text-align-centre"><span id="percentage">0</span>% complete</p>
+        <p class="govuk-body .govuk-text-align-centre">This page will automatically update when the validation is complete.</p>  
     </div>
 
-    <script>
-        console.log("Reloading in {{resultReloadDurationSeconds}} seconds")
-        setTimeout(() => location.reload(), {{resultReloadDurationSeconds}}000);
+    <script defer>
+        const eventSource = new EventSource("{{Urls.RESULT}}/{{fileId}}/sse");
+
+        eventSource.addEventListener('message', (event) => {
+            const data = JSON.parse(event.data);
+            document.getElementById('percentage').innerText = data.message.percent;
+            if(data.message.percent === '100'){
+                location.reload();
+            }
+        });
     </script>
+
 {% endset %}
 
 {{ govukNotificationBanner({
