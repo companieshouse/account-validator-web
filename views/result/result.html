@@ -31,8 +31,6 @@
 {% endblock %}
 
 {# Assumes accountValidationResult is not undefined! #}
-{% macro showValidationResult() %}
-    {% if accountValidationResult %}
-        {% include "result/account.validation." + accountValidationResult.status + ".html" %}
-    {% endif %}
-{% endmacro %}
+{% if accountValidationResult %}
+    {% include "result/account.validation." + accountValidationResult.status + ".html" %}
+{% endif %}

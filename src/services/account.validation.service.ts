@@ -63,6 +63,7 @@ interface PendingValidationResult extends ValidationResultCommon {
     status: "pending";
     /** The progress */
     percent: string;
+    message?: string;
 }
 
 interface ErrorValidationResult extends ValidationResultCommon {
@@ -98,7 +99,7 @@ export function mapResponseType(
     }
 
     const result = accountValidatorResponse.result;
-
+    const pendingStatus = 'pending';
     const baseResult = {
         fileId: accountValidatorResponse.fileId,
         fileName: accountValidatorResponse.fileName as string,
@@ -106,32 +107,59 @@ export function mapResponseType(
     };
 
     switch (accountValidatorResponse.status) {
-            case "pending":
-                return {
-                    status: "pending",
-                    ...baseResult
-                };
+            case pendingStatus:
+                switch (result.validationStatus) {
+                        case validationStatus.ValidationStatusTypeString(validationStatus.ValidationStatusType.OK):
+                            return {
+                                status: "success",
+                                imageUrl: validFileForRendering(baseResult.fileName) ? `${Urls.RENDER}/${baseResult.fileId}` : undefined,
+                                ...baseResult
+                            };
+                        case validationStatus.ValidationStatusTypeString(validationStatus.ValidationStatusType.FAILED):
+                            return {
+                                status: "failure",
+                                reasons: result.errorMessages.map(em => em['errorMessage']),
+                                ...baseResult
+                            };
+                        case validationStatus.ValidationStatusTypeString(validationStatus.ValidationStatusType.ERROR):
+                            return {
+                                status: "error",
+                                ...baseResult
+                            };
+                        case validationStatus.ValidationStatusTypeString(validationStatus.ValidationStatusType.UPLOADED_TO_FTS):
+                            return {
+                                status: pendingStatus,
+                                message: "File uploaded to FTS",
+                                ...baseResult
+                            };
+                        case validationStatus.ValidationStatusTypeString(validationStatus.ValidationStatusType.DOWNLOADED_FROM_FTS):
+                            return {
+                                status: pendingStatus,
+                                message: "File downloaded from FTS",
+                                ...baseResult
+                            };
+                        case validationStatus.ValidationStatusTypeString(validationStatus.ValidationStatusType.SENT_TO_VIRUS_SCANNER):
+                            return {
+                                status: pendingStatus,
+                                message: "File sent to virus scanner",
+                                ...baseResult
+                            };
+                        case validationStatus.ValidationStatusTypeString(validationStatus.ValidationStatusType.SENT_TO_TNDP):
+                            return {
+                                status: pendingStatus,
+                                message: "File sent to TNDP",
+                                ...baseResult
+                            };
+                        default:
+                            throw new Error('Unexcepted validation status detected');
+
+
+                }
             case "error":
                 logger.error(`Error validating document. Showing error page.`);
                 throw `Error validating file ${JSON.stringify(accountValidatorResponse)}`;
-    }
-
-    switch (result.validationStatus) {
-            case validationStatus.ValidationStatusTypeString(validationStatus.ValidationStatusType.OK):
-                return {
-                    status: "success",
-                    imageUrl: validFileForRendering(baseResult.fileName) ? `${Urls.RENDER}/${baseResult.fileId}` : undefined,
-                    ...baseResult
-                };
-            case validationStatus.ValidationStatusTypeString(validationStatus.ValidationStatusType.FAILED):
-                return {
-                    status: "failure",
-                    reasons: result.errorMessages.map(em => em['errorMessage']),
-                    ...baseResult
-                };
             default:
-                throw new Error('Unexcepted validation status detected');
-
+                throw new Error('Unexcepted account validator response status detected');
     }
 }
 

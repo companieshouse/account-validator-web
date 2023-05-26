@@ -15,9 +15,18 @@ async function renderResultsPage(req: Request, res: Response) {
     const accountValidationResult = await accountValidatorService.check(fileId);
 
     try {
-        setInterval(async () => {
+        const interval = setInterval(async () => {
             sse.send({ message: await accountValidatorService.check(fileId) });
         }, 10000);
+
+        const closeSSE = () => {
+            clearInterval(interval); // Stop sending data
+            res.end(); // close the SSE stream
+        };
+
+        // Close SSE stream when the client disconnects
+        req.on('close', closeSSE);
+
     } catch (e){
         sse.dropIni();
     }
