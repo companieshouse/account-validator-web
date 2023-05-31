@@ -15,7 +15,6 @@
     eventSource.addEventListener('message', (event) => {
         const data = JSON.parse(event.data);
         document.getElementById('percentage').innerText = data.message.percent;
-        console.log(data);
 
         if(data.message.percent === 100){
             location.reload();
