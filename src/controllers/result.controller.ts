@@ -45,7 +45,7 @@ async function renderResultsPage(req: Request, res: Response) {
 
 resultController.get("/", handleErrors(renderResultsPage));
 
-resultController.get(`/sse/${myuuid}`,(req, res) => {
+resultController.get(`/sse/${myuuid}`, (req, res) => {
     sse.init(req, res);
     const sseInterval = setInterval(() => {
         if (closeStream){
