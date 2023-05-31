@@ -19,7 +19,6 @@
         if(data.message.percent === 100){
             location.reload();
             eventSource.close();
-            this.removeListener('message', () => console.log("Removed Listener"));
         }
     });
 </script>
