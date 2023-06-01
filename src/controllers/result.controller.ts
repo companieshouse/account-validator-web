@@ -40,7 +40,6 @@ resultController.get(`/sse`, (req, res) => {
             sse.send({ message: accountValidationResult });
             if (accountValidationResult.percent === 100){
                 clearInterval(interval);
-                res.set("Connection", "close");
             }
 
         }, UI_UPDATE_INTERVAL_SECONDS * 1000);
