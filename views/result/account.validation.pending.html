@@ -1,16 +1,16 @@
 <div class="govuk-width-container gov-container-align-center word-break">
-    
-    <h1 class="govuk-heading-l govuk-text-align-centre">Validation in progress</h1>
-    <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-8 govuk-text-align-centre"><span id="percentage">0</span>% complete</p>
-    <p class="govuk-body govuk-text-align-centre">This page will automatically update when the validation is complete.</p>  
 
-    <div class="gds-loading-icon-container">
-        <div class="spinner"></div>
+    <div class="gds-loading-icon-container govuk-!-margin-bottom-8">
+        <div class="gds-loading-icon"></div>
     </div>
+    
+    <h1 class="govuk-heading-l govuk-text-align-centre govuk-!-margin-bottom-2">Validation in progress</h1>
+    <p class="govuk-body govuk-!-margin-bottom-8 govuk-text-align-centre"><span id="percentage">0</span>% complete</p>
+    <p class="govuk-body govuk-text-align-centre">This page will automatically update when the validation is complete.</p>  
 </div>
 
 <script defer>
-    const eventSource = new EventSource("{{Urls.RESULT}}/{{fileId}}/sse/{{sseId}}");
+    const eventSource = new EventSource("{{Urls.RESULT}}/{{fileId}}/sse");
 
     eventSource.addEventListener('message', (event) => {
         const data = JSON.parse(event.data);

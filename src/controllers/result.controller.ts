@@ -4,11 +4,7 @@ import { Templates } from "../constants";
 import { handleErrors } from "../middleware/error.handler";
 import { RESULT_RELOAD_DURATION_SECONDS, UI_UPDATE_INTERVAL_SECONDS } from "../config";
 import SSE from "express-sse";
-import { v4 as uuidv4 } from 'uuid';
-
-const sse: SSE = new SSE();
-const myuuid = uuidv4();
-let closeStream: boolean;
+import { logger } from "../utils/logger";
 
 export const resultController = Router({ mergeParams: true });
 
@@ -17,42 +13,38 @@ async function renderResultsPage(req: Request, res: Response) {
 
     const accountValidationResult = await accountValidatorService.check(fileId);
 
-    try {
-        const interval = setInterval(async () => {
-            sse.send({ message: await accountValidatorService.check(fileId) });
-            if (accountValidationResult.percent === 100){
-                clearInterval(interval);
-                req.on('close', () => {
-                    res.end();
-                    sse.dropIni();
-                });
-                closeStream = true;
-            }
-        }, UI_UPDATE_INTERVAL_SECONDS * 1000);
-
-    } catch (e){
-        sse.dropIni();
-    }
-
     return res.render(Templates.RESULT, {
         fileId: fileId,
         templateName: Templates.RESULT,
         resultReloadDurationSeconds: RESULT_RELOAD_DURATION_SECONDS,
-        accountValidationResult: accountValidationResult,
-        sseId: myuuid,
+        accountValidationResult: accountValidationResult
     });
 }
 
 resultController.get("/", handleErrors(renderResultsPage));
 
-resultController.get(`/sse/${myuuid}`, (req, res) => {
+resultController.get(`/sse`, (req, res) => {
+    const fileId = req.params["id"];
+
+    const sse = new SSE();
     sse.init(req, res);
-    const sseInterval = setInterval(() => {
-        if (closeStream){
-            clearInterval(sseInterval);
-            res.end();
-        }
-    }, UI_UPDATE_INTERVAL_SECONDS * 1000);
 
+    req.on('close', () => {
+        logger.info("Request now closed");
+    })
+    
+    try {
+        const interval = setInterval(async () => {
+            const accountValidationResult = await accountValidatorService.check(fileId);
 
+            sse.send({ message:  accountValidationResult });
+            if (accountValidationResult.percent === 100){
+                clearInterval(interval);
+                res.set("Connection", "close");
+            }
+
+        }, UI_UPDATE_INTERVAL_SECONDS * 1000);
+    } catch (e){
+        sse.dropIni();
+    }
 });
