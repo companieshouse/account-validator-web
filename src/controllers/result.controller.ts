@@ -2,25 +2,16 @@ import { Response, Request, Router } from "express";
 import { accountValidatorService } from "../services/account.validation.service";
 import { Templates } from "../constants";
 import { handleErrors } from "../middleware/error.handler";
-import { RESULT_RELOAD_DURATION_SECONDS } from "../config";
+import { RESULT_RELOAD_DURATION_SECONDS, UI_UPDATE_INTERVAL_SECONDS } from "../config";
 import SSE from "express-sse";
-
-const sse: SSE = new SSE();
+import { logger } from "../utils/logger";
 
 export const resultController = Router({ mergeParams: true });
 
 async function renderResultsPage(req: Request, res: Response) {
-    const fileId = req.params['id'];
+    const fileId = req.params["id"];
 
     const accountValidationResult = await accountValidatorService.check(fileId);
-
-    try {
-        setInterval(async () => {
-            sse.send({ message: await accountValidatorService.check(fileId) });
-        }, 10000);
-    } catch (e){
-        sse.dropIni();
-    }
 
     return res.render(Templates.RESULT, {
         fileId: fileId,
@@ -30,7 +21,29 @@ async function renderResultsPage(req: Request, res: Response) {
     });
 }
 
-resultController.get('/', handleErrors(renderResultsPage));
-resultController.get('/sse', (req, res) => {
+resultController.get("/", handleErrors(renderResultsPage));
+
+resultController.get(`/sse`, (req, res) => {
+    const fileId = req.params["id"];
+
+    const sse = new SSE();
     sse.init(req, res);
+
+    req.on('close', () => {
+        logger.info("Request now closed");
+    });
+
+    try {
+        const interval = setInterval(async () => {
+            const accountValidationResult = await accountValidatorService.check(fileId);
+
+            sse.send({ message: accountValidationResult });
+            if (accountValidationResult.percent === 100){
+                clearInterval(interval);
+            }
+
+        }, UI_UPDATE_INTERVAL_SECONDS * 1000);
+    } catch (e){
+        sse.dropIni();
+    }
 });

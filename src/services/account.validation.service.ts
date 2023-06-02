@@ -6,7 +6,7 @@ import { File, Id } from "private-api-sdk-node/dist/services/file-transfer/types
 import { ApiErrorResponse } from "@companieshouse/api-sdk-node/dist/services/resource";
 import { Urls } from "../constants";
 import { logger } from "../utils/logger";
-import * as validationStatus from "../utils/validationStatusType";
+import { ValidationStatusType, ValidationStatusPercents } from "../utils/validationStatusType";
 
 /**
  * Interface representing the account validation service
@@ -32,6 +32,8 @@ interface ValidationResultCommon {
     fileId: string;
     /** The name of the file */
     fileName: string;
+
+    percent: number;
 }
 
 /**
@@ -62,7 +64,7 @@ interface PendingValidationResult extends ValidationResultCommon {
     /** The status of the validation result */
     status: "pending";
     /** The progress */
-    percent: string;
+    message?: string;
 }
 
 interface ErrorValidationResult extends ValidationResultCommon {
@@ -89,6 +91,7 @@ export function mapResponseType(
     const accountValidatorResponse = (
         accountValidatorResource as Resource<AccountValidatorResponse>
     ).resource;
+    logger.trace("Response: " + JSON.stringify(accountValidatorResponse));
     if (accountValidatorResponse === undefined) {
         throw new Error(
             `Resource inside accountValidatorResource is undefined. ` +
@@ -98,11 +101,10 @@ export function mapResponseType(
     }
 
     const result = accountValidatorResponse.result;
-
     const baseResult = {
         fileId: accountValidatorResponse.fileId,
         fileName: accountValidatorResponse.fileName as string,
-        percent: getProgress(result.validationStatus),
+        percent: ValidationStatusPercents[result.validationStatus],
     };
 
     switch (accountValidatorResponse.status) {
@@ -117,21 +119,20 @@ export function mapResponseType(
     }
 
     switch (result.validationStatus) {
-            case validationStatus.ValidationStatusTypeString(validationStatus.ValidationStatusType.OK):
+            case ValidationStatusType.OK:
                 return {
                     status: "success",
                     imageUrl: validFileForRendering(baseResult.fileName) ? `${Urls.RENDER}/${baseResult.fileId}` : undefined,
                     ...baseResult
                 };
-            case validationStatus.ValidationStatusTypeString(validationStatus.ValidationStatusType.FAILED):
+            case ValidationStatusType.FAILED:
                 return {
                     status: "failure",
                     reasons: result.errorMessages.map(em => em['errorMessage']),
                     ...baseResult
                 };
             default:
-                throw new Error('Unexcepted validation status detected');
-
+                throw new Error(`Unexcepted validation status detected: ${result.validationStatus}`);
     }
 }
 
@@ -236,7 +237,3 @@ export class AccountValidator implements AccountValidationService {
 }
 
 export const accountValidatorService = new AccountValidator();
-
-export function getProgress(status: string): string {
-    return validationStatus.ValidationStatusType[status].toString();
-}
