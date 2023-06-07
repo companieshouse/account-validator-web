@@ -29,6 +29,7 @@ export const PORT = parseInt(getEnvironmentVariable("PORT", 3000));
 export const RESULT_RELOAD_DURATION_SECONDS = parseFloat(getEnvironmentVariable("RESULT_RELOAD_DURATION_SECONDS", 5));
 export const SURVEY_LINK = getEnvironmentVariable("SURVEY_LINK", "");
 export const UI_UPDATE_INTERVAL_SECONDS = parseInt(getEnvironmentVariable("ACCOUNT_VALIDATOR_UI_UPDATE_INTERVAL_SECONDS", 10));
+export const UI_UPDATE_TIMEOUT_SECONDS = parseInt(getEnvironmentVariable("ACCOUNT_VALIDATOR_UI_UPDATE_TIMEOUT_SECONDS", 300));
 
 /**
  * Parses a file size string and returns the equivalent number of bytes.

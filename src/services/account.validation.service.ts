@@ -114,8 +114,11 @@ export function mapResponseType(
                     ...baseResult
                 };
             case "error":
-                logger.error(`Error validating document. Showing error page.`);
-                throw `Error validating file ${JSON.stringify(accountValidatorResponse)}`;
+                logger.error(`Error validating document. Showing error page. Response: ${JSON.stringify(accountValidatorResponse)}`);
+                return {
+                    status: "error",
+                    ...baseResult
+                };
     }
 
     switch (result.validationStatus) {
