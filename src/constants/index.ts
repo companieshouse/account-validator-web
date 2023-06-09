@@ -18,4 +18,8 @@ export enum Urls {
     RESULT = "/xbrl_validate/result",
     HEALTH_CHECK_SUFFIX = "/healthcheck",
     HEALTH_CHECK = "/xbrl_validate/healthcheck",
+    ERROR = "/xbrl_validate/error",
+    ERROR_SUFFIX = "/error"
 }
+
+export const timeoutMessage = "timeout";

@@ -27,9 +27,13 @@
 
     eventSource.addEventListener('message', (event) => {
         const data = JSON.parse(event.data);
+        if (data.message === "{{timeoutMessage}}") {
+            window.location.href = "{{Urls.ERROR}}";
+        }
+
         document.getElementById('percentage').innerText = `${data.message.percent}% complete`;
 
-        if(data.message.percent === 100){
+        if(data.message.percent === 100) {
             location.reload();
             eventSource.close();
         }
