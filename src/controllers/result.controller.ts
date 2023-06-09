@@ -1,8 +1,8 @@
 import { Response, Request, Router } from "express";
 import { accountValidatorService } from "../services/account.validation.service";
-import { Templates } from "../constants";
+import { Templates, timeoutMessage } from "../constants";
 import { handleErrors } from "../middleware/error.handler";
-import { RESULT_RELOAD_DURATION_SECONDS, UI_UPDATE_INTERVAL_SECONDS, UI_UPDATE_TIMEOUT_SECONDS } from "../config";
+import { UI_UPDATE_INTERVAL_MS, UI_UPDATE_TIMEOUT_MS } from "../config";
 import SSE from "express-sse";
 import { logger } from "../utils/logger";
 
@@ -19,8 +19,8 @@ async function renderResultsPage(req: Request, res: Response) {
     return res.render(Templates.RESULT, {
         fileId: fileId,
         templateName: Templates.RESULT,
-        resultReloadDurationSeconds: RESULT_RELOAD_DURATION_SECONDS,
-        accountValidationResult: accountValidationResult
+        accountValidationResult: accountValidationResult,
+        timeoutMessage: timeoutMessage
     });
 }
 
@@ -53,12 +53,13 @@ resultController.get(`/sse`, (req, res) => {
             if (accountValidationResult.percent === 100){
                 cleanupHandles();
             }
-        }, UI_UPDATE_INTERVAL_SECONDS * 1000);
+        }, UI_UPDATE_INTERVAL_MS);
 
         uiTimeoutHandler = setTimeout(() => {
             logger.error(`UI update timeout reached. Closing SSE for file [${fileId}].`);
+            sse.send({ message: timeoutMessage });
             clearInterval(uiUpdateInterval);
-        }, UI_UPDATE_TIMEOUT_SECONDS * 1000);
+        }, UI_UPDATE_TIMEOUT_MS);
     } catch (e) {
         sse.send({ message: { percent: 100 } });
         sse.dropIni();
