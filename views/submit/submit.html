@@ -24,7 +24,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="govuk-grid-row">
+    <div id="submit" class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl">
                 Upload your accounts file
@@ -32,7 +32,7 @@
             
             {{ errorSummary() }}
 
-            <form method="POST" enctype="multipart/form-data">
+            <form method="POST" enctype="multipart/form-data" action="{{Urls.SUBMIT}}">
                 {{ govukFileUpload({
                     id: "file",
                     name: "file",
@@ -45,12 +45,29 @@
                 <p class="govuk-body">The validation process may take a few minutes.</p>
 
                 {{ govukButton({
+                    id: "submit-button",
                     text: "Validate",
                     type: "submit"
                 }) }}
-
             </form>
+
+            <div id="progress">
+            </div>
         </div>
     </div>
+
+    <div id="pending" class="govuk-grid-row hidden">
+        {% include "result/account.validation.pending.html" %}
+    </div>
+
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
+
+    <script>
+        {% include "submit/submit.js" %}
+    </script>
 {% endblock %}
 

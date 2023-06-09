@@ -130,6 +130,10 @@ submitController.post(
     (req: SubmitPageRequest, res: Response) => {
         if (req.formValidationResult?.hasErrors) {
             return renderSubmitPage(req, res);
+        } else if (req.headers.accept === 'application/json') {
+            return res.json({
+                fileId: req.accountValidationResult?.fileId
+            });
         } else {
             return res.redirect(
                 `${Urls.RESULT}/${req.accountValidationResult?.fileId}`
