@@ -18,7 +18,12 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            {{ showValidationResult() }}
+            {% include "result/account.validation." + accountValidationResult.status + ".html" %}
+
+            {% if accountValidationResult.status != "pending" %}
+                <h2 class="govuk-heading-m">What happens next</h2>
+                <p><a href="{{Urls.SUBMIT}}">Check another iXBRL accounts file</a> or close this browser if you've finished checking your files.</p>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
@@ -29,13 +34,3 @@
         href: Urls.SUBMIT
     }) }}
 {% endblock %}
-
-{# Assumes accountValidationResult is not undefined! #}
-{% macro showValidationResult() %}
-    {% if accountValidationResult %}
-        {% include "result/account.validation." + accountValidationResult.status + ".html" %}
-    {% endif %}
-{% endmacro %}
-
-<h2 class="govuk-heading-m">What happens next</h2>
-<p><a href="{{Urls.BASE}}">Check another iXBRL accounts file</a> or close this browser if you've finished checking your files.</p>
