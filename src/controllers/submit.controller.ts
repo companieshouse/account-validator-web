@@ -116,9 +116,7 @@ async function submitFileForValidation(
 }
 
 function handleMaxFileSizeError(err: Error, req: SubmitPageRequest, res: Response, next: NextFunction) {
-    logger.error(`Handling max file size error`);
     if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
-        logger.error(`Handling max file size error 2`);
         const maxSizeMB = Math.round(MAX_FILE_SIZE / 1024 / 1024);
 
         if (req.formValidationResult === undefined) {
