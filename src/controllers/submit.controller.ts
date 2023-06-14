@@ -44,8 +44,7 @@ function renderSubmitPage(req: SubmitPageRequest, res: Response) {
     });
 }
 
-function validateForm(file?: Express.Multer.File, ValidationResult = new ValidationResult()) {
-
+function validateForm(file?: Express.Multer.File, validationResult = new ValidationResult()) {
     if (file === undefined) {
         validationResult.addError("file", "Select an accounts file.");
     } else if (!isZipOrXBRLFile(file)) {
