@@ -33,7 +33,7 @@ const parseMultipartForm = multer({
         files: 1, // only 1 file per request
     },
     storage: multer.memoryStorage(),
-});
+}).single('file');
 
 function renderSubmitPage(req: SubmitPageRequest, res: Response) {
     return res.render(Templates.SUBMIT, {
@@ -44,8 +44,10 @@ function renderSubmitPage(req: SubmitPageRequest, res: Response) {
     });
 }
 
-function validateForm(file?: Express.Multer.File) {
-    const validationResult = new ValidationResult();
+function validateForm(file?: Express.Multer.File, validationResult?: ValidationResult) {
+    if (validationResult === undefined) {
+        validationResult = new ValidationResult();
+    }
 
     if (file === undefined) {
         validationResult.addError("file", "Select an accounts file.");
@@ -98,11 +100,10 @@ async function submitFileForValidation(
     res: Response,
     next: NextFunction
 ) {
-    const fileValidationResult = validateForm(req.file);
-    req.formValidationResult = fileValidationResult;
+    req.formValidationResult = validateForm(req.file, req.formValidationResult);
 
     // Check that the file is okay to submit to the API for validation
-    if (fileValidationResult.hasErrors) {
+    if (req.formValidationResult.hasErrors) {
         res.status(400);
         next();
         return;
@@ -118,6 +119,24 @@ async function submitFileForValidation(
     next();
 }
 
+function handleMaxFileSizeError(err: Error, req: SubmitPageRequest, res: Response, next: NextFunction) {
+    logger.error(`Handling max file size error`);
+    if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
+        logger.error(`Handling max file size error 2`);
+        const maxSizeMB = Math.round(MAX_FILE_SIZE / 1024 / 1024);
+        
+        if (req.formValidationResult === undefined) {
+            req.formValidationResult = new ValidationResult();
+        }
+        
+        req.formValidationResult.addError('file', `The selected file must be smaller than ${maxSizeMB}MB`);
+        
+        next();
+    } else {
+        next(err);
+    }
+}
+
 export const submitController = Router();
 submitController.use(addFormValidationResult);
 
@@ -125,8 +144,9 @@ submitController.get("/", renderSubmitPage);
 
 submitController.post(
     "/",
-    parseMultipartForm.single("file"),
+    parseMultipartForm,
     handleErrors(submitFileForValidation),
+    handleMaxFileSizeError,
     (req: SubmitPageRequest, res: Response) => {
         if (req.formValidationResult?.hasErrors) {
             return renderSubmitPage(req, res);
