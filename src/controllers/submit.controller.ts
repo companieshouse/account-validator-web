@@ -44,10 +44,7 @@ function renderSubmitPage(req: SubmitPageRequest, res: Response) {
     });
 }
 
-function validateForm(file?: Express.Multer.File, validationResult?: ValidationResult) {
-    if (validationResult === undefined) {
-        validationResult = new ValidationResult();
-    }
+function validateForm(file?: Express.Multer.File, ValidationResult = new ValidationResult()) {
 
     if (file === undefined) {
         validationResult.addError("file", "Select an accounts file.");
