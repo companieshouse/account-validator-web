@@ -26,7 +26,7 @@ async function renderResultsPage(req: Request, res: Response) {
 
 resultController.get("/", handleErrors(renderResultsPage));
 
-resultController.get(`/sse`, (req, res) => {
+export function handleUIUpdates(req: Request, res: Response) {
     const fileId = req.params["id"];
 
     let uiUpdateInterval: NodeJS.Timer | undefined = undefined;
@@ -45,27 +45,28 @@ resultController.get(`/sse`, (req, res) => {
         cleanupHandles();
     });
 
-    try {
-        uiUpdateInterval = setInterval(async () => {
+    uiUpdateInterval = setInterval(async () => {
+        try {
             const accountValidationResult = await accountValidatorService.check(fileId);
 
             sse.send({ message: accountValidationResult });
             if (accountValidationResult.percent === 100){
                 cleanupHandles();
             }
-        }, UI_UPDATE_INTERVAL_MS);
-
-        uiTimeoutHandler = setTimeout(() => {
-            logger.error(`UI update timeout reached. Closing SSE for file [${fileId}].`);
+        } catch (e) {
+            logger.error(`Encountered error while updating validation progress: ${JSON.stringify(e)}`);
 
             sse.send({ message: errorMessage });
-            clearInterval(uiUpdateInterval);
-        }, UI_UPDATE_TIMEOUT_MS);
-    } catch (e) {
-        logger.error(`Encountered error while updating validation progress: ${JSON.stringify(e)}`);
+            cleanupHandles();
+        }
+    }, UI_UPDATE_INTERVAL_MS);
+
+    uiTimeoutHandler = setTimeout(() => {
+        logger.error(`UI update timeout reached. Closing SSE for file [${fileId}].`);
 
         sse.send({ message: errorMessage });
-        sse.dropIni();
-        cleanupHandles();
-    }
-});
+        clearInterval(uiUpdateInterval);
+    }, UI_UPDATE_TIMEOUT_MS);
+}
+
+resultController.get(`/sse`, handleUIUpdates);
