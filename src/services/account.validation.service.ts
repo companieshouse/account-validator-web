@@ -100,6 +100,14 @@ export function mapResponseType(
         );
     }
 
+    if (accountValidatorResponse.result === undefined || accountValidatorResponse === null) {
+        logger.error(`account-validator-api response result field is null or undefined. ` +
+            `This shouldn't happen. It should atleast have validation status showing the validation stage. ` +
+            `Response: ${JSON.stringify(accountValidatorResponse, null, 2)}`);
+
+        throw new Error(`account-validator-api response result field is null or undefined.`);
+    }
+
     const result = accountValidatorResponse.result;
     const baseResult = {
         fileId: accountValidatorResponse.fileId,

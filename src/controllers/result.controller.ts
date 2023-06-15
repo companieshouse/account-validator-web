@@ -1,6 +1,6 @@
 import { Response, Request, Router } from "express";
 import { accountValidatorService } from "../services/account.validation.service";
-import { Templates, timeoutMessage } from "../constants";
+import { Templates, errorMessage } from "../constants";
 import { handleErrors } from "../middleware/error.handler";
 import { UI_UPDATE_INTERVAL_MS, UI_UPDATE_TIMEOUT_MS } from "../config";
 import SSE from "express-sse";
@@ -20,7 +20,7 @@ async function renderResultsPage(req: Request, res: Response) {
         fileId: fileId,
         templateName: Templates.RESULT,
         accountValidationResult: accountValidationResult,
-        timeoutMessage: timeoutMessage
+        errorMessage: errorMessage
     });
 }
 
@@ -57,11 +57,14 @@ resultController.get(`/sse`, (req, res) => {
 
         uiTimeoutHandler = setTimeout(() => {
             logger.error(`UI update timeout reached. Closing SSE for file [${fileId}].`);
-            sse.send({ message: timeoutMessage });
+
+            sse.send({ message: errorMessage });
             clearInterval(uiUpdateInterval);
         }, UI_UPDATE_TIMEOUT_MS);
     } catch (e) {
-        sse.send({ message: { percent: 100 } });
+        logger.error(`Encountered error while updating validation progress: ${JSON.stringify(e)}`);
+
+        sse.send({ message: errorMessage });
         sse.dropIni();
         cleanupHandles();
     }
