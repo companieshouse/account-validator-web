@@ -22,4 +22,4 @@ export enum Urls {
     ERROR_SUFFIX = "/error"
 }
 
-export const timeoutMessage = "timeout";
+export const errorMessage = "timeout";

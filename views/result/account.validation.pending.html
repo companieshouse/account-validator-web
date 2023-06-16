@@ -27,8 +27,9 @@
 
     eventSource.addEventListener('message', (event) => {
         const data = JSON.parse(event.data);
-        if (data.message === "{{timeoutMessage}}") {
+        if (data.message === "{{errorMessage}}") {
             window.location.href = "{{Urls.ERROR}}";
+            return;
         }
 
         document.getElementById('percentage').innerText = `${data.message.percent}% complete`;
