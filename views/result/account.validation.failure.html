@@ -7,7 +7,7 @@
     </p>
 <ul class="govuk-list govuk-list--bullet">
     {% for reason in accountValidationResult.reasons %}
-        <li>{{ reason }}</li>
+        <li class="wrap-overflow">{{ reason }}</li>
     {% endfor %}
 </ul>
 {% endset %}
