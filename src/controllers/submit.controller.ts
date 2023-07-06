@@ -1,6 +1,6 @@
 import { Response, Request, Router, NextFunction } from "express";
 import { MAX_FILE_SIZE } from "../config";
-import { Templates, Urls } from "../constants";
+import { Templates } from "../constants";
 import multer from "multer";
 import { ValidationResult } from "../validation/validation.result";
 import {
@@ -145,7 +145,7 @@ submitController.post(
         if (req.formValidationResult?.hasErrors) {
             return renderSubmitPage(req, res);
         } else {
-            return res.json({fileId: req.accountValidationResult?.fileId });
+            return res.json({ fileId: req.accountValidationResult?.fileId });
             // return res.redirect(
             //     `${Urls.RESULT}/${req.accountValidationResult?.fileId}`
             // );
