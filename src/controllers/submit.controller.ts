@@ -146,9 +146,6 @@ submitController.post(
             return renderSubmitPage(req, res);
         } else {
             return res.json({ fileId: req.accountValidationResult?.fileId });
-            // return res.redirect(
-            //     `${Urls.RESULT}/${req.accountValidationResult?.fileId}`
-            // );
         }
     }
 );
