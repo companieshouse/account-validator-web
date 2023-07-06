@@ -139,15 +139,16 @@ submitController.get("/", renderSubmitPage);
 submitController.post(
     "/",
     parseMultipartForm,
-    handleErrors(submitFileForValidation),
     handleMaxFileSizeError,
+    handleErrors(submitFileForValidation),
     (req: SubmitPageRequest, res: Response) => {
         if (req.formValidationResult?.hasErrors) {
             return renderSubmitPage(req, res);
         } else {
-            return res.redirect(
-                `${Urls.RESULT}/${req.accountValidationResult?.fileId}`
-            );
+            return res.json({fileId: req.accountValidationResult?.fileId });
+            // return res.redirect(
+            //     `${Urls.RESULT}/${req.accountValidationResult?.fileId}`
+            // );
         }
     }
 );
