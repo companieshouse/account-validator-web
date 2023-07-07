@@ -21,22 +21,3 @@
     <p id="percentage" class="govuk-body govuk-!-margin-bottom-8 govuk-text-align-centre">25% complete</p>
     <p class="govuk-body govuk-text-align-centre">This page will automatically update when the validation is complete.</p>  
 </div>
-
-<script defer>
-    const eventSource = new EventSource("{{Urls.RESULT}}/{{fileId}}/sse");
-
-    eventSource.addEventListener('message', (event) => {
-        const data = JSON.parse(event.data);
-        if (data.message === "{{errorMessage}}") {
-            window.location.href = "{{Urls.ERROR}}";
-            return;
-        }
-
-        document.getElementById('percentage').innerText = `${data.message.percent}% complete`;
-
-        if(data.message.percent === 100) {
-            location.reload();
-            eventSource.close();
-        }
-    });
-</script>

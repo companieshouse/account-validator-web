@@ -41,7 +41,7 @@ describe("Submit controller tests", () => {
         mockSubmit.mockRestore();
     });
 
-    it('Should redirect to the result page with the fileId after successful validation', async () => {
+    it('Should return the fileID on successful submission', async () => {
         const mockSubmit = jest.spyOn(mockedValidatorService, 'submit');
         mockSubmit.mockResolvedValue({ status: 'pending', fileId: '12345', fileName: '' } as AccountValidationResult);
 
@@ -49,8 +49,8 @@ describe("Submit controller tests", () => {
             .post(Urls.SUBMIT)
             .attach('file', Buffer.from(''), { filename: 'test_file.zip' });
 
-        expect(response.status).toBe(302);
-        expect(response.header.location).toEqual(`${Urls.RESULT}/12345`);
+        expect(response.status).toBe(200);
+        expect(response.body.fileId).toBe('12345');
 
         mockSubmit.mockRestore();
     });
@@ -79,7 +79,7 @@ describe("Submit controller tests", () => {
             .attach('file', Buffer.from('A'.repeat(MAX_FILE_SIZE + 1)), { filename: 'large_file.zip' });
 
         // The server should respond with a 400 error
-        expect(response.status).toBe(200);
+        expect(response.status).toBe(400);
         // And the error message should mention the maximum file size
         const maxSizeMB = Math.round(MAX_FILE_SIZE / 1024 / 1024);
         expect(response.text).toContain(`The selected file must be smaller than ${maxSizeMB}MB`);
