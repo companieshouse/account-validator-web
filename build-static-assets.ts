@@ -13,7 +13,7 @@ async function buildAssets() {
             bundle: true,
             platform: "browser",
             target: ["es2015"],
-            sourcemap: true,
+            // sourcemap: true, // Uncomment this to emit a source map to view the typescript code in the browser
             minify: true,
             format: "iife",
             plugins: [globPlugin()],
