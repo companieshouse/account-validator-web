@@ -5,7 +5,9 @@
     "main": "./src/bin/www.ts",
     "scripts": {
         "start": "node dist/bin/www.js",
-        "build": "tsc && cp -r views dist/",
+        "build:server": "tsc && cp -r views dist/",
+        "build:assets": "ts-node build-static-assets.ts",
+        "build": "npm run build:server && npm run build:assets",
         "dev": "nodemon --watch src --ignore 'src/**/*.unit.ts' --ext ts --exec 'NODE_OPTIONS=\"--inspect=0.0.0.0\" ts-node ./src/bin/www.ts'",
         "test": "jest",
         "lint": "eslint '{src,test}/**/*'",
@@ -17,6 +19,7 @@
         "prepare": "husky install"
     },
     "dependencies": {
+        "16": "^0.0.2",
         "@companieshouse/api-sdk-node": "^2.0.70",
         "@companieshouse/structured-logging-node": "^1.0.4",
         "@companieshouse/web-security-node": "^2.0.0",
@@ -24,6 +27,7 @@
         "cookie-parser": "^1.4.6",
         "express": "^4.17.1",
         "express-sse": "^0.5.1",
+        "glob": "^10.3.3",
         "govuk-frontend": "^3.14.0",
         "js-yaml": "^4.1.0",
         "luxon": "^2.1.1",
@@ -47,7 +51,10 @@
         "@types/uuid": "^8.3.3",
         "@typescript-eslint/eslint-plugin": "^4.27.0",
         "@typescript-eslint/parser": "^4.27.0",
+        "esbuild": "^0.18.11",
+        "esbuild-plugin-glob": "^2.2.2",
         "eslint": "^7.28.0",
+        "gulp": "^4.0.2",
         "husky": "^8.0.2",
         "jest": "^27.3.1",
         "nodemon": "^2.0.20",

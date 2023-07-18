@@ -24,7 +24,7 @@
 {% endblock %}
 
 {% block content %}
-    <div id="submit" class="govuk-grid-row">
+    <div id="submit" class="govuk-grid-row" aria-hidden="false">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl">
                 Upload your accounts file
@@ -56,13 +56,18 @@
         </div>
     </div>
 
-    <div id="pending" class="govuk-grid-row govuk-!-display-none">
+    <div id="pending" class="govuk-grid-row govuk-!-display-none" aria-hidden="true">
         {% include "result/account.validation.pending.html" %}
     </div>
 
-    <script src="{{assetPath}}/javascripts/app/account-validation-web/file-upload.min.js"></script>
+    <script src="{{assetPath}}/javascripts/app/account-validation-web/file-upload.js"></script>
     <script>
-        {% include "submit/submit.js" %}
+        var resultsUrl = "{{Urls.RESULT}}";
+        var errorUrl = "{{Urls.ERROR}}";
+        var timeoutMessage = "{{timeoutMessage}}";
+
+        //@ts-ignore
+        setupForm(resultsUrl, errorUrl, timeoutMessage);
     </script>
 {% endblock %}
 
