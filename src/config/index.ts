@@ -59,6 +59,8 @@ export const MAX_FILE_SIZE = parseFileSize(
     getEnvironmentVariable("ACCOUNT_VALIDATOR_MAX_FILE_SIZE", "30MB")
 );
 
+export const MAX_FILE_SIZE_MB = Math.round(MAX_FILE_SIZE / 1024 / 1024);
+
 /**
  * Parse a duration string into milliseconds.
  * The string can include hours (h), minutes (m), and seconds (s), like "1h", "2m 5s", "15m", "1h34m".

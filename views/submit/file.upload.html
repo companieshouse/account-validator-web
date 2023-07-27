@@ -1,0 +1,24 @@
+<h1 class="govuk-heading-xl">
+        Upload your accounts file
+    </h1>
+
+{{ errorSummary() }}
+
+<form method="POST" enctype="multipart/form-data" action="{{Urls.SUBMIT}}">
+    {{ govukFileUpload({
+            id: "{{FILE_UPLOAD_FIELD_NAME}}",
+            name: "{{FILE_UPLOAD_FIELD_NAME}}",
+            errorMessage: formValidationResult.getErrorForField("{{FILE_UPLOAD_FIELD_NAME}}"),
+            label: {
+                text: "Upload your accounts file, then select continue."
+            }
+        }) }}
+
+    <p class="govuk-body">The validation process may take a few minutes.</p>
+
+    {{ govukButton({
+            id: "submit-button",
+            text: "Validate",
+            type: "submit"
+        }) }}
+</form>
