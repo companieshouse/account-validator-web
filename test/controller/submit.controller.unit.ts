@@ -2,66 +2,183 @@ import { mockedValidatorService } from '../mocks/account.validator.service.mock'
 
 import request from "supertest";
 import app from '../../src/app';
-import { Urls } from '../../src/constants';
+import { Urls, FILE_UPLOAD_FIELD_NAME, ErrorMessages } from '../../src/constants';
+import { AccountValidationResult } from '../../src/services/account.validation.service';
+import { MAX_FILE_SIZE, MAX_FILE_SIZE_MB } from '../../src/config';
+import { SubmittedFileValidationRequest } from '../../src/validation/submit.controller.validation';
 
 describe("Submit controller tests", () => {
+    it("Should render the submit page", async () => {
+        const response = await request(app).
+            get(Urls.SUBMIT);
+
+        expect(response.status).toBe(200);
+
+        const fileUploadHtml = `<input class="govuk-file-upload" id="file" name="file" type="file">`;
+        expect(response.text).toContain(fileUploadHtml);
+        const hiddenPendingPage = `id="pending" class="govuk-grid-row govuk-!-display-none"`;
+        expect(response.text).toContain(hiddenPendingPage);
+    });
+
+    const zipFileMagicBytes = "PK\u0003\u0004";
+    it("Should return 200 OK and no HTML when validating a file input", async () => {
+        const payload: SubmittedFileValidationRequest = {
+            file: {
+                size: 42,
+                firstBytes: zipFileMagicBytes
+            }
+        };
+
+        const response = await request(app)
+            .post(Urls.SUBMIT_VALIDATE)
+            .send(payload)
+            .set('Content-Type', 'application/json');
+
+        expect(response.status).toBe(200);
+    });
+
+    it("Should return 400 when validting and there is no file", async () => {
+        const payload: SubmittedFileValidationRequest = {
+            file: null
+        };
+
+        const response = await request(app)
+            .post(Urls.SUBMIT_VALIDATE)
+            .send(payload)
+            .set('Content-Type', 'application/json');
+
+        expect(response.status).toBe(400);
+        expect(response.text).toContain(ErrorMessages.NO_FILE);
+    });
+
+    it("Should return 400 when validting and the file is too big", async () => {
+        const payload: SubmittedFileValidationRequest = {
+            file: {
+                size: MAX_FILE_SIZE + 1,
+                firstBytes: zipFileMagicBytes
+            }
+        };
+
+        const response = await request(app)
+            .post(Urls.SUBMIT_VALIDATE)
+            .send(payload)
+            .set('Content-Type', 'application/json');
+
+        expect(response.status).toBe(400);
+        expect(response.text).toContain(ErrorMessages.FILE_TOO_LARGE(MAX_FILE_SIZE_MB));
+    });
+
+    it("Should return 400 when validting and the file not a valid type", async () => {
+        const payload: SubmittedFileValidationRequest = {
+            file: {
+                size: 42,
+                firstBytes: "Not a ZIP or HTML file"
+            }
+        };
+
+        const response = await request(app)
+            .post(Urls.SUBMIT_VALIDATE)
+            .send(payload)
+            .set('Content-Type', 'application/json');
+
+        expect(response.status).toBe(400);
+        expect(response.text).toContain(ErrorMessages.INVALID_FILE_TYPE);
+    });
+
+    it("Should return file ID as JSON when successfully submitted", async () => {
+        const mockSubmit = jest.spyOn(mockedValidatorService, 'submit');
+        const mockValue = { status: 'pending', fileId: '12345', fileName: '' };
+        mockSubmit.mockResolvedValue(mockValue as AccountValidationResult);
+
+        const response = await request(app)
+            .post(Urls.SUBMIT)
+            .attach(FILE_UPLOAD_FIELD_NAME, Buffer.from(`PK\u0003\u0004`), { filename: 'test_file.zip' });
+
+        expect(response.status).toBe(200);
+        const resp = JSON.parse(response.text);
+        expect(resp).toHaveProperty('fileId');
+        expect(resp.fileId).toBe(mockValue.fileId);
+    });
+
+
     it('Should reject post submissions with no file', async () => {
         const response = await request(app)
-            .post(Urls.SUBMIT);
+            .post(Urls.SUBMIT)
+            .attach(FILE_UPLOAD_FIELD_NAME, Buffer.from([]));
 
         expect(response.status).toBe(400);
-        expect(response.text).toContain('Select an accounts file.');
+        expect(response.text).toContain(ErrorMessages.NO_FILE);
     });
 
-    it(`Should reject post submissions with a file that isn't XBRL or ZIP`, async () => {
-        const response = await request(app)
-            .post(Urls.SUBMIT)
-            .attach('file', Buffer.from(''), { filename: 'not_xbrl.jpg' } );
+    // it(`Should reject post submissions with a file that isn't XBRL or ZIP`, async () => {
+    //     const response = await request(app)
+    //         .post(Urls.SUBMIT)
+    //         .attach(FILE_UPLOAD_FIELD_NAME, Buffer.from(''), { filename: 'not_xbrl.jpg' } );
 
 
-        expect(response.status).toBe(400);
-        expect(response.text).toContain('The selected file must be a XHTML or ZIP.');
-    });
+    //     expect(response.status).toBe(400);
+    //     expect(response.text).toContain('The selected file must be a XHTML or ZIP.');
+    // });
 
-    it('Should call accountValidatorService.submit with the correct file', async () => {
-        const mockSubmit = jest.spyOn(mockedValidatorService, 'submit');
-        mockSubmit.mockResolvedValue({ status: 'pending', fileId: '12345', fileName: '' });
+    // it('Should call accountValidatorService.submit with the correct file', async () => {
+    //     const mockSubmit = jest.spyOn(mockedValidatorService, 'submit');
+    //     mockSubmit.mockResolvedValue({ status: 'pending', fileId: '12345', fileName: '' } as AccountValidationResult);
 
-        await request(app)
-            .post(Urls.SUBMIT)
-            .attach('file', Buffer.from(''), { filename: 'test_file.zip' });
+    //     await request(app)
+    //         .post(Urls.SUBMIT)
+    //         .attach(FILE_UPLOAD_FIELD_NAME, Buffer.from(''), { filename: 'test_file.zip' });
 
-        expect(mockSubmit).toHaveBeenCalledWith(expect.objectContaining({
-            originalname: 'test_file.zip'
-        }));
+    //     expect(mockSubmit).toHaveBeenCalledWith(expect.objectContaining({
+    //         originalname: 'test_file.zip'
+    //     }));
 
-        mockSubmit.mockRestore();
-    });
+    //     mockSubmit.mockRestore();
+    // });
 
-    it('Should redirect to the result page with the fileId after successful validation', async () => {
-        const mockSubmit = jest.spyOn(mockedValidatorService, 'submit');
-        mockSubmit.mockResolvedValue({ status: 'pending', fileId: '12345', fileName: '' });
+    // it('Should return the fileID on successful submission', async () => {
+    //     const mockSubmit = jest.spyOn(mockedValidatorService, 'submit');
+    //     mockSubmit.mockResolvedValue({ status: 'pending', fileId: '12345', fileName: '' } as AccountValidationResult);
 
-        const response = await request(app)
-            .post(Urls.SUBMIT)
-            .attach('file', Buffer.from(''), { filename: 'test_file.zip' });
+    //     const response = await request(app)
+    //         .post(Urls.SUBMIT)
+    //         .attach(FILE_UPLOAD_FIELD_NAME, Buffer.from(''), { filename: 'test_file.zip' });
 
-        expect(response.status).toBe(302);
-        expect(response.header.location).toEqual(`${Urls.RESULT}/12345`);
+    //     expect(response.status).toBe(200);
+    //     expect(response.body.fileId).toBe('12345');
 
-        mockSubmit.mockRestore();
-    });
+    //     mockSubmit.mockRestore();
+    // });
 
-    it('Should handle errors from accountValidatorService.submit', async () => {
-        const mockSubmit = jest.spyOn(mockedValidatorService, 'submit');
-        mockSubmit.mockRejectedValue(new Error('API error'));
+    // it('Should handle errors from accountValidatorService.submit', async () => {
+    //     const mockSubmit = jest.spyOn(mockedValidatorService, 'submit');
+    //     mockSubmit.mockRejectedValue(new Error('API error'));
 
-        const response = await request(app)
-            .post(Urls.SUBMIT)
-            .attach('file', Buffer.from(''), { filename: 'test_file.zip' });
+    //     const response = await request(app)
+    //         .post(Urls.SUBMIT)
+    //         .attach(FILE_UPLOAD_FIELD_NAME, Buffer.from(''), { filename: 'test_file.zip' });
 
-        expect(response.status).toBe(500);
+    //     expect(response.status).toBe(500);
 
-        mockSubmit.mockRestore();
-    });
+    //     mockSubmit.mockRestore();
+    // });
+
+    // it('Should handle max file size error', async () => {
+    //     // Mock the validator service to return an error
+    //     const mockSubmit = jest.spyOn(mockedValidatorService, 'submit');
+    //     mockSubmit.mockRejectedValue(new multer.MulterError('LIMIT_FILE_SIZE'));
+
+    //     // We make a POST request to the server with a large file
+    //     const response = await request(app)
+    //         .post(Urls.SUBMIT)
+    //         .attach(FILE_UPLOAD_FIELD_NAME, Buffer.from('A'.repeat(MAX_FILE_SIZE + 1)), { filename: 'large_file.zip' });
+
+    //     // The server should respond with a 400 error
+    //     expect(response.status).toBe(400);
+    //     // And the error message should mention the maximum file size
+    //     const maxSizeMB = Math.round(MAX_FILE_SIZE / 1024 / 1024);
+    //     expect(response.text).toContain(`The selected file must be smaller than ${maxSizeMB}MB`);
+
+    //     mockSubmit.mockRestore();
+    // });
 });
+

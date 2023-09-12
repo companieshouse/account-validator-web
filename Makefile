@@ -7,7 +7,6 @@ all: build
 .PHONY: clean
 clean:
 	rm -f ./$(artifact_name)-*.zip
-	rm -rf ./build-*
 	rm -rf ./dist
 	rm -f ./build.log
 
@@ -42,7 +41,6 @@ endif
 	cp -r ./package-lock.json $(tmpdir)
 	cp -r ./.git $(tmpdir)
 	cp ./start.sh $(tmpdir)
-	cp ./routes.yaml $(tmpdir)
 	cd $(tmpdir) && npm ci --production
 	rm $(tmpdir)/package.json $(tmpdir)/package-lock.json
 	cd $(tmpdir) && zip -r ../$(artifact_name)-$(version).zip .

@@ -24,19 +24,19 @@
 {% endblock %}
 
 {% block content %}
-    <div class="govuk-grid-row">
+    <div id="submit" class="govuk-grid-row" aria-hidden="false">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl">
                 Upload your accounts file
             </h1>
-            
+
             {{ errorSummary() }}
 
-            <form method="POST" enctype="multipart/form-data">
+            <form method="POST" enctype="multipart/form-data" action="{{Urls.SUBMIT}}">
                 {{ govukFileUpload({
-                    id: "file",
-                    name: "file",
-                    errorMessage: formValidationResult.getErrorForField("file"),
+                    id: FILE_UPLOAD_FIELD_NAME,
+                    name: FILE_UPLOAD_FIELD_NAME,
+                    errorMessage: formValidationResult.getErrorForField(FILE_UPLOAD_FIELD_NAME),
                     label: {
                         text: "Upload your accounts file, then select continue."
                     }
@@ -45,12 +45,29 @@
                 <p class="govuk-body">The validation process may take a few minutes.</p>
 
                 {{ govukButton({
+                    id: "submit-button",
                     text: "Validate",
                     type: "submit"
                 }) }}
-
             </form>
+
+            {# // TODO: remove this? #}
+            <div id="progress"></div>
         </div>
     </div>
-{% endblock %}
 
+    <div id="pending" class="govuk-grid-row govuk-!-display-none" aria-hidden="true">
+        {% include "result/account.validation.pending.html" %}
+    </div>
+
+    <script src="{{assetPath}}/javascripts/app/account-validation-web/file-upload.js"></script>
+    <script>
+        var resultsUrl = "{{Urls.RESULT}}";
+        var errorUrl = "{{Urls.ERROR}}";
+        var timeoutMessage = "{{timeoutMessage}}";
+        var fileInputFieldName = "{{FILE_UPLOAD_FIELD_NAME}}";
+
+        //@ts-ignore
+        setupForm({resultsUrl, errorUrl, timeoutMessage, fileInputFieldName});
+    </script>
+{% endblock %}

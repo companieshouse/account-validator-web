@@ -4,8 +4,9 @@ import { createPrivateApiKeyClient } from "./api.service";
 import PrivateApiClient from "private-api-sdk-node/dist/client";
 import { File, Id } from "private-api-sdk-node/dist/services/file-transfer/types";
 import { ApiErrorResponse } from "@companieshouse/api-sdk-node/dist/services/resource";
-import { Urls, AllowedRenderExtensions } from "../constants";
+import { Urls } from "../constants";
 import { logger } from "../utils/logger";
+import { ValidationStatusType, ValidationStatusPercents } from "../utils/validationStatusType";
 
 /**
  * Interface representing the account validation service
@@ -31,6 +32,8 @@ interface ValidationResultCommon {
     fileId: string;
     /** The name of the file */
     fileName: string;
+
+    percent: number;
 }
 
 /**
@@ -60,6 +63,12 @@ interface FailureValidationResult extends ValidationResultCommon {
 interface PendingValidationResult extends ValidationResultCommon {
     /** The status of the validation result */
     status: "pending";
+    /** The progress */
+    message?: string;
+}
+
+interface ErrorValidationResult extends ValidationResultCommon {
+    status: "error";
 }
 
 /**
@@ -68,7 +77,8 @@ interface PendingValidationResult extends ValidationResultCommon {
 export type AccountValidationResult =
     | SuccessValidationResult
     | FailureValidationResult
-    | PendingValidationResult;
+    | PendingValidationResult
+    | ErrorValidationResult;
 
 /**
  * Map the response type from the API to the `AccountValidationResult` type
@@ -81,6 +91,7 @@ export function mapResponseType(
     const accountValidatorResponse = (
         accountValidatorResource as Resource<AccountValidatorResponse>
     ).resource;
+    logger.trace("Response: " + JSON.stringify(accountValidatorResponse));
     if (accountValidatorResponse === undefined) {
         throw new Error(
             `Resource inside accountValidatorResource is undefined. ` +
@@ -89,42 +100,63 @@ export function mapResponseType(
         );
     }
 
-    const baseResult = {
-        fileId: accountValidatorResponse.fileId,
-        fileName: accountValidatorResponse.fileName as string,
-    };
+    if (accountValidatorResponse.result === undefined || accountValidatorResponse.result === null) {
+        logger.error(`account-validator-api response result field is null or undefined. ` +
+            `This shouldn't happen. It should atleast have validation status showing the validation stage. ` +
+            `Response: ${JSON.stringify(accountValidatorResponse, null, 2)}`);
 
-    if (accountValidatorResponse.status === "pending") {
-        return {
-            status: "pending",
-            ...baseResult
-        };
+        throw new Error(`account-validator-api response result field is null or undefined.`);
     }
 
     const result = accountValidatorResponse.result;
+    const baseResult = {
+        fileId: accountValidatorResponse.fileId,
+        fileName: accountValidatorResponse.fileName as string,
+        percent: ValidationStatusPercents[result.validationStatus],
+    };
+
+    switch (accountValidatorResponse.status) {
+            case "pending":
+                return {
+                    status: "pending",
+                    ...baseResult
+                };
+            case "error":
+                logger.error(`Error validating document. Showing error page. Response: ${JSON.stringify(accountValidatorResponse)}`);
+                return {
+                    status: "error",
+                    ...baseResult
+                };
+    }
+
     switch (result.validationStatus) {
-            case "OK":
+            case ValidationStatusType.OK:
                 return {
                     status: "success",
                     imageUrl: validFileForRendering(baseResult.fileName) ? `${Urls.RENDER}/${baseResult.fileId}` : undefined,
                     ...baseResult
                 };
-            case "FAILED":
+            case ValidationStatusType.FAILED:
                 return {
                     status: "failure",
                     reasons: result.errorMessages.map(em => em['errorMessage']),
                     ...baseResult
                 };
+            default:
+                throw new Error(`Unexcepted validation status detected: ${result.validationStatus}`);
     }
 }
 
 /**
- * Check whether file is a valid type to be rendered.
- * @param fileName
- * @returns
+ * Check whether file is a valid type to be rendered. Only single submissions are valid for rendering. So if the extension !== 'zip' then it is valid.
+ * @param fileName the name of the file.
+ * @returns true if not a zip file.
  */
-export function validFileForRendering(fileName: string){
-    return AllowedRenderExtensions.some(extension => fileName.toLowerCase().endsWith(extension));
+export function validFileForRendering(fileName: string) {
+    const lastDotPosition = fileName.lastIndexOf('.');
+    if (lastDotPosition === -1) {return false;}
+    const extension = fileName.substring(lastDotPosition + 1);
+    return extension !== 'zip';
 }
 
 /**
@@ -201,7 +233,9 @@ export class AccountValidator implements AccountValidationService {
 
 
         // TODO: Change body type to string
-        const fileDetails: File =  { fileName: file.originalname, body: file.buffer.toString("base64"), mimeType: file.mimetype, size: file.size, extension: '.xtml' };
+        const body = file.buffer.toString("base64");
+        logger.debug(`Body size: ${body.length} Sample ${body.slice(0, 10)}`);
+        const fileDetails: File =  { fileName: file.originalname, body: body, mimeType: file.mimetype, size: file.size, extension: '.xtml' };
 
         const fileTransferService = this.privateApiClient.fileTransferService;
         logger.debug(`Uploading file ${fileDetails.fileName} to S3.`);
@@ -211,8 +245,6 @@ export class AccountValidator implements AccountValidationService {
         logger.debug(`File ${fileDetails.fileName} has been uploaded to S3 with ID ${fileId}`);
         return fileId;
     }
-
-
 }
 
 export const accountValidatorService = new AccountValidator();

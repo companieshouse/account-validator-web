@@ -1,6 +1,6 @@
 import { Response, Request, Router, NextFunction } from "express";
-import { MAX_FILE_SIZE } from "../config";
-import { Templates, Urls } from "../constants";
+import { MAX_FILE_SIZE, MAX_FILE_SIZE_MB } from "../config";
+import { ErrorMessages, FILE_UPLOAD_FIELD_NAME, Templates } from "../constants";
 import multer from "multer";
 import { ValidationResult } from "../validation/validation.result";
 import {
@@ -9,8 +9,9 @@ import {
 } from "../services/account.validation.service";
 import { logger } from "../utils/logger";
 import { handleErrors } from "../middleware/error.handler";
+import { validateSubmitRequest } from "../middleware/submit.validation.middleware";
 
-interface SubmitPageRequest extends Request {
+export interface SubmitPageRequest extends Request {
     formValidationResult?: ValidationResult;
     accountValidationResult?: AccountValidationResult;
 }
@@ -26,71 +27,47 @@ function addFormValidationResult(
     next();
 }
 
-// multipart/form-data middleware
-const parseMultipartForm = multer({
-    limits: {
-        fileSize: MAX_FILE_SIZE,
-        files: 1, // only 1 file per request
-    },
-    storage: multer.memoryStorage(),
-});
+function multerMiddleware(req: SubmitPageRequest, res: Response, next: NextFunction) {
+    const upload = multer({
+        limits: {
+            fileSize: MAX_FILE_SIZE,
+            files: 1, // only 1 file per request
+        },
+        storage: multer.memoryStorage(),
+    }).single(FILE_UPLOAD_FIELD_NAME);
+
+    upload(req, res, function (err) {
+        if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
+            if (req.formValidationResult === undefined) {
+                req.formValidationResult = new ValidationResult();
+            }
+
+            req.formValidationResult.addError(FILE_UPLOAD_FIELD_NAME, ErrorMessages.FILE_TOO_LARGE(MAX_FILE_SIZE_MB));
+            next();
+            return;
+        }
+
+        if (err) {
+            next(err);
+            return;
+        }
+
+        next();
+    });
+}
 
 function renderSubmitPage(req: SubmitPageRequest, res: Response) {
+    if (req.formValidationResult?.hasErrors) {
+        res.status(400);
+    }
+
     return res.render(Templates.SUBMIT, {
         templateName: Templates.SUBMIT,
         formValidationResult: req.formValidationResult,
         accountValidationResult: req.accountValidationResult,
         fileName: req.file?.originalname,
+        FILE_UPLOAD_FIELD_NAME: FILE_UPLOAD_FIELD_NAME
     });
-}
-
-function validateForm(file?: Express.Multer.File) {
-    const validationResult = new ValidationResult();
-
-    if (file === undefined) {
-        validationResult.addError("file", "Select an accounts file.");
-    } else if (!isZipOrXBRLFile(file)) {
-        validationResult.addError(
-            "file",
-            "The selected file must be a XHTML or ZIP."
-        );
-    }
-
-    return validationResult;
-}
-
-/**
- * Extracts the file extension from a given filename.
- * @param filename - The name of the file to extract the extension from.
- * @returns The file extension in lowercase or an empty string if not found.
- */
-function extention(filename: string): string {
-    return filename.split(".").pop()?.toLowerCase() ?? "";
-}
-
-/**
- * Checks if a given file is a ZIP file or a valid iXBRL file.
- * @param file - An Express.Multer.File object representing the file to be checked.
- * @returns A boolean indicating if the file is a ZIP or a valid iXBRL file.
- */
-function isZipOrXBRLFile(file: Express.Multer.File): boolean {
-    return extention(file.originalname) === "zip" || isValidIXBRLFile(file);
-}
-
-/**
- * Checks if a given file is a valid iXBRL file by analyzing its first bytes.
- *
- * See https://github.com/companieshouse/chl-perl/blob/e852c9599d71b2fe7df5951ec1ff2084f9afc5f7/websystems/htdocs/efiling/handlers/xbrl_validator#L177-L180
- *
- * @param file - An Express.Multer.File object representing the file to be checked.
- * @returns A boolean indicating if the file is a valid iXBRL file.
- */
-function isValidIXBRLFile(file: Express.Multer.File): boolean {
-    const firstBytes: string = Uint8Array.prototype.slice.call(file.buffer, 0, 50).toString('utf-8');
-    const xmlPattern: RegExp = /^\s*<\?xml/i;
-    const htmlPattern: RegExp = /^\s*<html/i;
-
-    return xmlPattern.test(firstBytes) || htmlPattern.test(firstBytes);
 }
 
 async function submitFileForValidation(
@@ -98,11 +75,7 @@ async function submitFileForValidation(
     res: Response,
     next: NextFunction
 ) {
-    const fileValidationResult = validateForm(req.file);
-    req.formValidationResult = fileValidationResult;
-
-    // Check that the file is okay to submit to the API for validation
-    if (fileValidationResult.hasErrors) {
+    if (req.formValidationResult === undefined || req.formValidationResult.hasErrors) {
         res.status(400);
         next();
         return;
@@ -121,19 +94,24 @@ async function submitFileForValidation(
 export const submitController = Router();
 submitController.use(addFormValidationResult);
 
+submitController.post(
+    "/validate",
+    validateSubmitRequest,
+    renderSubmitPage
+);
+
 submitController.get("/", renderSubmitPage);
 
 submitController.post(
     "/",
-    parseMultipartForm.single("file"),
+    multerMiddleware,
+    validateSubmitRequest,
     handleErrors(submitFileForValidation),
     (req: SubmitPageRequest, res: Response) => {
         if (req.formValidationResult?.hasErrors) {
             return renderSubmitPage(req, res);
         } else {
-            return res.redirect(
-                `${Urls.RESULT}/${req.accountValidationResult?.fileId}`
-            );
+            return res.json({ fileId: req.accountValidationResult?.fileId });
         }
     }
 );

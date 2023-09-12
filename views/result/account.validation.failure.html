@@ -7,21 +7,13 @@
     </p>
 <ul class="govuk-list govuk-list--bullet">
     {% for reason in accountValidationResult.reasons %}
-        <li>{{ reason }}</li>
+        <li class="wrap-overflow">{{ reason }}</li>
     {% endfor %}
 </ul>
 {% endset %}
 
 {{ govukNotificationBanner({
     titleText: 'Failure',
-    classes: 'govuk-notification-banner--failure',
+    classes: 'govuk-notification-banner--failure word-break',
     html: html
 }) }}
-
-<h2 class="govuk-heading-m">What happens next</h2>
-<p class="govuk-body">
-        You can <a href={{BASE_URL}}>validate another single file or zip file.</a>
-</p>
-<p class="govuk-body">
-        You can return to <a href={{CHS_URL}}>Companies House home page.</a>
-</p>
