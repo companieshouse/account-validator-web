@@ -48,3 +48,7 @@ endif
 
 .PHONY: dist
 dist: lint test clean package
+
+.PHONY: security-check
+security-check:
+	npm audit
