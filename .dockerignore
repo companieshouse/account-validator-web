@@ -1,5 +1,7 @@
 *
 !api-enumerations
+!dist
+!docker_start.sh
 !src
 !views
 !package.json
