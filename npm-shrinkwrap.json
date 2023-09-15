@@ -10,7 +10,7 @@
             "license": "ISC",
             "dependencies": {
                 "16": "^0.0.2",
-                "@companieshouse/api-sdk-node": "^2.0.70",
+                "@companieshouse/api-sdk-node": "^2.0.110",
                 "@companieshouse/structured-logging-node": "^1.0.8",
                 "@companieshouse/web-security-node": "^2.0.0",
                 "axios": "^0.21.4",
