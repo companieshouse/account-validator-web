@@ -7,7 +7,6 @@ all: build
 .PHONY: clean
 clean:
 	rm -f ./$(artifact_name)-*.zip
-	rm -rf ./build-*
 	rm -rf ./dist
 	rm -f ./build.log
 
@@ -49,3 +48,7 @@ endif
 
 .PHONY: dist
 dist: lint test clean package
+
+.PHONY: security-check
+security-check:
+	npm audit
