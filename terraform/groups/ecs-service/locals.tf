@@ -1,6 +1,6 @@
 # Define all hardcoded local variable and local variables looked up from data resources
 locals {
-  stack_name                = "filing-maintain-service" # this must match the stack name the service deploys into
+  stack_name                = "filing-maintain" # this must match the stack name the service deploys into
   name_prefix               = "${local.stack_name}-${var.environment}"
   service_name              = "account-validator-web"
   container_port            = "3000" # default node port required here until prod docker container is built allowing port change via env var
