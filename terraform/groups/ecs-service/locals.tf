@@ -22,7 +22,6 @@ locals {
     "account_url"           = local.service_secrets["account_url"]
     "cache_server"          = local.service_secrets["cache_server"]
     "cookie_secret"         = local.service_secrets["cookie_secret"]
-    "file_transfer_api_key" = local.service_secrets["file_transfer_api_key"]
   }
 
   vpc_name              = local.service_secrets["vpc_name"]
@@ -34,7 +33,6 @@ locals {
   account_url           = local.service_secrets["account_url"]
   cache_server          = local.service_secrets["cache_server"]
   cookie_secret         = local.service_secrets["cookie_secret"]
-  file_transfer_api_key = local.service_secrets["file_transfer_api_key"]
 
   # create a map of secret name => secret arn to pass into ecs service module
   # using the trimprefix function to remove the prefixed path from the secret name
@@ -55,8 +53,7 @@ locals {
     { "name" : "CACHE_SERVER", "valueFrom" : "${local.service_secrets_arn_map.cache_server}" },
     { "name" : "ACCOUNT_URL", "valueFrom" : "${local.service_secrets_arn_map.account_url}" },
     { "name" : "ACCOUNT_TEST_URL", "valueFrom" : "${local.service_secrets_arn_map.account_test_url}" },
-    { "name" : "INTERNAL_API_URL", "valueFrom" : "${local.service_secrets_arn_map.internal_api_url}" },
-    { "name" : "FILE_TRANSFER_API_KEY", "valueFrom" : "${local.service_secrets_arn_map.file_transfer_api_key}" }
+    { "name" : "INTERNAL_API_URL", "valueFrom" : "${local.service_secrets_arn_map.internal_api_url}" }
   ]
 
   task_environment = [
@@ -68,12 +65,9 @@ locals {
     { "name" : "CACHE_SERVER", "value" : "${var.cache_server}" },
     { "name" : "CDN_HOST", "value" : "${var.cdn_host}" },
     { "name" : "CHS_URL", "value" : "${var.chs_url}" },
-    { "name" : "COOKIE_SECRET", "value" : "${var.cookie_secret}" },
     { "name" : "COOKIE_DOMAIN", "value" : "${var.cookie_domain}" },
     { "name" : "COOKIE_NAME", "value" : "${var.cookie_name}" },
     { "name" : "EWF_URL", "value" : "${var.ewf_url}" },
-    { "name" : "FILE_TRANSFER_API_URL", "value" : "${var.file_transfer_api_url}" },
-    { "name" : "KAFKA_BROKER_ADDR", "value" : "${var.kafka_broker_addr}" },
     { "name" : "LOG_LEVEL", "value" : "${var.log_level}" },
     { "name" : "PIWIK_SITE_ID", "value" : "${var.piwik_site_id}" },
     { "name" : "PIWIK_URL", "value" : "${var.piwik_url}" },

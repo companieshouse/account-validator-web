@@ -110,14 +110,6 @@ variable "ewf_url" {
   type = string
 }
 
-variable "file_transfer_api_url" {
-  type = string
-}
-
-variable "kafka_broker_addr" {
-  type = string
-}
-
 variable "piwik_site_id" {
   type = string
 }

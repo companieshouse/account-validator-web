@@ -16,7 +16,6 @@ cookie_name = "__SID"
 ewf_url = "https://ewf.companieshouse.gov.uk/"
 
 file_transfer_api_url = "https://9rwq9ydff0-vpce-0ffeb1a278a21fc36.execute-api.eu-west-2.amazonaws.com/staging/files"
-kafka_broker_addr = "kafka-broker1.staging.aws.internal:9092,kafka-broker2.staging.aws.internal:9092,kafka-broker3.staging.aws.internal:9092"
 piwik_site_id = "15"
 piwik_url = "https://matomo.platform.aws.chdev.org"
 log_level = "debug"

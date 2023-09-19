@@ -16,8 +16,6 @@ cookie_name = "__SID"
 
 ewf_url = "https://ewf.companieshouse.gov.uk/"
 
-file_transfer_api_url = "https://6iwnopwp6k-vpce-030b059ca4dfb6eb2.execute-api.eu-west-2.amazonaws.com/cidev/files"
-kafka_broker_addr = "kafka-broker1-cidev.development.aws.internal:9092"
 piwik_site_id = "7"
 piwik_url = "https://matomo.platform.aws.chdev.org"
 log_level = "trace"
