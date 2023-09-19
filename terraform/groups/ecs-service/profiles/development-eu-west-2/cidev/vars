@@ -13,7 +13,6 @@ chs_url = "https://cidev.aws.chdev.org"
 
 cookie_domain = "cidev.aws.chdev.org"
 cookie_name = "__SID"
-cookie_secret = "ChGovUk-XQrbf3sLj2abFxIY2TlapsJ"
 
 ewf_url = "https://ewf.companieshouse.gov.uk/"
 
