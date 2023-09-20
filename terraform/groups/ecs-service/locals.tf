@@ -22,6 +22,12 @@ locals {
     "account_url"           = local.service_secrets["account_url"]
     "cache_server"          = local.service_secrets["cache_server"]
     "cookie_secret"         = local.service_secrets["cookie_secret"]
+    "oauth2_auth_uri"      = local.service_secrets["oauth2_auth_uri"]
+    "oauth2_redirect_uri"  = local.service_secrets["oauth2_redirect_uri"]
+    "oauth2_token_uri"     = local.service_secrets["oauth2_token_uri"]
+    "oauth2_client_id"     = local.service_secrets["oauth2_client_id"]
+    "oauth2_client_secret" = local.service_secrets["oauth2_client_secret"]
+    "oauth2_request_key"   = local.service_secrets["oauth2_request_key"]
   }
 
   vpc_name              = local.service_secrets["vpc_name"]
@@ -33,6 +39,12 @@ locals {
   account_url           = local.service_secrets["account_url"]
   cache_server          = local.service_secrets["cache_server"]
   cookie_secret         = local.service_secrets["cookie_secret"]
+  oauth2_auth_uri      = local.service_secrets["oauth2_auth_uri"]
+  oauth2_redirect_uri  = local.service_secrets["oauth2_redirect_uri"]
+  oauth2_token_uri     = local.service_secrets["oauth2_token_uri"]
+  oauth2_client_id     = local.service_secrets["oauth2_client_id"]
+  oauth2_client_secret = local.service_secrets["oauth2_client_secret"]
+  oauth2_request_key   = local.service_secrets["oauth2_request_key"]
 
   # create a map of secret name => secret arn to pass into ecs service module
   # using the trimprefix function to remove the prefixed path from the secret name
@@ -53,7 +65,13 @@ locals {
     { "name" : "CACHE_SERVER", "valueFrom" : "${local.service_secrets_arn_map.cache_server}" },
     { "name" : "ACCOUNT_URL", "valueFrom" : "${local.service_secrets_arn_map.account_url}" },
     { "name" : "ACCOUNT_TEST_URL", "valueFrom" : "${local.service_secrets_arn_map.account_test_url}" },
-    { "name" : "INTERNAL_API_URL", "valueFrom" : "${local.service_secrets_arn_map.internal_api_url}" }
+    { "name" : "INTERNAL_API_URL", "valueFrom" : "${local.service_secrets_arn_map.internal_api_url}" },
+    { "name" : "OAUTH2_AUTH_URI", "valueFrom" : "${local.service_secrets_arn_map.oauth2_auth_uri}" },
+    { "name" : "OAUTH2_REDIRECT_URI", "valueFrom" : "${local.service_secrets_arn_map.oauth2_token_uri}" },
+    { "name" : "OAUTH2_TOKEN_URI", "valueFrom" : "${local.service_secrets_arn_map.oauth2_redirect_uri}" },
+    { "name" : "OAUTH2_CLIENT_ID", "valueFrom" : "${local.service_secrets_arn_map.oauth2_client_id}" },
+    { "name" : "OAUTH2_CLIENT_SECRET", "valueFrom" : "${local.service_secrets_arn_map.oauth2_client_secret}" },
+    { "name" : "OAUTH2_REQUEST_KEY", "valueFrom" : "${local.service_secrets_arn_map.oauth2_request_key}" }
   ]
 
   task_environment = [
