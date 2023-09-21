@@ -65,7 +65,7 @@ class RenderAPIService {
             fileName: fileNameTemplate,
             body: resp.body,
             mimeType: mimeType,
-            size: resp.headers?.byteLength,
+            size: resp.headers?.byteLength ?? 0,
             extension: extension
         };
 
