@@ -5,7 +5,7 @@ locals {
   service_name              = "account-validator-web"
   container_port            = "3000" # default node port required here until prod docker container is built allowing port change via env var
   docker_repo               = "account-validator-web"
-  lb_listener_rule_priority = 15
+  lb_listener_rule_priority = 16
   lb_listener_paths         = ["/xbrl_validate"]
   healthcheck_path          = "/xbrl_validate/healthcheck" #healthcheck path for account-validator-web
   healthcheck_matcher       = "200"                        # no explicit healthcheck in this service yet, change this when added!
@@ -19,7 +19,6 @@ locals {
     "internal_api_url"     = local.service_secrets["internal_api_url"]
     "account_test_url"     = local.service_secrets["account_test_url"]
     "account_url"          = local.service_secrets["account_url"]
-    "cache_server"         = local.service_secrets["cache_server"]
     "cookie_secret"        = local.service_secrets["cookie_secret"]
     "oauth2_auth_uri"      = local.service_secrets["oauth2_auth_uri"]
     "oauth2_redirect_uri"  = local.service_secrets["oauth2_redirect_uri"]
@@ -35,7 +34,6 @@ locals {
   cdn_host             = local.service_secrets["cdn_host"]
   account_test_url     = local.service_secrets["account_test_url"]
   account_url          = local.service_secrets["account_url"]
-  cache_server         = local.service_secrets["cache_server"]
   cookie_secret        = local.service_secrets["cookie_secret"]
   oauth2_auth_uri      = local.service_secrets["oauth2_auth_uri"]
   oauth2_redirect_uri  = local.service_secrets["oauth2_redirect_uri"]
@@ -59,7 +57,6 @@ locals {
   task_secrets = [
     { "name" : "COOKIE_SECRET", "valueFrom" : "${local.secrets_arn_map.web-oauth2-cookie-secret}" },
     { "name" : "CHS_API_KEY", "valueFrom" : "${local.service_secrets_arn_map.chs_api_key}" },
-    { "name" : "CACHE_SERVER", "valueFrom" : "${local.service_secrets_arn_map.cache_server}" },
     { "name" : "ACCOUNT_URL", "valueFrom" : "${local.service_secrets_arn_map.account_url}" },
     { "name" : "ACCOUNT_TEST_URL", "valueFrom" : "${local.service_secrets_arn_map.account_test_url}" },
     { "name" : "INTERNAL_API_URL", "valueFrom" : "${local.service_secrets_arn_map.internal_api_url}" },
