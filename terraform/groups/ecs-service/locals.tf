@@ -8,20 +8,20 @@ locals {
   lb_listener_rule_priority = 13
   lb_listener_paths         = ["/xbrl_validate"]
   healthcheck_path          = "/xbrl_validate/healthcheck" #healthcheck path for account-validator-web
-  healthcheck_matcher       = "200"           # no explicit healthcheck in this service yet, change this when added!
+  healthcheck_matcher       = "200"                        # no explicit healthcheck in this service yet, change this when added!
 
   kms_alias       = "alias/${var.aws_profile}/environment-services-kms"
   service_secrets = jsondecode(data.vault_generic_secret.service_secrets.data_json)
 
   parameter_store_secrets = {
-    "vpc_name"              = local.service_secrets["vpc_name"]
-    "chs_api_key"           = local.service_secrets["chs_api_key"]
-    "chs_internal_api_key"  = local.service_secrets["chs_internal_api_key"]
-    "internal_api_url"      = local.service_secrets["internal_api_url"]
-    "account_test_url"      = local.service_secrets["account_test_url"]
-    "account_url"           = local.service_secrets["account_url"]
-    "cache_server"          = local.service_secrets["cache_server"]
-    "cookie_secret"         = local.service_secrets["cookie_secret"]
+    "vpc_name"             = local.service_secrets["vpc_name"]
+    "chs_api_key"          = local.service_secrets["chs_api_key"]
+    "chs_internal_api_key" = local.service_secrets["chs_internal_api_key"]
+    "internal_api_url"     = local.service_secrets["internal_api_url"]
+    "account_test_url"     = local.service_secrets["account_test_url"]
+    "account_url"          = local.service_secrets["account_url"]
+    "cache_server"         = local.service_secrets["cache_server"]
+    "cookie_secret"        = local.service_secrets["cookie_secret"]
     "oauth2_auth_uri"      = local.service_secrets["oauth2_auth_uri"]
     "oauth2_redirect_uri"  = local.service_secrets["oauth2_redirect_uri"]
     "oauth2_token_uri"     = local.service_secrets["oauth2_token_uri"]
@@ -30,15 +30,15 @@ locals {
     "oauth2_request_key"   = local.service_secrets["oauth2_request_key"]
   }
 
-  vpc_name              = local.service_secrets["vpc_name"]
-  chs_api_key           = local.service_secrets["chs_api_key"]
-  chs_internal_api_key  = local.service_secrets["chs_internal_api_key"]
-  internal_api_url      = local.service_secrets["internal_api_url"]
-  cdn_host              = local.service_secrets["cdn_host"]
-  account_test_url      = local.service_secrets["account_test_url"]
-  account_url           = local.service_secrets["account_url"]
-  cache_server          = local.service_secrets["cache_server"]
-  cookie_secret         = local.service_secrets["cookie_secret"]
+  vpc_name             = local.service_secrets["vpc_name"]
+  chs_api_key          = local.service_secrets["chs_api_key"]
+  chs_internal_api_key = local.service_secrets["chs_internal_api_key"]
+  internal_api_url     = local.service_secrets["internal_api_url"]
+  cdn_host             = local.service_secrets["cdn_host"]
+  account_test_url     = local.service_secrets["account_test_url"]
+  account_url          = local.service_secrets["account_url"]
+  cache_server         = local.service_secrets["cache_server"]
+  cookie_secret        = local.service_secrets["cookie_secret"]
   oauth2_auth_uri      = local.service_secrets["oauth2_auth_uri"]
   oauth2_redirect_uri  = local.service_secrets["oauth2_redirect_uri"]
   oauth2_token_uri     = local.service_secrets["oauth2_token_uri"]

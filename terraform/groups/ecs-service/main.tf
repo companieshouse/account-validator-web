@@ -68,5 +68,5 @@ module "ecs-service" {
   task_secrets     = local.task_secrets
 
   depends_on = [module.secrets]
-  
+
 }

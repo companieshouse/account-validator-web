@@ -76,21 +76,12 @@ variable "account_validator_max_file_size" {
 variable "cdn_host" {
   type = string
 }
-
-variable "chs_api_key" {
-  type = string
-}
-
-variable "chs_internal_api_key" {
-  type = string
-}
-
 variable "chs_url" {
   type = string
 }
 
 variable "cache_server" {
-  type    = string
+  type = string
 }
 
 variable "cookie_domain" {
@@ -100,10 +91,6 @@ variable "cookie_domain" {
 variable "cookie_name" {
   type    = string
   default = "__SID"
-}
-
-variable "cookie_secret" {
-  type = string
 }
 
 variable "ewf_url" {
