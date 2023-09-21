@@ -16,7 +16,6 @@ locals {
   parameter_store_secrets = {
     "vpc_name"             = local.service_secrets["vpc_name"]
     "chs_api_key"          = local.service_secrets["chs_api_key"]
-    "internal_api_key"     = local.service_secrets["internal_api_key"]
     "internal_api_url"     = local.service_secrets["internal_api_url"]
     "account_test_url"     = local.service_secrets["account_test_url"]
     "account_url"          = local.service_secrets["account_url"]
@@ -32,7 +31,6 @@ locals {
 
   vpc_name             = local.service_secrets["vpc_name"]
   chs_api_key          = local.service_secrets["chs_api_key"]
-  internal_api_key     = local.service_secrets["internal_api_key"]
   internal_api_url     = local.service_secrets["internal_api_url"]
   cdn_host             = local.service_secrets["cdn_host"]
   account_test_url     = local.service_secrets["account_test_url"]
