@@ -61,7 +61,7 @@ locals {
   task_secrets = [
     { "name" : "COOKIE_SECRET", "valueFrom" : "${local.secrets_arn_map.web-oauth2-cookie-secret}" },
     { "name" : "CHS_API_KEY", "valueFrom" : "${local.service_secrets_arn_map.chs_api_key}" },
-    { "name" : "CHS_INTERNAL_API_KEY", "value" : "${local.service_secrets_arn_map..chs_internal_api_key}" },
+    { "name" : "CHS_INTERNAL_API_KEY", "value" : "${local.service_secrets_arn_map.chs_internal_api_key}" },
     { "name" : "CACHE_SERVER", "valueFrom" : "${local.service_secrets_arn_map.cache_server}" },
     { "name" : "ACCOUNT_URL", "valueFrom" : "${local.service_secrets_arn_map.account_url}" },
     { "name" : "ACCOUNT_TEST_URL", "valueFrom" : "${local.service_secrets_arn_map.account_test_url}" },
