@@ -33,7 +33,7 @@ export function handleUIUpdates(req: Request, res: Response) {
     let uiTimeoutHandler: NodeJS.Timeout | undefined = undefined;
 
     const cleanupHandles = () => {
-        clearInterval(uiUpdateInterval);
+        clearInterval(uiUpdateInterval as number | undefined);
         clearTimeout(uiTimeoutHandler);
     };
 
@@ -65,7 +65,7 @@ export function handleUIUpdates(req: Request, res: Response) {
         logger.error(`UI update timeout reached. Closing SSE for file [${fileId}].`);
 
         sse.send({ message: errorMessage });
-        clearInterval(uiUpdateInterval);
+        clearInterval(uiUpdateInterval as number | undefined);
     }, UI_UPDATE_TIMEOUT_MS);
 }
 
