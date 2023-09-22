@@ -89,9 +89,7 @@ locals {
     { "name" : "SUPPORTED_MIME_TYPES", "value" : "${var.supported_mime_types}" },
     { "name" : "NODE_ENV", "value" : "${var.node_env}" },
     { "name" : "TZ", "value" : "${var.tz}" },
-    { "name" : "UI_UPDATE_INTERVAL_SECONDS", "value" : "${var.ui_update_interval_seconds}" },
-    { "name" : "CHS_INTERNAL_API_KEY", "valueFrom" : "${local.service_secrets_arn_map.chs_internal_api_key}" }
-
+    { "name" : "UI_UPDATE_INTERVAL_SECONDS", "value" : "${var.ui_update_interval_seconds}" }
   ]
 
 }
