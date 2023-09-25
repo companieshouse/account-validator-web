@@ -7,7 +7,7 @@ account_validator_max_file_size = "300MB"
 allowed_company_prefixes = "SC,NI,OC,SO,R,AP"
 
 cache_server = "redis"
-cdn_host = "d3uvya5a8a1ncx.cloudfront.net"
+cdn_host = "https://d3uvya5a8a1ncx.cloudfront.net"
 
 chs_url = "https://cidev.aws.chdev.org"
 
