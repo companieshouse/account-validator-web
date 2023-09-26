@@ -1,9 +1,30 @@
-import { Response, Request } from "express";
+import { Response, Request, Router } from "express";
 import { accountValidatorService } from "../services/account.validation.service";
-import { errorMessage } from "../constants";
+import { Templates, errorMessage } from "../constants";
 import { logger } from "../utils/logger";
 import { UI_UPDATE_INTERVAL_MS, UI_UPDATE_TIMEOUT_MS } from "../config";
 import { SSEManager } from "../utils/sseManager";
+import { handleErrors } from "../middleware/error.handler";
+
+export const resultController = Router({ mergeParams: true });
+
+async function renderResultsPage(req: Request, res: Response) {
+    const fileId = req.params["id"];
+
+    const accountValidationResult = await accountValidatorService.check(fileId);
+    if (accountValidationResult.status === "error") {
+        throw `Error validating file. Redirecting to error handler.`;
+    }
+
+    return res.render(Templates.RESULT, {
+        fileId: fileId,
+        templateName: Templates.RESULT,
+        accountValidationResult: accountValidationResult,
+        errorMessage: errorMessage
+    });
+}
+
+resultController.get("/", handleErrors(renderResultsPage));
 
 export function handleUIUpdates(req: Request, res: Response) {
     const fileId = req.params["id"];
@@ -28,8 +49,8 @@ export function handleUIUpdates(req: Request, res: Response) {
             const accountValidationResult = await accountValidatorService.check(fileId);
 
             sse.send({ message: accountValidationResult });
-            
-            if (accountValidationResult.percent === 100) {
+
+            if (accountValidationResult.percent === 100){
                 cleanupHandles();
             }
         } catch (e) {
@@ -45,5 +66,8 @@ export function handleUIUpdates(req: Request, res: Response) {
 
         sse.send({ message: errorMessage });
         cleanupHandles();
-    }, UI_UPDATE_TIMEOUT_MS); 
+    }, UI_UPDATE_TIMEOUT_MS);
 }
+
+
+resultController.get(`/sse`, handleUIUpdates);
