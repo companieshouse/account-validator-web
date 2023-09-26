@@ -49,7 +49,6 @@ export function handleUIUpdates(req: Request, res: Response) {
             const accountValidationResult = await accountValidatorService.check(fileId);
 
             sse.send({ message: accountValidationResult });
-
             if (accountValidationResult.percent === 100){
                 cleanupHandles();
             }
