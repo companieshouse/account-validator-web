@@ -1,5 +1,5 @@
 import { Response, Request, Router, NextFunction } from "express";
-import { MAX_FILE_SIZE, MAX_FILE_SIZE_MB } from "../config";
+import { MAX_FILE_SIZE, MAX_FILE_SIZE_MB, UI_UPDATE_TIMEOUT_MS } from "../config";
 import { ErrorMessages, FILE_UPLOAD_FIELD_NAME, Templates, errorMessage } from "../constants";
 import multer from "multer";
 import { ValidationResult } from "../validation/validation.result";
@@ -10,6 +10,7 @@ import {
 import { logger } from "../utils/logger";
 import { handleErrors } from "../middleware/error.handler";
 import { validateSubmitRequest } from "../middleware/submit.validation.middleware";
+import { timeout } from "../middleware/timeout..middleware";
 
 export interface SubmitPageRequest extends Request {
     formValidationResult?: ValidationResult;
@@ -105,6 +106,7 @@ submitController.get("/", renderSubmitPage);
 
 submitController.post(
     "/",
+    timeout(UI_UPDATE_TIMEOUT_MS),
     multerMiddleware,
     validateSubmitRequest,
     handleErrors(submitFileForValidation),
