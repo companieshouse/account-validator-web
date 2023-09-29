@@ -10,7 +10,7 @@ import {
 import { logger } from "../utils/logger";
 import { handleErrors } from "../middleware/error.handler";
 import { validateSubmitRequest } from "../middleware/submit.validation.middleware";
-import { timeout } from "../middleware/timeout..middleware";
+import { timeout } from "../middleware/timeout.middleware";
 
 export interface SubmitPageRequest extends Request {
     formValidationResult?: ValidationResult;

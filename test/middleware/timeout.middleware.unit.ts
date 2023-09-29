@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { timeout } from "../../src/middleware/timeout..middleware";
+import { timeout } from "../../src/middleware/timeout.middleware";
 
 describe("Timeout middleware", () => {
     it("Should set request timeout to the specified duration", () => {
