@@ -61,14 +61,6 @@ variable "api_url" {
   type = string
 }
 
-variable "account_web_url" {
-  type = string
-}
-
-variable "allowed_company_prefixes" {
-  type = string
-}
-
 variable "account_validator_max_file_size" {
   type = string
 }
@@ -93,22 +85,6 @@ variable "cookie_name" {
   default = "__SID"
 }
 
-variable "ewf_url" {
-  type = string
-}
-
-variable "piwik_site_id" {
-  type = string
-}
-
-variable "piwik_url" {
-  type = string
-}
-
-variable "supported_mime_types" {
-  type = string
-}
-
 variable "node_env" {
   type = string
 }
@@ -117,6 +93,10 @@ variable "tz" {
   type = string
 }
 
-variable "ui_update_interval_seconds" {
+variable "account_validator_ui_update_interval" {
+  type = string
+}
+
+variable "account_validator_ui_update_timeout" {
   type = string
 }

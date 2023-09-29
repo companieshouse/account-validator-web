@@ -57,39 +57,33 @@ locals {
   }
 
   task_secrets = [
-    { "name" : "COOKIE_SECRET", "valueFrom" : "${local.secrets_arn_map.web-oauth2-cookie-secret}" },
+    { "name" : "ACCOUNT_TEST_URL", "valueFrom" : "${local.service_secrets_arn_map.account_test_url}" },
+    { "name" : "ACCOUNT_URL", "valueFrom" : "${local.service_secrets_arn_map.account_url}" },
     { "name" : "CHS_API_KEY", "valueFrom" : "${local.service_secrets_arn_map.chs_api_key}" },
     { "name" : "CHS_INTERNAL_API_KEY", "valueFrom" : "${local.service_secrets_arn_map.chs_internal_api_key}" },
-    { "name" : "ACCOUNT_URL", "valueFrom" : "${local.service_secrets_arn_map.account_url}" },
-    { "name" : "ACCOUNT_TEST_URL", "valueFrom" : "${local.service_secrets_arn_map.account_test_url}" },
+    { "name" : "COOKIE_SECRET", "valueFrom" : "${local.secrets_arn_map.web-oauth2-cookie-secret}" },
     { "name" : "INTERNAL_API_URL", "valueFrom" : "${local.service_secrets_arn_map.internal_api_url}" },
     { "name" : "OAUTH2_AUTH_URI", "valueFrom" : "${local.service_secrets_arn_map.oauth2_auth_uri}" },
-    { "name" : "OAUTH2_REDIRECT_URI", "valueFrom" : "${local.service_secrets_arn_map.oauth2_token_uri}" },
-    { "name" : "OAUTH2_TOKEN_URI", "valueFrom" : "${local.service_secrets_arn_map.oauth2_redirect_uri}" },
     { "name" : "OAUTH2_CLIENT_ID", "valueFrom" : "${local.service_secrets_arn_map.oauth2_client_id}" },
     { "name" : "OAUTH2_CLIENT_SECRET", "valueFrom" : "${local.service_secrets_arn_map.oauth2_client_secret}" },
-    { "name" : "OAUTH2_REQUEST_KEY", "valueFrom" : "${local.service_secrets_arn_map.oauth2_request_key}" }
+    { "name" : "OAUTH2_REDIRECT_URI", "valueFrom" : "${local.service_secrets_arn_map.oauth2_token_uri}" },
+    { "name" : "OAUTH2_REQUEST_KEY", "valueFrom" : "${local.service_secrets_arn_map.oauth2_request_key}" },
+    { "name" : "OAUTH2_TOKEN_URI", "valueFrom" : "${local.service_secrets_arn_map.oauth2_redirect_uri}" },
   ]
 
   task_environment = [
-    { "name" : "ACCOUNT_WEB_URL", "value" : "${var.account_web_url}" },
-    { "name" : "ALLOWED_COMPANY_PREFIXES", "value" : "${var.allowed_company_prefixes}" },
-    { "name" : "API_URL", "value" : "${var.api_url}" },
     { "name" : "ACCOUNT_VALIDATOR_MAX_FILE_SIZE", "value" : "${var.account_validator_max_file_size}" },
+    { "name" : "ACCOUNT_VALIDATOR_UI_UPDATE_INTERVAL", "value" : "${var.account_validator_ui_update_interval}" },
+    { "name" : "ACCOUNT_VALIDATOR_UI_UPDATE_TIMEOUT", "value" : "${var.account_validator_ui_update_timeout}" },
     { "name" : "ACCOUNT_VALIDATOR_WEB_VERSION", "value" : "${var.account_validator_web_version}" },
+    { "name" : "API_URL", "value" : "${var.api_url}" },
     { "name" : "CACHE_SERVER", "value" : "${var.cache_server}" },
     { "name" : "CDN_HOST", "value" : "${var.cdn_host}" },
     { "name" : "CHS_URL", "value" : "${var.chs_url}" },
     { "name" : "COOKIE_DOMAIN", "value" : "${var.cookie_domain}" },
     { "name" : "COOKIE_NAME", "value" : "${var.cookie_name}" },
-    { "name" : "EWF_URL", "value" : "${var.ewf_url}" },
     { "name" : "LOG_LEVEL", "value" : "${var.log_level}" },
-    { "name" : "PIWIK_SITE_ID", "value" : "${var.piwik_site_id}" },
-    { "name" : "PIWIK_URL", "value" : "${var.piwik_url}" },
-    { "name" : "SUPPORTED_MIME_TYPES", "value" : "${var.supported_mime_types}" },
     { "name" : "NODE_ENV", "value" : "${var.node_env}" },
-    { "name" : "TZ", "value" : "${var.tz}" },
-    { "name" : "UI_UPDATE_INTERVAL_SECONDS", "value" : "${var.ui_update_interval_seconds}" }
+    { "name" : "TZ", "value" : "${var.tz}" }
   ]
-
 }

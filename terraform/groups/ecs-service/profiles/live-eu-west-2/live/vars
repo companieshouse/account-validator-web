@@ -1,10 +1,8 @@
 environment = "live"
 aws_profile = "live-eu-west-2"
 
-account_web_url =  "https://identity.company-information.service.gov.uk"
 api_url = "https://private-api.companieshouse.gov.uk"
 account_validator_max_file_size = "300MB"
-allowed_company_prefixes = "SC,NI,OC,SO,R,AP"
 cache_server = "redis"
 cdn_host = "https://db2062spq951s.cloudfront.net"
 
@@ -13,14 +11,10 @@ chs_url = "https://staging.company-information.service.gov.uk"
 cookie_domain = "company-information.service.gov.uk"
 cookie_name = "__SID"
 
-ewf_url = "https://ewf.companieshouse.gov.uk/"
-
 file_transfer_api_url = "https://9rwq9ydff0-vpce-0ffeb1a278a21fc36.execute-api.eu-west-2.amazonaws.com/staging/files"
-piwik_site_id = "15"
-piwik_url = "https://matomo.platform.aws.chdev.org"
-log_level = "debug"
-node_env = "docker"
+log_level = "info"
+node_env = "production"
 tz = "Europe/London"
-supported_mime_types = "application/pdf,image/jpeg,image/png,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/zip,application/octet-stream,application/x-zip-compressed,application/x-zip,multipart/x-zip,image/gif,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
-ui_update_interval_seconds = "1"
+account_validator_ui_update_interval="10s"
+account_validator_ui_update_timeout = "15m"
