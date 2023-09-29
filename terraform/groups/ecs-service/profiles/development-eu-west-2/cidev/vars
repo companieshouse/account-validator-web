@@ -13,7 +13,7 @@ cookie_domain = "cidev.aws.chdev.org"
 cookie_name = "__SID"
 
 log_level = "debug"
-node_env = "production"
+node_env = "docker"
 tz = "Europe/London"
 
 account_validator_ui_update_interval = "1s"

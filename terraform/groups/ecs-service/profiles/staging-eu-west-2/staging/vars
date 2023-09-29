@@ -12,7 +12,7 @@ cookie_domain = "company-information.service.gov.uk"
 cookie_name = "__SID"
 
 log_level = "info"
-node_env = "production"
+node_env = "docker"
 tz = "Europe/London"
 
 account_validator_ui_update_interval = "10s"
