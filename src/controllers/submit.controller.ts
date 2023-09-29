@@ -82,7 +82,7 @@ async function submitFileForValidation(
         return;
     }
 
-    logger.debug(`Submitting file to account-validator-api for validation`);
+    logger.debug(`Submitting file to account-validator-api for validation. File name ${req.file?.filename}`);
     // We know the file is not undefined since if the validation did not succeed we wouldn't have made it to this point
     req.accountValidationResult = await accountValidatorService.submit(
         req.file! // eslint-disable-line @typescript-eslint/no-non-null-assertion
