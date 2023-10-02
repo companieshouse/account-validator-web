@@ -4,7 +4,7 @@ import { logger } from "../utils/logger";
 export const healthCheckController = Router({ mergeParams: true });
 
 function healthCheck(req: Request, res: Response) {
-    logger.debug(`health check triggered`);
+    logger.traceRequest(req, "Healthcheck triggered.");
     return res.sendStatus(200);
 }
 

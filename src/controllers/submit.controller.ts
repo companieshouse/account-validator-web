@@ -1,6 +1,6 @@
 import { Response, Request, Router, NextFunction } from "express";
-import { MAX_FILE_SIZE, MAX_FILE_SIZE_MB } from "../config";
-import { ErrorMessages, FILE_UPLOAD_FIELD_NAME, Templates } from "../constants";
+import { MAX_FILE_SIZE, MAX_FILE_SIZE_MB, UI_UPDATE_TIMEOUT_MS } from "../config";
+import { ErrorMessages, FILE_UPLOAD_FIELD_NAME, Templates, errorMessage } from "../constants";
 import multer from "multer";
 import { ValidationResult } from "../validation/validation.result";
 import {
@@ -10,6 +10,7 @@ import {
 import { logger } from "../utils/logger";
 import { handleErrors } from "../middleware/error.handler";
 import { validateSubmitRequest } from "../middleware/submit.validation.middleware";
+import { timeout } from "../middleware/timeout.middleware";
 
 export interface SubmitPageRequest extends Request {
     formValidationResult?: ValidationResult;
@@ -66,7 +67,8 @@ function renderSubmitPage(req: SubmitPageRequest, res: Response) {
         formValidationResult: req.formValidationResult,
         accountValidationResult: req.accountValidationResult,
         fileName: req.file?.originalname,
-        FILE_UPLOAD_FIELD_NAME: FILE_UPLOAD_FIELD_NAME
+        FILE_UPLOAD_FIELD_NAME: FILE_UPLOAD_FIELD_NAME,
+        errorMessage: errorMessage
     });
 }
 
@@ -81,7 +83,7 @@ async function submitFileForValidation(
         return;
     }
 
-    logger.debug(`Submitting file to account-validator-api for validation`);
+    logger.debug(`Submitting file to account-validator-api for validation. File name ${req.file?.filename}`);
     // We know the file is not undefined since if the validation did not succeed we wouldn't have made it to this point
     req.accountValidationResult = await accountValidatorService.submit(
         req.file! // eslint-disable-line @typescript-eslint/no-non-null-assertion
@@ -104,6 +106,7 @@ submitController.get("/", renderSubmitPage);
 
 submitController.post(
     "/",
+    timeout(UI_UPDATE_TIMEOUT_MS),
     multerMiddleware,
     validateSubmitRequest,
     handleErrors(submitFileForValidation),

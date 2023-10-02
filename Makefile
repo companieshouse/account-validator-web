@@ -7,7 +7,6 @@ all: build
 .PHONY: clean
 clean:
 	rm -f ./$(artifact_name)-*.zip
-	rm -rf ./build-*
 	rm -rf ./dist
 	rm -f ./build.log
 
@@ -23,6 +22,10 @@ lint:
 .PHONY: sonar
 sonar:
 	npm run sonarqube
+
+.PHONY: test-unit
+test-unit:
+	npm run test
 
 .PHONY: test
 test:
@@ -49,3 +52,7 @@ endif
 
 .PHONY: dist
 dist: lint test clean package
+
+.PHONY: security-check
+security-check:
+	npm audit

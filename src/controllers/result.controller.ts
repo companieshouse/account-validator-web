@@ -1,10 +1,10 @@
 import { Response, Request, Router } from "express";
 import { accountValidatorService } from "../services/account.validation.service";
 import { Templates, errorMessage } from "../constants";
-import { handleErrors } from "../middleware/error.handler";
-import { UI_UPDATE_INTERVAL_MS, UI_UPDATE_TIMEOUT_MS } from "../config";
-import SSE from "express-sse";
 import { logger } from "../utils/logger";
+import { UI_UPDATE_INTERVAL_MS, UI_UPDATE_TIMEOUT_MS } from "../config";
+import { SSEManager } from "../utils/sseManager";
+import { handleErrors } from "../middleware/error.handler";
 
 export const resultController = Router({ mergeParams: true });
 
@@ -33,12 +33,11 @@ export function handleUIUpdates(req: Request, res: Response) {
     let uiTimeoutHandler: NodeJS.Timeout | undefined = undefined;
 
     const cleanupHandles = () => {
-        clearInterval(uiUpdateInterval);
+        clearInterval(uiUpdateInterval as number | undefined);
         clearTimeout(uiTimeoutHandler);
     };
 
-    const sse = new SSE();
-    sse.init(req, res);
+    const sse = new SSEManager(res);
 
     req.on('close', () => {
         logger.trace("Request now closed");
@@ -65,8 +64,9 @@ export function handleUIUpdates(req: Request, res: Response) {
         logger.error(`UI update timeout reached. Closing SSE for file [${fileId}].`);
 
         sse.send({ message: errorMessage });
-        clearInterval(uiUpdateInterval);
+        cleanupHandles();
     }, UI_UPDATE_TIMEOUT_MS);
 }
+
 
 resultController.get(`/sse`, handleUIUpdates);
