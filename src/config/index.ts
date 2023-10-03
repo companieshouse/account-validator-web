@@ -27,7 +27,7 @@ export const INTERNAL_API_URL = getEnvironmentVariable("INTERNAL_API_URL");
 export const CHS_INTERNAL_API_KEY = getEnvironmentVariable(
     "CHS_INTERNAL_API_KEY"
 );
-export const PORT = parseInt(getEnvironmentVariable("PORT", 3000));
+export const NODE_PORT = parseInt(getEnvironmentVariable("NODE_PORT", 3000));
 export const RESULT_RELOAD_DURATION_SECONDS = parseFloat(
     getEnvironmentVariable("RESULT_RELOAD_DURATION_SECONDS", 5)
 );

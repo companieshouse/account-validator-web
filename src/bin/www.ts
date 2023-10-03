@@ -14,7 +14,7 @@ import app from "../app";
  * Get port from environment and store in Express.
  */
 
-app.set("port", config.PORT);
+app.set("port", config.NODE_PORT);
 
 /**
  * Create HTTP server.
@@ -26,7 +26,7 @@ const server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(config.PORT);
+server.listen(config.NODE_PORT);
 server.on("error", onError);
 
 /**
@@ -41,11 +41,11 @@ function onError(error: any) {
     // handle specific listen errors with friendly messages
     switch (error.code) {
         case "EACCES":
-            logger.error(config.PORT + " requires elevated privileges");
+            logger.error(config.NODE_PORT + " requires elevated privileges");
             process.exit(1);
             break;
         case "EADDRINUSE":
-            logger.error(config.PORT + " is already in use");
+            logger.error(config.NODE_PORT + " is already in use");
             process.exit(1);
             break;
         default:
