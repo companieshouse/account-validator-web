@@ -3,7 +3,7 @@ import { accountValidatorService } from "../services/account.validation.service"
 import { Templates, errorMessage } from "../constants";
 import { logger } from "../utils/logger";
 import { UI_UPDATE_INTERVAL_MS, UI_UPDATE_TIMEOUT_MS } from "../config";
-import { SSEManager } from "../utils/sseManager";
+import { SSEManager } from "../utils/sse.manager";
 import { handleErrors } from "../middleware/error.handler";
 
 export const resultController = Router({ mergeParams: true });
@@ -38,6 +38,7 @@ export function handleUIUpdates(req: Request, res: Response) {
     };
 
     const sse = new SSEManager(res);
+    sse.initialize(req.socket);
 
     req.on('close', () => {
         logger.trace("Request now closed");
