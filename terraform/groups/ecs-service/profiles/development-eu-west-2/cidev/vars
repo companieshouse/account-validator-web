@@ -1,5 +1,7 @@
 environment = "cidev"
 aws_profile = "development-eu-west-2"
+cert_domain = "cidev.aws.chdev.org"
+account     = "development"
 
 api_url = "https://api.cidev.aws.chdev.org"
 account_validator_max_file_size = "300MB"

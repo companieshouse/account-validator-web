@@ -15,6 +15,10 @@ variable "aws_profile" {
   type        = string
   description = "The AWS profile to use for deployment."
 }
+variable "cert_domain" {
+}
+variable "account" {
+}
 
 # ------------------------------------------------------------------------------
 # Docker Container
