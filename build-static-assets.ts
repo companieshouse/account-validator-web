@@ -1,6 +1,5 @@
 import esbuild from "esbuild";
 import path from "path";
-import { globPlugin } from "esbuild-plugin-glob";
 
 async function buildAssets() {
     const srcDir = path.join(__dirname, "assets/src");
@@ -16,7 +15,6 @@ async function buildAssets() {
             // sourcemap: true, // Uncomment this to emit a source map to view the typescript code in the browser
             minify: true,
             format: "iife",
-            plugins: [globPlugin()],
         });
     } catch (error) {
         console.error(`Error building static assets: ${error.message}`);
