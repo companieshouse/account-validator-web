@@ -3,7 +3,7 @@ import { accountValidatorService } from "../services/account.validation.service"
 import { Templates, errorMessage } from "../constants";
 import { logger } from "../utils/logger";
 import { UI_UPDATE_INTERVAL_MS, UI_UPDATE_TIMEOUT_MS } from "../config";
-import SSE from 'express-sse'
+import SSE from 'express-sse';
 
 import { handleErrors } from "../middleware/error.handler";
 
