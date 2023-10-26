@@ -1,4 +1,5 @@
 import { type SubmittedFileValidationRequest } from "../../src/validation/submit.controller.validation";
+import { LOG_LEVELS, log } from "./lib/log";
 
 const FORM_SELECTOR = "form";
 const SUBMIT_BLOCK_ID = "submit";
@@ -10,6 +11,7 @@ const ARIA_HIDDEN_ATTRIBUTE = "aria-hidden";
 type PageName = "submit" | "pending";
 
 function showPage(pageName: PageName): void {
+    log(LOG_LEVELS.DEBUG, `Showing page: ${pageName}`);
     const submitBlock = document.getElementById(SUBMIT_BLOCK_ID);
     const pendingBlock = document.getElementById(PENDING_BLOCK_ID);
 
@@ -25,6 +27,7 @@ function showPage(pageName: PageName): void {
 }
 
 function mustGetById(id: string): HTMLElement {
+    log(LOG_LEVELS.DEBUG, `Getting element by id: ${id}`);
     const elem = document.getElementById(id);
     if (elem === null) {
         throw new Error(`Cannot find element with id '${id}'`);
@@ -42,6 +45,8 @@ function handleErrorUploading(
     responseHTML: string,
     args: SetupFormArguments
 ): void {
+    log(LOG_LEVELS.ERROR, 'Handling error while uploading');
+
     const parser = new DOMParser();
     const xhrDoc = parser.parseFromString(responseHTML, "text/html");
 
@@ -67,6 +72,8 @@ type SetupFormArguments = {
 };
 
 function setupForm(args: SetupFormArguments): void {
+    log(LOG_LEVELS.INFO, 'Setting up form');
+
     const {
         resultsUrl,
         errorUrl,
@@ -81,6 +88,7 @@ function setupForm(args: SetupFormArguments): void {
     const percentage = mustGetById(PERCENTAGE_ID);
 
     form.addEventListener("submit", async (event) => {
+        log(LOG_LEVELS.INFO, 'Form submission event triggered');
         event.preventDefault();
 
         const fileInput = mustGetById(args.fileInputFieldName) as HTMLInputElement;
@@ -117,7 +125,10 @@ function setupForm(args: SetupFormArguments): void {
                 return;
             }
 
-            let percentComplete = Math.round((event.loaded / event.total) * 25); // 25% is fully uploaded
+            const percentUploaded = event.loaded / event.total;
+            log(LOG_LEVELS.DEBUG, `${(percentUploaded*100).toFixed(1)}% uploaded.`);
+
+            let percentComplete = Math.round(percentUploaded * 25); // 25% is fully uploaded
 
             if (percentComplete < 12.5) {
                 percentComplete = 5;
@@ -131,8 +142,12 @@ function setupForm(args: SetupFormArguments): void {
         });
 
         xhr.addEventListener("load", () => {
+            log(LOG_LEVELS.DEBUG, `XHR load event triggered with status: ${xhr.status}`);
+
             switch (xhr.status) {
                 case 200:
+                    log(LOG_LEVELS.DEBUG, `Starting SSE connection`);
+
                     const result = JSON.parse(xhr.responseText);
                     const fileId = result.fileId;
 
@@ -144,9 +159,11 @@ function setupForm(args: SetupFormArguments): void {
                         "message",
                         function (event: MessageEvent) {
                             const data = JSON.parse(event.data);
+                            log(LOG_LEVELS.DEBUG, `Recieved SSE message: ${JSON.stringify(data)}`);
 
                             if (data.message === timeoutMessage) {
                                 window.location.href = errorUrl;
+                                return;
                             }
 
                             percentage.innerText = `${data.message.percent}% complete`;
@@ -159,8 +176,8 @@ function setupForm(args: SetupFormArguments): void {
                     );
                     break;
                 case 400:
-                    console.error(`Error uploading file: ${xhr.statusText}`);
-                    console.log(xhr.responseText);
+                    log(LOG_LEVELS.ERROR, `Error uploading file: ${xhr.statusText}`);
+                    log(LOG_LEVELS.ERROR, xhr.responseText);
 
                     handleErrorUploading(xhr.responseText, args);
 
@@ -169,7 +186,7 @@ function setupForm(args: SetupFormArguments): void {
                 case 500:
                 // Fallthrough
                 default:
-                    console.error(`Error occured while uploading file`);
+                    log(LOG_LEVELS.ERROR, `Error occured while uploading file`);
                     window.location.href = errorUrl;
                     break;
             }
@@ -183,6 +200,7 @@ function setupForm(args: SetupFormArguments): void {
 async function validateForm(
     fileInput: HTMLInputElement,
 ): Promise<string> {
+    log(LOG_LEVELS.DEBUG, 'Validating form');
     const req: SubmittedFileValidationRequest = {
         file: null
     }
@@ -236,7 +254,12 @@ function setVisibility(element: HTMLElement, visible: boolean) {
     }
 }
 
+declare global {
+    interface Window {
+        setupForm: typeof setupForm
+    }
+}
 
 // Make it accessible from other script tags
-//@ts-ignore
 window.setupForm = setupForm;
+window.accountValidatorLogLevel = LOG_LEVELS.DEBUG;
