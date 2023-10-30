@@ -5,6 +5,7 @@ api_url = "https://api.cidev.aws.chdev.org"
 account_validator_max_file_size = "300MB"
 
 required_memory = "4096"
+required_cpus = "512"
 
 cache_server = "redis"
 cdn_host = "https://d3uvya5a8a1ncx.cloudfront.net"
