@@ -27,8 +27,6 @@ const server = http.createServer(app);
  */
 
 server.listen(config.PORT);
-const minuteMS = 60 * 1000;
-server.keepAliveTimeout = 25 * minuteMS;
 server.on("error", onError);
 
 /**
