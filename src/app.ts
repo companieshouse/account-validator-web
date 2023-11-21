@@ -6,7 +6,7 @@ import cookieParser from "cookie-parser";
 import { logger } from "./utils/logger";
 import { errorHandler } from "./middleware/error.handler";
 import { Urls } from "./constants";
-import { CDN_HOST, CHS_URL, SURVEY_LINK } from "./config";
+import { CDN_HOST, CHS_URL, SURVEY_LINK, NUNJUCKS_RELOAD } from "./config";
 
 const app = express();
 app.disable("x-powered-by");
@@ -21,6 +21,8 @@ const nunjucksEnv = nunjucks.configure(
     {
         autoescape: true,
         express: app,
+        watch: NUNJUCKS_RELOAD,
+        noCache: NUNJUCKS_RELOAD
     }
 );
 
