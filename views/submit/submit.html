@@ -32,7 +32,13 @@
 
             {{ errorSummary() }}
 
-            <form method="POST" enctype="multipart/form-data" action="{{Urls.SUBMIT}}">
+            <form id="file-submit-form" method="POST" enctype="multipart/form-data" action="{{Urls.SUBMIT}}" onsubmit="event.preventDefault(); submitForm('file-submit-form', {
+                resultsBaseUrl: '{{Urls.RESULT}}',
+                errorUrl: '{{Urls.ERROR}}',
+                timeoutMessage: '{{errorMessage}}',
+                fileInputFieldName: '{{FILE_UPLOAD_FIELD_NAME}}',
+                callbackUrlOnComplete: '{{callback}}'
+            });">
                 {{ govukFileUpload({
                     id: FILE_UPLOAD_FIELD_NAME,
                     name: FILE_UPLOAD_FIELD_NAME,
@@ -60,14 +66,5 @@
         {% include "result/account.validation.pending.html" %}
     </div>
 
-    <script src="{{assetPath}}/javascripts/app/account-validation-web/file-upload.js"></script>
-    <script>
-        var resultsUrl = "{{Urls.RESULT}}";
-        var errorUrl = "{{Urls.ERROR}}";
-        var timeoutMessage = "{{errorMessage}}";
-        var fileInputFieldName = "{{FILE_UPLOAD_FIELD_NAME}}";
-
-        //@ts-ignore
-        setupForm({resultsUrl, errorUrl, timeoutMessage, fileInputFieldName});
-    </script>
+    <script src="{{assetPath}}/javascripts/app/account-validation-web/form-submit.js"></script>
 {% endblock %}
