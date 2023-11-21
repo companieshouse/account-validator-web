@@ -17,7 +17,7 @@ async function buildAssets() {
             platform: "browser",
             target: ["es2015"],
             sourcemap: shouldGenerateSourcemap,
-            minify: false,
+            minify: true,
             format: "iife",
         });
     } catch (error) {
