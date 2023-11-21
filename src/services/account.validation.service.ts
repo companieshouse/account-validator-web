@@ -2,11 +2,17 @@ import { Resource } from "@companieshouse/api-sdk-node";
 import { AccountValidatorResponse } from "private-api-sdk-node/dist/services/account-validator/types";
 import { createPrivateApiKeyClient } from "./api.service";
 import PrivateApiClient from "private-api-sdk-node/dist/client";
-import { File, Id } from "private-api-sdk-node/dist/services/file-transfer/types";
+import {
+    File,
+    Id,
+} from "private-api-sdk-node/dist/services/file-transfer/types";
 import { ApiErrorResponse } from "@companieshouse/api-sdk-node/dist/services/resource";
 import { Urls } from "../constants";
 import { logger } from "../utils/logger";
-import { ValidationStatusType, ValidationStatusPercents } from "../utils/validationStatusType";
+import {
+    ValidationStatusType,
+    ValidationStatusPercents,
+} from "../utils/validationStatusType";
 
 /**
  * Interface representing the account validation service
@@ -54,7 +60,6 @@ interface FailureValidationResult extends ValidationResultCommon {
     status: "failure";
     /** The reasons for the failure */
     reasons: string[];
-
 }
 
 /**
@@ -100,12 +105,19 @@ export function mapResponseType(
         );
     }
 
-    if (accountValidatorResponse.result === undefined || accountValidatorResponse.result === null) {
-        logger.error(`account-validator-api response result field is null or undefined. ` +
-            `This shouldn't happen. It should atleast have validation status showing the validation stage. ` +
-            `Response: ${JSON.stringify(accountValidatorResponse, null, 2)}`);
+    if (
+        accountValidatorResponse.result === undefined ||
+        accountValidatorResponse.result === null
+    ) {
+        logger.error(
+            `account-validator-api response result field is null or undefined. ` +
+                `This shouldn't happen. It should atleast have validation status showing the validation stage. ` +
+                `Response: ${JSON.stringify(accountValidatorResponse, null, 2)}`
+        );
 
-        throw new Error(`account-validator-api response result field is null or undefined.`);
+        throw new Error(
+            `account-validator-api response result field is null or undefined.`
+        );
     }
 
     const result = accountValidatorResponse.result;
@@ -119,13 +131,17 @@ export function mapResponseType(
             case "pending":
                 return {
                     status: "pending",
-                    ...baseResult
+                    ...baseResult,
                 };
             case "error":
-                logger.error(`Error validating document. Showing error page. Response: ${JSON.stringify(accountValidatorResponse)}`);
+                logger.error(
+                    `Error validating document. Showing error page. Response: ${JSON.stringify(
+                        accountValidatorResponse
+                    )}`
+                );
                 return {
                     status: "error",
-                    ...baseResult
+                    ...baseResult,
                 };
     }
 
@@ -133,17 +149,21 @@ export function mapResponseType(
             case ValidationStatusType.OK:
                 return {
                     status: "success",
-                    imageUrl: validFileForRendering(baseResult.fileName) ? `${Urls.RENDER}/${baseResult.fileId}` : undefined,
-                    ...baseResult
+                    imageUrl: validFileForRendering(baseResult.fileName)
+                        ? `${Urls.RENDER}/${baseResult.fileId}`
+                        : undefined,
+                    ...baseResult,
                 };
             case ValidationStatusType.FAILED:
                 return {
                     status: "failure",
-                    reasons: result.errorMessages.map(em => em['errorMessage']),
-                    ...baseResult
+                    reasons: result.errorMessages.map((em) => em["errorMessage"]),
+                    ...baseResult,
                 };
             default:
-                throw new Error(`Unexcepted validation status detected: ${result.validationStatus}`);
+                throw new Error(
+                    `Unexcepted validation status detected: ${result.validationStatus}`
+                );
     }
 }
 
@@ -153,10 +173,12 @@ export function mapResponseType(
  * @returns true if not a zip file.
  */
 export function validFileForRendering(fileName: string) {
-    const lastDotPosition = fileName.lastIndexOf('.');
-    if (lastDotPosition === -1) {return false;}
+    const lastDotPosition = fileName.lastIndexOf(".");
+    if (lastDotPosition === -1) {
+        return false;
+    }
     const extension = fileName.substring(lastDotPosition + 1);
-    return extension !== 'zip';
+    return extension !== "zip";
 }
 
 /**
@@ -170,7 +192,7 @@ export class AccountValidator implements AccountValidationService {
      * The default value is automatically configured from the environment.
      */
     constructor(
-        private privateApiClient: PrivateApiClient = createPrivateApiKeyClient(),
+        private privateApiClient: PrivateApiClient = createPrivateApiKeyClient()
     ) {}
 
     /**
@@ -180,7 +202,8 @@ export class AccountValidator implements AccountValidationService {
      * @throws If the API returns a non-200 status code, the returned value is an instance of `ApiErrorResponse`
      */
     async check(id: string): Promise<AccountValidationResult> {
-        const accountValidatorService = this.privateApiClient.accountValidatorService;
+        const accountValidatorService =
+            this.privateApiClient.accountValidatorService;
         const accountValidatorResponse =
             await accountValidatorService.getFileValidationStatus(id);
         if (accountValidatorResponse.httpStatusCode !== 200) {
@@ -199,17 +222,20 @@ export class AccountValidator implements AccountValidationService {
      * @throws If the API returns a non-200 status code, the returned value is an instance of `ApiErrorResponse`
      */
     async submit(file: Express.Multer.File): Promise<AccountValidationResult> {
-
-        const fileId = (
-            await this.uploadToS3(file)) as Resource<Id>;
+        const fileId = (await this.uploadToS3(file)) as Resource<Id>;
 
         if (fileId.resource?.id) {
-
-            const requestPayload = { fileName: file.originalname, id: fileId.resource?.id };
-            const accountValidatorService = this.privateApiClient.accountValidatorService;
+            const requestPayload = {
+                fileName: file.originalname,
+                id: fileId.resource?.id,
+            };
+            const accountValidatorService =
+                this.privateApiClient.accountValidatorService;
 
             const accountValidatorResponse =
-                await accountValidatorService.postFileForValidation(requestPayload);
+                await accountValidatorService.postFileForValidation(
+                    requestPayload
+                );
 
             if (accountValidatorResponse.httpStatusCode !== 200) {
                 throw accountValidatorResponse; // If the status code is not 200, the return type is ApiErrorResponse
@@ -219,8 +245,14 @@ export class AccountValidator implements AccountValidationService {
                 accountValidatorResponse as Resource<AccountValidatorResponse>
             );
         } else {
-            logger.error(`Got unexpected response from file-transfer-service ${JSON.stringify(fileId, null, 2)}`);
-            throw new Error('Upload to S3 failed: no file id returned');
+            logger.error(
+                `Got unexpected response from file-transfer-service ${JSON.stringify(
+                    fileId,
+                    null,
+                    2
+                )}`
+            );
+            throw new Error("Upload to S3 failed: no file id returned");
         }
     }
 
@@ -229,20 +261,28 @@ export class AccountValidator implements AccountValidationService {
      * @param file The file to be uploaded
      * @returns string The id of the uploaded file
      */
-    private async uploadToS3(file: Express.Multer.File): Promise<Resource<Id> | ApiErrorResponse>{
-
-
+    private async uploadToS3(
+        file: Express.Multer.File
+    ): Promise<Resource<Id> | ApiErrorResponse> {
         // TODO: Change body type to string
         const body = file.buffer.toString("base64");
         logger.debug(`Body size: ${body.length} Sample ${body.slice(0, 10)}`);
-        const fileDetails: File =  { fileName: file.originalname, body: body, mimeType: file.mimetype, size: file.size, extension: '.xtml' };
+        const fileDetails: File = {
+            fileName: file.originalname,
+            body: body,
+            mimeType: file.mimetype,
+            size: file.size,
+            extension: ".xtml",
+        };
 
         const fileTransferService = this.privateApiClient.fileTransferService;
         logger.debug(`Uploading file ${fileDetails.fileName} to S3.`);
 
         const fileId = await fileTransferService.upload(fileDetails);
 
-        logger.debug(`File ${fileDetails.fileName} has been uploaded to S3 with ID ${fileId}`);
+        logger.debug(
+            `File ${fileDetails.fileName} has been uploaded to S3 with ID ${fileId["resource"]["id"]}`
+        );
         return fileId;
     }
 }
