@@ -9,6 +9,7 @@ clean:
 	rm -f ./$(artifact_name)-*.zip
 	rm -rf ./dist
 	rm -f ./build.log
+	rm -rf assets/dist
 
 .PHONY: build
 build:
