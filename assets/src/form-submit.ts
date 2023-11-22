@@ -119,9 +119,8 @@ function handleUploadProgress(percentUploaded: number) {
     setPercentComplete(percentComplete);
 }
 
-function redirect(errorUrl: string) {
-    console.error(`Error occured while uploading file`);
-    window.location.href = errorUrl;
+function redirect(url: string) {
+    window.location.href = url;
 }
 
 interface ConfigParams {
@@ -170,6 +169,7 @@ function startValidationProgress(params: ValidationProgressParams) {
         const data = JSON.parse(event.data);
 
         if (data.message === timeoutMessage) {
+            console.error(`Recieved timeout message while validating file. Redirecting to error page.`);
             redirect(errorUrl);
             return;
         }
@@ -181,6 +181,8 @@ function startValidationProgress(params: ValidationProgressParams) {
             const resultRedirect = hasCallbackUrl
                 ? callbackUrlOnComplete.replace("{fileId}", fileId)
                 : `${resultsBaseUrl}/${fileId}`;
+
+            console.log(`Validation complete. Redirecting to ${resultRedirect}`);
             redirect(resultRedirect);
             return;
         }
@@ -245,6 +247,7 @@ export async function submitForm(formId: string, configParams: ConfigParams) {
                 case 500:
                     // falls through
                 default:
+                    console.error(`Recieved unexpected response status when uploading form. Status: ${status}`);
                     redirect(errorUrl);
                     break;
         }
