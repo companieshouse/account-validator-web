@@ -68,7 +68,8 @@ function renderSubmitPage(req: SubmitPageRequest, res: Response) {
         accountValidationResult: req.accountValidationResult,
         fileName: req.file?.originalname,
         FILE_UPLOAD_FIELD_NAME: FILE_UPLOAD_FIELD_NAME,
-        errorMessage: errorMessage
+        errorMessage: errorMessage,
+        callback: req.query.callback
     });
 }
 

@@ -32,6 +32,7 @@ export const RESULT_RELOAD_DURATION_SECONDS = parseFloat(
     getEnvironmentVariable("RESULT_RELOAD_DURATION_SECONDS", 5)
 );
 export const SURVEY_LINK = getEnvironmentVariable("SURVEY_LINK", "");
+export const NUNJUCKS_RELOAD = getEnvironmentVariable("NUNJUCKS_RELOAD", "0") === '1' ? true : false;
 
 /**
  * Parses a file size string and returns the equivalent number of bytes.

@@ -4,6 +4,7 @@ custom_build(
     command = 'DOCKER_BUILDKIT=0 docker build --build-arg SSH_PRIVATE_KEY="$(cat ~/.ssh/id_rsa)" --build-arg SSH_PRIVATE_KEY_PASSPHRASE --tag $EXPECTED_REF .',
     live_update = [
         sync(local_path = './src', remote_path = '/opt/src'),
+        sync(local_path = './views', remote_path = '/opt/views'),
         run('npm install', trigger=['./package.json', './package-lock.json'])
     ],
     deps = [
@@ -11,3 +12,21 @@ custom_build(
         './views'
     ]
 )
+
+local_resource(
+    name = 'account-validator-web-assets',
+    cmd = """
+        set -e
+        npm run build:assets -- --sourcemap || { echo 'Failed to build assets'; exit 1; }
+        if [ $(docker ps -q -f name=docker-chs-development-cdn-ch-gov-uk-1) ]; then
+            (cd assets/dist && docker cp . docker-chs-development-cdn-ch-gov-uk-1:/usr/share/nginx/html/javascripts/app/account-validation-web/) || { echo 'Failed to copy contents of assets/dist'; exit 1; }
+            echo 'Contents of assets/dist copied successfully.'
+        else
+            echo 'Container docker-chs-development-cdn-ch-gov-uk-1 is not running.'
+            exit 1
+        fi
+    """,
+    deps = ['./assets/src', './assets/dist']
+)
+
+

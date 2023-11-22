@@ -2,17 +2,21 @@ import esbuild from "esbuild";
 import path from "path";
 
 async function buildAssets() {
+    // Get command line arguments
+    const args = process.argv.slice(2);
+    const shouldGenerateSourcemap = args.includes("--sourcemap");
+
     const srcDir = path.join(__dirname, "assets/src");
     const outDir = path.join(__dirname, "assets/dist");
 
     try {
         await esbuild.build({
-            entryPoints: [`${srcDir}/**/*.ts`],
+            entryPoints: [`${srcDir}/*.ts`],
             outdir: outDir,
             bundle: true,
             platform: "browser",
             target: ["es2015"],
-            // sourcemap: true, // Uncomment this to emit a source map to view the typescript code in the browser
+            sourcemap: shouldGenerateSourcemap,
             minify: true,
             format: "iife",
         });
