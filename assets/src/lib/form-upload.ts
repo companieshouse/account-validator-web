@@ -1,12 +1,12 @@
 /**
  * FormUploadArgs is a type representing a parameter object storing parameters needed to upload a form.
- * It is used by the uploadForm function. 
- * 
+ * It is used by the uploadForm function.
+ *
  * @param formId The ID of the form element in the HTML document. This is used to locate the form
  *               and gather its data for the upload process.
- * @param uploadEndpointOverride Optional parameter. It allows specifying a custom endpoint URL 
+ * @param uploadEndpointOverride Optional parameter. It allows specifying a custom endpoint URL
  *                               for the form submission. If not provided, the form's 'action' attribute is used.
- * @param onProgress Optional callback function that gets invoked during the upload process. 
+ * @param onProgress Optional callback function that gets invoked during the upload process.
  *                   It provides progress updates in the form of a number representing the percentage of completion.
  */
 export interface FormUploadArgs {
@@ -16,17 +16,17 @@ export interface FormUploadArgs {
 }
 
 /**
- * This function handles the process of uploading a form's data using an XMLHttpRequest. 
+ * This function handles the process of uploading a form's data using an XMLHttpRequest.
  * It allows for custom configuration of the upload process through the provided arguments.
  * The onProgress callback is called during the form upload with the percentage of the form that has been uploaded.
  * This can be used to implement progress indicators.
- * 
+ *
  * @param args An object of type FormUploadArgs containing:
  *             - formId: String representing the ID of the form element to be uploaded.
  *             - uploadEndpointOverride: (Optional) String specifying a custom endpoint for the form submission.
  *                                       If not provided, the form's 'action' attribute is used.
  *             - onProgress: (Optional) Callback function that is invoked with the upload progress (as a percentage).
- * @returns A Promise that resolves to a Response object containing the status, body, 
+ * @returns A Promise that resolves to a Response object containing the status, body,
  *          and the XMLHttpRequest used for the upload. The promise rejects with an error in case of network issues.
  */
 export function uploadForm(args: FormUploadArgs): Promise<Response> {
@@ -62,10 +62,10 @@ export function uploadForm(args: FormUploadArgs): Promise<Response> {
         });
     }
 
-    // Return a promise which resolves when the request has completed. 
+    // Return a promise which resolves when the request has completed.
     // If there is an error with the request, reject is called.
     // Calling resolve is the same as returning from an async function.
-    // Calling reject is the same as throwing from an async function. 
+    // Calling reject is the same as throwing from an async function.
     return new Promise((resolve, reject) => {
         xhr.addEventListener("load", () => {
             resolve({
@@ -83,6 +83,17 @@ export function uploadForm(args: FormUploadArgs): Promise<Response> {
     });
 }
 
+/**
+ * Response interface represents the structure of the response object returned by the uploadForm function.
+ * It encapsulates the details of the response received from the server after form data upload.
+ *
+ * @param status The HTTP status code returned by the server. It provides information about the result
+ *               of the form submission, such as success (e.g., 200) or failure (e.g., 404).
+ * @param body The body of the server's response as a string. This typically contains information or
+ *             data sent back from the server, such as confirmation messages or error details.
+ * @param xhr The XMLHttpRequest object used to perform the form upload. It contains detailed information
+ *            about the request and response, and can be used for further processing or error handling.
+ */
 export interface Response {
     status: number;
     body: string;
