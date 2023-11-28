@@ -9,15 +9,15 @@ const ARIA_HIDDEN_ATTRIBUTE = "aria-hidden"; // Accessibility attribute used to 
 
 // This type acts like an enum limiting the possible parameters to a set of strings.
 // In this case it only allows page names to be either "submit" or "pending".
-type PageName = "submit" | "pending"; 
+type PageName = "submit" | "pending";
 
 /**
  * This function controls the visibility of different sections of the page based on the provided page name.
- * It uses the PageName type to determine which section to show and hide. The function dynamically manages 
+ * It uses the PageName type to determine which section to show and hide. The function dynamically manages
  * two main sections of the page, handling their display status according to the given page name.
  *
  * @param pageName A string parameter of type PageName that determines which page section to show.
- *                 Depending on the value, it switches the visibility of the sections identified by 
+ *                 Depending on the value, it switches the visibility of the sections identified by
  *                 their respective IDs (as defined in the PageName type).
  *                 - If 'submit' is provided, the submit section is shown and the pending section is hidden.
  *                 - If 'pending' is provided, the pending section is shown and the submit section is hidden.
@@ -50,7 +50,7 @@ function setVisibility(element: HTMLElement, visible: boolean) {
 /**
  * Retrieves an HTML element by its ID and ensures that it actually exists in the DOM.
  * This is a strict utility function that enforces the presence of an element with the given ID.
- * If the element is not found, the function throws an error, preventing further execution of 
+ * If the element is not found, the function throws an error, preventing further execution of
  * code that depends on the existence of this element.
  *
  * @param id The ID of the HTML element to be retrieved. It is a string specifying the unique identifier
@@ -73,7 +73,7 @@ function mustGetById(id: string): HTMLElement {
  * Handles the error scenario during the uploading process. This function takes the response HTML string,
  * typically received from an HTTP response, and uses it to update the current webpage's content.
  * Specifically, it replaces the inner HTML of a specific element on the page (identified by SUBMIT_BLOCK_ID)
- * with new content derived from the response HTML. This is useful for updating the page with field error messages 
+ * with new content derived from the response HTML. This is useful for updating the page with field error messages
  * returned from the server. It also resets the upload progress indicator to 0%.
  *
  * @param responseHTML A string containing HTML content, typically received as a response from the server
@@ -100,17 +100,17 @@ function handleErrorUploading(responseHTML: string): void {
 
 /**
  * Asynchronously validates a form by sending a file's metadata to a server endpoint for validation.
- * The function extracts the first file from the provided file input element and constructs a validation 
- * request object. It then sends this object to a server endpoint for validation. If the server returns 
- * a status of 400 (indicating a client error, typically bad input), the function retrieves and returns 
- * the response text which contains HTML with the field error messages. Otherwise, it returns an empty string, 
+ * The function extracts the first file from the provided file input element and constructs a validation
+ * request object. It then sends this object to a server endpoint for validation. If the server returns
+ * a status of 400 (indicating a client error, typically bad input), the function retrieves and returns
+ * the response text which contains HTML with the field error messages. Otherwise, it returns an empty string,
  * indicating that no error was found during validation.
  * This function allows for validation to be performed on the file without needing to upload the whole file.
  * This allows for quick validation feedback to the user.
  *
- * @param fileInput An HTMLInputElement that represents the file input on the form. It's expected to 
+ * @param fileInput An HTMLInputElement that represents the file input on the form. It's expected to
  *                  contain the file that needs to be validated.
- * @returns A Promise that resolves to a string. If validation fails (response status 400), 
+ * @returns A Promise that resolves to a string. If validation fails (response status 400),
  *          it returns the HTML containing the field error messages. Otherwise, it returns an empty string.
  */
 async function validateForm(fileInput: HTMLInputElement): Promise<string> {
@@ -119,7 +119,7 @@ async function validateForm(fileInput: HTMLInputElement): Promise<string> {
     };
 
     // Get the file from the input.
-    // If there is no file, null will be submitted which will fail validation with 
+    // If there is no file, null will be submitted which will fail validation with
     // the error message indicating there was no file.
     const file = fileInput?.files?.[0];
     if (file) {
@@ -149,14 +149,14 @@ async function validateForm(fileInput: HTMLInputElement): Promise<string> {
 /**
  * Asynchronously reads the first 'n' bytes of a given file and returns them as a string.
  * This function uses the FileReader API to read a specified portion of the file. It's useful for
- * passing to the server to validate the file based upon it's starting bytes. For example a ZIP file starts with 
+ * passing to the server to validate the file based upon it's starting bytes. For example a ZIP file starts with
  * PK\003\004 or PK\005\006
  * and an XML file starts with '<xml'.
  *
  * @param file The File object to be read. This object represents the actual file content to be processed.
- * @param n Optional parameter indicating the number of bytes to read from the start of the file. 
+ * @param n Optional parameter indicating the number of bytes to read from the start of the file.
  *          It defaults to 50 if not specified.
- * @returns A Promise that resolves to a string containing the first 'n' bytes of the file. If there's an 
+ * @returns A Promise that resolves to a string containing the first 'n' bytes of the file. If there's an
  *          error in reading the file, the promise is rejected with an error message.
  */
 function getFirstBytes(file: File, n = 50): Promise<string> {
@@ -176,7 +176,7 @@ function getFirstBytes(file: File, n = 50): Promise<string> {
 }
 
 /**
- * Sets the text content of the element with ID PERCENTAGE_ID 
+ * Sets the text content of the element with ID PERCENTAGE_ID
  * to display the given completion percentage.
  *
  * @param {number} percentComplete - The completion percentage, from 0 to 100.
@@ -188,12 +188,12 @@ function setPercentComplete(percentComplete: number) {
 
 /**
  * Callback used by the upload form to handle upload progress.
- * Maps the actual upload percentage to a discrete percentage 
- * to display. 
- * 
+ * Maps the actual upload percentage to a discrete percentage
+ * to display.
+ *
  * Used as the onProgress callback for the upload form.
- * 
- * @param {number} percentUploaded - The actual upload percentage 
+ *
+ * @param {number} percentUploaded - The actual upload percentage
  * out of 100
  */
 function handleUploadProgress(percentUploaded: number) {
@@ -212,11 +212,11 @@ function handleUploadProgress(percentUploaded: number) {
 
 /**
  * Redirects the browser to a given URL.
- * 
+ *
  * Updates window.location.href to the provided URL string.
- * 
+ *
  * Can be used to redirect on completion or when there is an error.
- * 
+ *
  * @param {string} url - The URL to redirect the browser to.
  */
 function redirect(url: string) {
@@ -224,12 +224,12 @@ function redirect(url: string) {
 }
 
 
-/** 
+/**
  * Interface defining the configuration parameters.
- * 
+ *
  * @property {string} resultsBaseUrl - Base URL for results pages
  * @property {string} errorUrl - URL to redirect on errors
- * @property {string} timeoutMessage - Message when timeout occurs 
+ * @property {string} timeoutMessage - Message when timeout occurs
  * @property {string} fileInputFieldName - Upload form field name
  * @property {string} callbackUrlOnComplete - URL called on completion
 */
@@ -245,7 +245,7 @@ interface ConfigParams {
  * Checks if an object conforms to the ConfigParams interface.
  * Useful for type checking in TypeScript.
  *
- * @param {any} obj - The object to check 
+ * @param {any} obj - The object to check
  * @returns {obj is ConfigParams} True if obj satisfies interface
  */
 function isConfigParams(obj: any): obj is ConfigParams {
@@ -268,9 +268,9 @@ function isConfigParams(obj: any): obj is ConfigParams {
 }
 
 /**
- * Interface for validation progress parameters. 
+ * Interface for validation progress parameters.
  * Used as the parameter object for the startValidationProgress function.
- *  
+ *
  * @extends ConfigParams
  * @property {string} fileId - The ID of the file being uploaded
  */
@@ -280,9 +280,9 @@ interface ValidationProgressParams extends ConfigParams {
 
 /**
  * Initiates and manages the progress of a file validation process using server-sent events (SSE).
- * It establishes an EventSource connection to a specified URL and listens for messages indicating 
- * the progress of the validation. If a timeout occurs, it redirects to an error URL. Upon completion 
- * of the validation, it redirects to a specified callback URL or a results page, based on the 
+ * It establishes an EventSource connection to a specified URL and listens for messages indicating
+ * the progress of the validation. If a timeout occurs, it redirects to an error URL. Upon completion
+ * of the validation, it redirects to a specified callback URL or a results page, based on the
  * completion status and provided parameters.
  *
  * @param params An object of type ValidationProgressParams, containing:
@@ -337,14 +337,14 @@ interface UploadResponse {
 }
 
 /**
- * Asynchronously handles the submission of a form, including validation, upload, and subsequent 
- * validation progress tracking. It performs initial checks and validation, then proceeds to upload 
+ * Asynchronously handles the submission of a form, including validation, upload, and subsequent
+ * validation progress tracking. It performs initial checks and validation, then proceeds to upload
  * the form. Based on the upload response, it either handles errors or starts tracking the validation progress.
- * 
+ *
  * @param formId The ID of the form element that is being submitted.
- * @param configParams Configuration parameters including URLs for error handling, file input field name, 
+ * @param configParams Configuration parameters including URLs for error handling, file input field name,
  *                     and callback URL for when the upload and validation are complete.
- * @throws Redirects to the error URL specified in configParams if any errors occur during form validation 
+ * @throws Redirects to the error URL specified in configParams if any errors occur during form validation
  *         or upload, or if the response status from the upload is not as expected.
  */
 export async function submitForm(formId: string, configParams: ConfigParams) {
@@ -418,7 +418,7 @@ declare global {
     }
 }
 
-// This line actually adds the 'submitForm' function to the global window object. 
+// This line actually adds the 'submitForm' function to the global window object.
 // This makes 'submitForm' accessible from other script tags in the HTML document, not just within the module or file where it's defined.
 // It's a way of exporting the function to a broader scope, allowing it to be called like a global function in the browser environment.
 window.submitForm = submitForm;
