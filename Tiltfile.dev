@@ -26,7 +26,8 @@ local_resource(
             exit 1
         fi
     """,
-    deps = ['./assets/src', './assets/dist']
+    resource_deps=['cdn-ch-gov-uk'],
+    deps = ['./assets/src']
 )
 
 
