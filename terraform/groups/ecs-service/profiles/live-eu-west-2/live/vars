@@ -4,7 +4,7 @@ aws_profile = "live-eu-west-2"
 api_url = "https://private-api.companieshouse.gov.uk"
 account_validator_max_file_size = "300MB"
 cache_server = "redis"
-cdn_host = "https://d6nh3dxv55e16.cloudfront.net"
+cdn_host = "https://d2zcnazgetow0i.cloudfront.net"
 
 # scaling configs
 desired_task_count = 2 # use multi instance in live
