@@ -1,6 +1,6 @@
 import { Response, Request, Router, NextFunction } from "express";
 import { MAX_FILE_SIZE, MAX_FILE_SIZE_MB, UI_UPDATE_TIMEOUT_MS } from "../config";
-import { ErrorMessages, FILE_UPLOAD_FIELD_NAME, Templates, errorMessage } from "../constants";
+import { ErrorMessages, FILE_UPLOAD_FIELD_NAME, Templates, errorMessage, Urls } from "../constants";
 import multer from "multer";
 import { ValidationResult } from "../validation/validation.result";
 import {
@@ -69,7 +69,8 @@ function renderSubmitPage(req: SubmitPageRequest, res: Response) {
         fileName: req.file?.originalname,
         FILE_UPLOAD_FIELD_NAME: FILE_UPLOAD_FIELD_NAME,
         errorMessage: errorMessage,
-        callback: req.query.callback
+        callback: req.query.callback,
+        backUrl: req.query.backUrl ?? Urls.BASE
     });
 }
 
