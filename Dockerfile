@@ -7,6 +7,8 @@ COPY --from=0 ./ ./
 
 WORKDIR /opt
 
+COPY node_modules ./node_modules
+
 COPY . .
 
 CMD [ "./docker_start.sh" ]

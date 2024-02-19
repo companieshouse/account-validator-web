@@ -4,6 +4,7 @@
 !docker_start.sh
 !src
 !views
+!node_modules
 !package.json
 !package-lock.json
 !tsconfig.json
