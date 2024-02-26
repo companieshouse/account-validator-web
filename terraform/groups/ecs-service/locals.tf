@@ -1,7 +1,9 @@
 # Define all hardcoded local variable and local variables looked up from data resources
 locals {
-  stack_name                = "filing-maintain" # this must match the stack name the service deploys into
-  name_prefix               = "${local.stack_name}-${var.environment}"
+  stack_name    = "filing-maintain" # this must match the stack name the service deploys into
+  name_prefix   = "${local.stack_name}-${var.environment}"
+  global_prefix = "global-${var.environment}"
+
   service_name              = "account-validator-web"
   container_port            = "3000" # default node port required here until prod docker container is built allowing port change via env var
   docker_repo               = "account-validator-web"
@@ -11,38 +13,13 @@ locals {
   healthcheck_matcher       = "200"                        # no explicit healthcheck in this service yet, change this when added!
 
   kms_alias       = "alias/${var.aws_profile}/environment-services-kms"
+  vpc_name        = local.service_secrets["vpc_name"]
+  app_environment_filename   = "account-validator-web.env"
+  use_set_environment_files  = var.use_set_environment_files
+  application_subnet_ids     = data.aws_subnets.application.ids
+  application_subnet_pattern = local.stack_secrets["application_subnet_pattern"]
   service_secrets = jsondecode(data.vault_generic_secret.service_secrets.data_json)
-
-  parameter_store_secrets = {
-    "vpc_name"             = local.service_secrets["vpc_name"]
-    "chs_api_key"          = local.service_secrets["chs_api_key"]
-    "internal_api_url"     = local.service_secrets["internal_api_url"]
-    "chs_internal_api_key" = local.service_secrets["chs_internal_api_key"]
-    "account_test_url"     = local.service_secrets["account_test_url"]
-    "account_url"          = local.service_secrets["account_url"]
-    "cookie_secret"        = local.service_secrets["cookie_secret"]
-    "oauth2_auth_uri"      = local.service_secrets["oauth2_auth_uri"]
-    "oauth2_redirect_uri"  = local.service_secrets["oauth2_redirect_uri"]
-    "oauth2_token_uri"     = local.service_secrets["oauth2_token_uri"]
-    "oauth2_client_id"     = local.service_secrets["oauth2_client_id"]
-    "oauth2_client_secret" = local.service_secrets["oauth2_client_secret"]
-    "oauth2_request_key"   = local.service_secrets["oauth2_request_key"]
-  }
-
-  vpc_name             = local.service_secrets["vpc_name"]
-  chs_api_key          = local.service_secrets["chs_api_key"]
-  internal_api_url     = local.service_secrets["internal_api_url"]
-  chs_internal_api_key = local.service_secrets["chs_internal_api_key"]
-  cdn_host             = local.service_secrets["cdn_host"]
-  account_test_url     = local.service_secrets["account_test_url"]
-  account_url          = local.service_secrets["account_url"]
-  cookie_secret        = local.service_secrets["cookie_secret"]
-  oauth2_auth_uri      = local.service_secrets["oauth2_auth_uri"]
-  oauth2_redirect_uri  = local.service_secrets["oauth2_redirect_uri"]
-  oauth2_token_uri     = local.service_secrets["oauth2_token_uri"]
-  oauth2_client_id     = local.service_secrets["oauth2_client_id"]
-  oauth2_client_secret = local.service_secrets["oauth2_client_secret"]
-  oauth2_request_key   = local.service_secrets["oauth2_request_key"]
+  stack_secrets   = jsondecode(data.vault_generic_secret.stack_secrets.data_json)
 
   # create a map of secret name => secret arn to pass into ecs service module
   # using the trimprefix function to remove the prefixed path from the secret name
@@ -56,34 +33,35 @@ locals {
     trimprefix(sec.name, "/${local.service_name}-${var.environment}/") => sec.arn
   }
 
-  task_secrets = [
-    { "name" : "ACCOUNT_TEST_URL", "valueFrom" : "${local.service_secrets_arn_map.account_test_url}" },
-    { "name" : "ACCOUNT_URL", "valueFrom" : "${local.service_secrets_arn_map.account_url}" },
-    { "name" : "CHS_API_KEY", "valueFrom" : "${local.service_secrets_arn_map.chs_api_key}" },
-    { "name" : "CHS_INTERNAL_API_KEY", "valueFrom" : "${local.service_secrets_arn_map.chs_internal_api_key}" },
-    { "name" : "COOKIE_SECRET", "valueFrom" : "${local.secrets_arn_map.web-oauth2-cookie-secret}" },
-    { "name" : "INTERNAL_API_URL", "valueFrom" : "${local.service_secrets_arn_map.internal_api_url}" },
-    { "name" : "OAUTH2_AUTH_URI", "valueFrom" : "${local.service_secrets_arn_map.oauth2_auth_uri}" },
-    { "name" : "OAUTH2_CLIENT_ID", "valueFrom" : "${local.service_secrets_arn_map.oauth2_client_id}" },
-    { "name" : "OAUTH2_CLIENT_SECRET", "valueFrom" : "${local.service_secrets_arn_map.oauth2_client_secret}" },
-    { "name" : "OAUTH2_REDIRECT_URI", "valueFrom" : "${local.service_secrets_arn_map.oauth2_token_uri}" },
-    { "name" : "OAUTH2_REQUEST_KEY", "valueFrom" : "${local.service_secrets_arn_map.oauth2_request_key}" },
-    { "name" : "OAUTH2_TOKEN_URI", "valueFrom" : "${local.service_secrets_arn_map.oauth2_redirect_uri}" },
+  global_secrets_arn_map = {
+    for sec in data.aws_ssm_parameter.global_secret :
+    trimprefix(sec.name, "/${local.global_prefix}/") => sec.arn
+  }
+
+  global_secret_list = flatten([for key, value in local.global_secrets_arn_map :
+    { "name" = upper(key), "valueFrom" = value }
+  ])
+
+  ssm_global_version_map = [
+    for sec in data.aws_ssm_parameter.global_secret : {
+      name = "GLOBAL_${var.ssm_version_prefix}${replace(upper(basename(sec.name)), "-", "_")}", value = sec.version
+    }
   ]
 
-  task_environment = [
-    { "name" : "ACCOUNT_VALIDATOR_MAX_FILE_SIZE", "value" : "${var.account_validator_max_file_size}" },
-    { "name" : "ACCOUNT_VALIDATOR_UI_UPDATE_INTERVAL", "value" : "${var.account_validator_ui_update_interval}" },
-    { "name" : "ACCOUNT_VALIDATOR_UI_UPDATE_TIMEOUT", "value" : "${var.account_validator_ui_update_timeout}" },
-    { "name" : "ACCOUNT_VALIDATOR_WEB_VERSION", "value" : "${var.account_validator_web_version}" },
-    { "name" : "API_URL", "value" : "${var.api_url}" },
-    { "name" : "CACHE_SERVER", "value" : "${var.cache_server}" },
-    { "name" : "CDN_HOST", "value" : "${var.cdn_host}" },
-    { "name" : "CHS_URL", "value" : "${var.chs_url}" },
-    { "name" : "COOKIE_DOMAIN", "value" : "${var.cookie_domain}" },
-    { "name" : "COOKIE_NAME", "value" : "${var.cookie_name}" },
-    { "name" : "LOG_LEVEL", "value" : "${var.log_level}" },
-    { "name" : "NODE_ENV", "value" : "${var.node_env}" },
-    { "name" : "TZ", "value" : "${var.tz}" }
+  service_secret_list = flatten([for key, value in local.service_secrets_arn_map :
+    { "name" = upper(key), "valueFrom" = value }
+  ])
+
+  ssm_service_version_map = [
+    for sec in module.secrets.secrets : {
+      name = "${replace(upper(local.service_name), "-", "_")}_${var.ssm_version_prefix}${replace(upper(basename(sec.name)), "-", "_")}", value = sec.version
+    }
   ]
+
+  # secrets to go in list
+  task_secrets = concat(local.service_secret_list, local.global_secret_list, [])
+
+  task_environment = concat(local.ssm_global_version_map, local.ssm_service_version_map, [
+    { "name" : "PORT", "value" : local.container_port },
+  ])
 }
