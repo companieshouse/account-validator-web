@@ -1,5 +1,5 @@
 import { Resource } from "@companieshouse/api-sdk-node";
-import { AccountValidatorResponse } from "private-api-sdk-node/dist/services/account-validator/types";
+import { AccountValidatorRequest, AccountValidatorResponse } from "private-api-sdk-node/dist/services/account-validator/types";
 import { createPrivateApiKeyClient } from "./api.service";
 import PrivateApiClient from "private-api-sdk-node/dist/client";
 import {
@@ -13,6 +13,7 @@ import {
     ValidationStatusType,
     ValidationStatusPercents,
 } from "../utils/validationStatusType";
+import { PackageType } from "private-api-sdk-node/dist/services/accounts-filing/types";
 
 /**
  * Interface representing the account validation service
@@ -23,7 +24,7 @@ export interface AccountValidationService {
      * @param file The file to be validated
      * @returns Promise<AccountValidationResult> The result of the validation
      */
-    submit(file: Express.Multer.File): Promise<AccountValidationResult>;
+    submit(file: Express.Multer.File, packageType?: PackageType): Promise<AccountValidationResult>;
 
     /**
      * Check the status of a validation request
@@ -40,6 +41,8 @@ interface ValidationResultCommon {
     fileName: string;
 
     percent: number;
+
+    packageType?: PackageType;
 }
 
 /**
@@ -218,17 +221,27 @@ export class AccountValidator implements AccountValidationService {
     /**
      * Submit a file for validation
      * @param file The file to be validated
+     * @param packageType an optional param - use to indicate which package type the file belongs to
      * @returns Promise<AccountValidationResult> The result of the validation
      * @throws If the API returns a non-200 status code, the returned value is an instance of `ApiErrorResponse`
      */
-    async submit(file: Express.Multer.File): Promise<AccountValidationResult> {
+    async submit(file: Express.Multer.File, packageType?: PackageType): Promise<AccountValidationResult> {
         const fileId = (await this.uploadToS3(file)) as Resource<Id>;
 
         if (fileId.resource?.id) {
-            const requestPayload = {
+            const fileIdString = fileId.resource.id;
+            const requestPayload: AccountValidatorRequest = {
                 fileName: file.originalname,
-                id: fileId.resource?.id,
+                id: fileIdString,
             };
+
+            if (packageType){
+                logger.info(fileIdString + " has set a package type of " + packageType);
+                requestPayload.packageType = packageType;
+            } else {
+                logger.info(fileIdString + " has not set a package type");
+            }
+
             const accountValidatorService =
                 this.privateApiClient.accountValidatorService;
 

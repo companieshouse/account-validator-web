@@ -7,12 +7,21 @@ import {
 import { Resource } from "@companieshouse/api-sdk-node";
 import { ApiErrorResponse } from "@companieshouse/api-sdk-node/dist/services/resource";
 import { AccountValidatorResponse } from "private-api-sdk-node/dist/services/account-validator/types";
+import { Id } from "private-api-sdk-node/dist/services/file-transfer/types";
 
 const mockPrivateApiClient = {
     accountValidatorService: {
         postFileForValidation: jest.fn(),
         getFileValidationStatus: jest.fn(),
+
     },
+    fileTransferService: {
+        upload: () => {
+            return Promise.resolve(
+                    { resource: { id: "123" } } as unknown as Resource<Id>
+            );
+        }
+    }
 } as unknown as PrivateApiClient;
 
 function createAccountValidatorResponse(
@@ -80,8 +89,8 @@ describe("validFileForRendering", () => {
 });
 
 let accountValidator: AccountValidationService;
-// const mockPostForValidation = mockApiClient.accountValidatorService
-//     .postFileForValidation as jest.Mock;
+const mockPostForValidation = mockPrivateApiClient.accountValidatorService
+    .postFileForValidation as jest.Mock;
 const mockGetFileValidationStatus = mockPrivateApiClient.accountValidatorService
     .getFileValidationStatus as jest.Mock;
 describe("AccountValidator", () => {
@@ -89,28 +98,62 @@ describe("AccountValidator", () => {
         accountValidator = new AccountValidator(mockPrivateApiClient);
     });
 
-    // it("should submit a file to the api for validation", async () => {
-    //     // Given
-    //     const file = {
-    //         originalname: "success.xhtml",
-    //     } as Express.Multer.File;
+    it("should submit a file to the api for validation", async () => {
+        // Given
+        const file = {
+            originalname: "success.xhtml",
+            buffer: {
+                toString: () => {
+                    return "abc";
+                }
+            }
+        } as Express.Multer.File;
 
-    //     const resource = createAccountValidatorResponse(
-    //         200,
-    //         "pending",
-    //         "fileId",
-    //         file.originalname,
-    //         "OK"
-    //     );
-    //     mockPostForValidation.mockResolvedValue(resource);
+        const resource = createAccountValidatorResponse(
+            200,
+            "pending",
+            "fileId",
+            file.originalname,
+            "OK"
+        );
+        mockPostForValidation.mockResolvedValue(resource);
 
-    //     // When
-    //     const resp = await accountValidator.submit(file);
+        // When
+        const resp = await accountValidator.submit(file);
 
-    //     // Then
-    //     expect(resp.status).toBe("pending");
-    //     expect(resp.fileId).toBe("fileId");
-    // });
+        // Then
+        expect(resp.status).toBe("pending");
+        expect(resp.fileId).toBe("fileId");
+    });
+
+    it("should submit a file to the api for validation with package type", async () => {
+        // Given
+        const file = {
+            originalname: "success.xhtml",
+            buffer: {
+                toString: () => {
+                    return "abc";
+                }
+            }
+        } as Express.Multer.File;
+
+        const resource = createAccountValidatorResponse(
+            200,
+            "pending",
+            "fileId",
+            file.originalname,
+            "OK"
+        );
+        mockPostForValidation.mockResolvedValue(resource);
+
+        // When
+        const resp = await accountValidator.submit(file, "UKSEF");
+
+        // Then
+        expect(mockPostForValidation).toHaveBeenCalledWith({ fileName: 'success.xhtml', id: '123', packageType: 'UKSEF' });
+        expect(resp.status).toBe("pending");
+        expect(resp.fileId).toBe("fileId");
+    });
 
     // it("should throw an error if postFileForValidation returns a non-200 status code", async () => {
     //     // Given

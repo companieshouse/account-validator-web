@@ -49,4 +49,3 @@ mockedValidatorService.check.mockImplementation(async id => {
 
     return mockResponse;
 });
-
