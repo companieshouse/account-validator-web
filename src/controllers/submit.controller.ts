@@ -92,8 +92,7 @@ function checkPackageTypeIsUsedCorrectly(packageType: string| undefined): void {
 }
 
 function isValidatedPackageTypePresent(packageType: string| undefined): boolean {
-    const packageAllowCharactor = new RegExp("[a-z014-]{1,24}");
-    return packageType !== undefined && packageAllowCharactor.test(packageType);
+    return packageType !== undefined;
 }
 
 async function submitFileForValidation(
