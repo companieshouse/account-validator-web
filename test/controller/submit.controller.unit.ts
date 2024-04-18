@@ -24,7 +24,7 @@ describe("Submit controller tests", () => {
 
     it("Should render the submit page with package type", async () => {
         const response = await request(app).
-            get(Urls.SUBMIT + "/?packageType=UKSEF");
+            get(Urls.SUBMIT + "/?packageType=uksef");
 
         expect(response.status).toBe(200);
 
@@ -32,7 +32,7 @@ describe("Submit controller tests", () => {
         expect(response.text).toContain(fileUploadHtml);
         const hiddenPendingPage = `id="pending" class="govuk-grid-row govuk-!-display-none"`;
         expect(response.text).toContain(hiddenPendingPage);
-        const submitUrl = `action="/xbrl_validate/submit/?packageType=UKSEF"`;
+        const submitUrl = `action="/xbrl_validate/submit/?packageType=uksef"`;
         expect(response.text).toContain(submitUrl);
     });
 
