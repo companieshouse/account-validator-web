@@ -67,7 +67,7 @@ function renderSubmitPage(req: SubmitPageRequest, res: Response) {
 
     checkPackageTypeIsUsedCorrectly(packageType);
 
-    const submitUrl = isValidatedPackageTypePresent(packageType) ? `${Urls.SUBMIT}/?packageType=${req.query.packageType}` : Urls.SUBMIT;
+    const submitUrl = packageType !== undefined ? `${Urls.SUBMIT}/?packageType=${req.query.packageType}` : Urls.SUBMIT;
 
     return res.render(Templates.SUBMIT, {
         templateName: Templates.SUBMIT,
@@ -85,14 +85,10 @@ function renderSubmitPage(req: SubmitPageRequest, res: Response) {
 
 function checkPackageTypeIsUsedCorrectly(packageType: string| undefined): void {
     // IS "packageType=[anything]" present AND type is not valid -> fail
-    if (isValidatedPackageTypePresent(packageType) && !PackageType.includes(packageType)){
+    if (packageType !== undefined && !PackageType.includes(packageType)){
         logger.error(`An invalid package type has been entered. Does not match any of the validate type allowed.`);
         throw new Error("Invalid package type");
     }
-}
-
-function isValidatedPackageTypePresent(packageType: string| undefined): boolean {
-    return packageType !== undefined;
 }
 
 async function submitFileForValidation(
