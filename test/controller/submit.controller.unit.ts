@@ -50,7 +50,7 @@ describe("Submit controller tests", () => {
         expect(response.text).toContain(submitUrl);
     });
 
-    it("Should render the submit page with package type group-package-401", async () => {
+    it("Should render the submit page with package type group-package-5", async () => {
         const response = await request(app).
             get(Urls.SUBMIT + "/?packageType=group-package-5");
 
