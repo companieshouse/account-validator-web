@@ -235,12 +235,9 @@ export class AccountValidator implements AccountValidationService {
                 id: fileIdString,
             };
 
-            if (packageType){
-                logger.info(fileIdString + " has set a package type of " + packageType);
-                requestPayload.packageType = packageType;
-            } else {
-                logger.info(fileIdString + " has not set a package type");
-            }
+            logger.debug(fileIdString + " has set a package type of " + packageType);
+            requestPayload.packageType = packageType;
+
 
             const accountValidatorService =
                 this.privateApiClient.accountValidatorService;

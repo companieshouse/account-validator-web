@@ -65,7 +65,7 @@ function renderSubmitPage(req: SubmitPageRequest, res: Response) {
 
     const packageType = req.query?.packageType as string|undefined;
 
-    checkPackageTypeIsUsedCorrectly(packageType);
+    validatePackageType(packageType);
 
     const submitUrl = packageType !== undefined ? `${Urls.SUBMIT}/?packageType=${req.query.packageType}` : Urls.SUBMIT;
 
@@ -83,7 +83,7 @@ function renderSubmitPage(req: SubmitPageRequest, res: Response) {
 }
 
 
-function checkPackageTypeIsUsedCorrectly(packageType: string| undefined): void {
+function validatePackageType(packageType: string| undefined): void {
     // IS "packageType=[anything]" present AND type is not valid -> fail
     if (packageType !== undefined && !PackageType.includes(packageType)){
         logger.error(`An invalid package type has been entered. Does not match any of the validate type allowed.`);
