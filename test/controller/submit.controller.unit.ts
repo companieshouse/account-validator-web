@@ -18,6 +18,43 @@ describe("Submit controller tests", () => {
         expect(response.text).toContain(fileUploadHtml);
         const hiddenPendingPage = `id="pending" class="govuk-grid-row govuk-!-display-none"`;
         expect(response.text).toContain(hiddenPendingPage);
+        const submitUrl = `action="/xbrl_validate/submit"`;
+        expect(response.text).toContain(submitUrl);
+    });
+
+    it("Should render the submit page with package type uksef", async () => {
+        const response = await request(app).
+            get(Urls.SUBMIT + "/?packageType=uksef");
+
+        expect(response.status).toBe(200);
+
+        const fileUploadHtml = `<input class="govuk-file-upload" id="file" name="file" type="file">`;
+        expect(response.text).toContain(fileUploadHtml);
+        const hiddenPendingPage = `id="pending" class="govuk-grid-row govuk-!-display-none"`;
+        expect(response.text).toContain(hiddenPendingPage);
+        const submitUrl = `action="/xbrl_validate/submit/?packageType=uksef"`;
+        expect(response.text).toContain(submitUrl);
+    });
+
+    it("Should render the submit page with package type group-package-401", async () => {
+        const response = await request(app).
+            get(Urls.SUBMIT + "/?packageType=group-package-401");
+
+        expect(response.status).toBe(200);
+
+        const fileUploadHtml = `<input class="govuk-file-upload" id="file" name="file" type="file">`;
+        expect(response.text).toContain(fileUploadHtml);
+        const hiddenPendingPage = `id="pending" class="govuk-grid-row govuk-!-display-none"`;
+        expect(response.text).toContain(hiddenPendingPage);
+        const submitUrl = `action="/xbrl_validate/submit/?packageType=group-package-401"`;
+        expect(response.text).toContain(submitUrl);
+    });
+
+    it("Should render the submit page with package type group-package-5", async () => {
+        const response = await request(app).
+            get(Urls.SUBMIT + "/?packageType=group-package-5");
+
+        expect(response.status).toBe(500);
     });
 
     const zipFileMagicBytes = "PK\u0003\u0004";
@@ -108,6 +145,13 @@ describe("Submit controller tests", () => {
 
         expect(response.status).toBe(400);
         expect(response.text).toContain(ErrorMessages.NO_FILE);
+    });
+
+    it('Should error when package type is not valid', async () => {
+        const response = await request(app).
+            get(Urls.SUBMIT + "/?packageType=not_valid");
+
+        expect(response.status).toBe(500);
     });
 
     // it(`Should reject post submissions with a file that isn't XBRL or ZIP`, async () => {

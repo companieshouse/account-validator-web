@@ -11,6 +11,7 @@ import { logger } from "../utils/logger";
 import { handleErrors } from "../middleware/error.handler";
 import { validateSubmitRequest } from "../middleware/submit.validation.middleware";
 import { timeout } from "../middleware/timeout.middleware";
+import { PackageType } from "private-api-sdk-node/dist/services/accounts-filing/types";
 
 export interface SubmitPageRequest extends Request {
     formValidationResult?: ValidationResult;
@@ -62,6 +63,12 @@ function renderSubmitPage(req: SubmitPageRequest, res: Response) {
         res.status(400);
     }
 
+    const packageType = req.query?.packageType as string|undefined;
+
+    validatePackageType(packageType);
+
+    const submitUrl = packageType !== undefined ? `${Urls.SUBMIT}/?packageType=${req.query.packageType}` : Urls.SUBMIT;
+
     return res.render(Templates.SUBMIT, {
         templateName: Templates.SUBMIT,
         formValidationResult: req.formValidationResult,
@@ -70,8 +77,18 @@ function renderSubmitPage(req: SubmitPageRequest, res: Response) {
         FILE_UPLOAD_FIELD_NAME: FILE_UPLOAD_FIELD_NAME,
         errorMessage: errorMessage,
         callback: req.query.callback,
-        backUrl: req.query.backUrl ?? Urls.BASE
+        backUrl: req.query.backUrl ?? Urls.BASE,
+        submitUrl: submitUrl
     });
+}
+
+
+function validatePackageType(packageType: string| undefined): void {
+    // IS "packageType=[anything]" present AND type is not valid -> fail
+    if (packageType !== undefined && !PackageType.includes(packageType)){
+        logger.error(`An invalid package type has been entered. Does not match any of the validate type allowed.`);
+        throw new Error("Invalid package type");
+    }
 }
 
 async function submitFileForValidation(
@@ -88,7 +105,8 @@ async function submitFileForValidation(
     logger.debug(`Submitting file to account-validator-api for validation. File name ${req.file?.filename}`);
     // We know the file is not undefined since if the validation did not succeed we wouldn't have made it to this point
     req.accountValidationResult = await accountValidatorService.submit(
-        req.file! // eslint-disable-line @typescript-eslint/no-non-null-assertion
+        req.file!, // eslint-disable-line @typescript-eslint/no-non-null-assertion
+        req.query?.packageType as PackageType|undefined,
     );
     logger.debug(`Response recieved from account-validator-api`);
 
