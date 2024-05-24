@@ -1,5 +1,5 @@
 import { Response, Request, Router, NextFunction } from "express";
-import { MAX_FILE_SIZE, MAX_FILE_SIZE_MB, UI_UPDATE_TIMEOUT_MS } from "../config";
+import { MAX_FILE_SIZE, MAX_FILE_SIZE_MB, UI_UPDATE_INTERVAL_MS, UI_UPDATE_TIMEOUT_MS } from "../config";
 import { ErrorMessages, FILE_UPLOAD_FIELD_NAME, Templates, errorMessage, Urls } from "../constants";
 import multer from "multer";
 import { ValidationResult } from "../validation/validation.result";
@@ -78,7 +78,9 @@ function renderSubmitPage(req: SubmitPageRequest, res: Response) {
         errorMessage: errorMessage,
         callback: req.query.callback,
         backUrl: req.query.backUrl ?? Urls.BASE,
-        submitUrl: submitUrl
+        submitUrl: submitUrl,
+        pollingIntervalMS: UI_UPDATE_INTERVAL_MS,
+        timeoutMS: UI_UPDATE_TIMEOUT_MS
     });
 }
 
@@ -102,13 +104,13 @@ async function submitFileForValidation(
         return;
     }
 
-    logger.debug(`Submitting file to account-validator-api for validation. File name ${req.file?.filename}`);
+    logger.debug(`Submitting file to account-validator-api for validation. File name ${req.file?.originalname}`);
     // We know the file is not undefined since if the validation did not succeed we wouldn't have made it to this point
     req.accountValidationResult = await accountValidatorService.submit(
         req.file!, // eslint-disable-line @typescript-eslint/no-non-null-assertion
         req.query?.packageType as PackageType|undefined,
     );
-    logger.debug(`Response recieved from account-validator-api`);
+    logger.debug(`Response received from account-validator-api`);
 
     next();
 }

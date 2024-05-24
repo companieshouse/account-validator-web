@@ -11,4 +11,6 @@ export default () => {
     process.env.INTERNAL_API_URL = "http://localhost:9333";
     process.env.CHS_INTERNAL_API_KEY = "g9yZIA81Zo9J46Kzp3JPbfld6kOqxR47EAYqXbRV";
     process.env.ACCOUNT_VALIDATOR_UI_UPDATE_INTERVAL = "1s";
+    process.env.MAX_API_CALL_RETRIES = "1";
+    process.env.API_CALL_RETRY_DELAY_MS = "0";
 };

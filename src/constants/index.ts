@@ -18,6 +18,8 @@ export enum Urls {
     SUBMIT_VALIDATE = "/xbrl_validate/submit/validate",
     RESULT_SUFFIX = "/result",
     RESULT = "/xbrl_validate/result",
+    PROGRESS = "/xbrl_validate/progress",
+    PROGRESS_SUFFIX = "/progress",
     HEALTH_CHECK_SUFFIX = "/healthcheck",
     HEALTH_CHECK = "/xbrl_validate/healthcheck",
     ERROR = "/xbrl_validate/error",
