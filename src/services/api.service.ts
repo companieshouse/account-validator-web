@@ -173,7 +173,7 @@ export async function makeApiCallWithRetry<T extends ApiErrorResponse>(fn: () =>
     }
 
 
-    throw new Error(`Unable to make API call. No response avaialble.`);
+    throw new Error(`Unable to make API call. No response available.`);
 }
 
 function delay(milliseconds: number): Promise<void> {
