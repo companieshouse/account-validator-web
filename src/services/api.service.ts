@@ -1,8 +1,10 @@
 import {
+    API_CALL_RETRY_DELAY_MS,
     API_URL,
     CHS_API_KEY,
     CHS_INTERNAL_API_KEY,
     INTERNAL_API_URL,
+    MAX_API_CALL_RETRIES,
     MAX_FILE_SIZE,
 } from "../config";
 import {
@@ -18,6 +20,7 @@ import {
     HttpResponse,
 } from "@companieshouse/api-sdk-node/dist/http/http-client";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import { ApiErrorResponse } from "@companieshouse/api-sdk-node/dist/services/resource";
 
 export const createPublicApiKeyClient = (): ApiClient => {
     return createApiClient(CHS_API_KEY, undefined, API_URL);
@@ -122,4 +125,57 @@ function base64Size(sizeInBytes: number) {
     const padding = base64Size % 4 === 0 ? 0 : 4 - (base64Size % 4);
 
     return base64Size + padding;
+}
+
+function isOkStatus(status: number) {
+    return 200 <= status && status < 300;
+}
+
+function retryIfStatusNotOkay<T extends ApiErrorResponse>(resp: T): boolean {
+    const status = resp.httpStatusCode;
+    return status === undefined || !isOkStatus(status);
+}
+
+export async function makeApiCallWithRetry<T extends ApiErrorResponse>(fn: () => Promise<T>, shouldRetry: (resp: T) => boolean = retryIfStatusNotOkay): Promise<T> {
+    let resp: T | undefined = undefined;
+    let error: any = undefined;
+
+    const maxRetries = parseInt(MAX_API_CALL_RETRIES);
+    const retryDelay = parseInt(API_CALL_RETRY_DELAY_MS);
+
+    for (let i = 0; i < maxRetries; i++) {
+        try {
+            resp = await fn();
+            if (!shouldRetry(resp)) {
+                return resp;
+            }
+
+            logger.error(`Retrying API call. Received error response.`);
+        } catch (e) {
+            logger.error(`Exception thrown whilst making api call: ${e}`);
+            error = e;
+            resp = undefined;
+        }
+
+        const retriesRemaining = maxRetries - (i + 1);
+        if (retriesRemaining > 0) {
+            await delay(retryDelay);
+            logger.info(`Trying failed API call. ${retriesRemaining} Retries remaining.`);
+        }
+    }
+
+    if (resp !== undefined) {
+        return resp;
+    }
+
+    if (error !== undefined) {
+        throw error;
+    }
+
+
+    throw new Error(`Unable to make API call. No response available.`);
+}
+
+function delay(milliseconds: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, milliseconds));
 }

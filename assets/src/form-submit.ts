@@ -229,16 +229,19 @@ function redirect(url: string) {
  *
  * @property {string} resultsBaseUrl - Base URL for results pages
  * @property {string} errorUrl - URL to redirect on errors
- * @property {string} timeoutMessage - Message when timeout occurs
  * @property {string} fileInputFieldName - Upload form field name
  * @property {string} callbackUrlOnComplete - URL called on completion
+ * @property {number} pollingIntervalMS - The interval between requests polling the progress of documantion validation
+ * @property {number} timeoutMS - The time after which the validation will be considered an error.
 */
 interface ConfigParams {
     resultsBaseUrl: string;
+    progressCheckUrl: string
     errorUrl: string;
-    timeoutMessage: string;
     fileInputFieldName: string;
     callbackUrlOnComplete: string;
+    pollingIntervalMS: number;
+    timeoutMS: number;
 }
 
 /**
@@ -255,16 +258,15 @@ function isConfigParams(obj: any): obj is ConfigParams {
 
     const requiredProps = [
         "resultsBaseUrl",
+        "progressCheckUrl",
         "errorUrl",
-        "timeoutMessage",
         "fileInputFieldName",
         "callbackUrlOnComplete",
+        "pollingIntervalMS",
+        "timeoutMS"
     ];
-    const stringProps = requiredProps.every(
-        (prop) => typeof obj[prop] === "string"
-    );
 
-    return stringProps && requiredProps.every((prop) => prop in obj);
+    return requiredProps.every((prop) => prop in obj);
 }
 
 /**
@@ -288,7 +290,6 @@ interface ValidationProgressParams extends ConfigParams {
  * @param params An object of type ValidationProgressParams, containing:
  *               - fileId: The unique identifier for the file being validated.
  *               - resultsBaseUrl: The base URL where validation progress messages are sent from the server.
- *               - timeoutMessage: A message string to identify a timeout event in the SSE stream.
  *               - errorUrl: The URL to redirect to in case of an error (like timeout).
  *               - callbackUrlOnComplete: A URL to redirect to upon successful completion of validation.
  *                 If this is not provided, a default URL constructed from resultsBaseUrl and fileId is used.
@@ -297,25 +298,26 @@ function startValidationProgress(params: ValidationProgressParams) {
     const {
         fileId,
         resultsBaseUrl,
-        timeoutMessage,
-        errorUrl,
+        progressCheckUrl,
         callbackUrlOnComplete,
+        errorUrl,
+        pollingIntervalMS,
+        timeoutMS
     } = params;
 
-    const eventSource = new EventSource(`${resultsBaseUrl}/${fileId}/sse`);
 
-    eventSource.addEventListener("message", function (event: MessageEvent) {
-        const data = JSON.parse(event.data);
-
-        if (data.message === timeoutMessage) {
-            console.error(`Recieved timeout message while validating file. Redirecting to error page.`);
+    const intervalTimer = setInterval(async () => {
+        let percent: number;
+        try {
+            percent = await getValidationProgress(progressCheckUrl, fileId);
+        } catch (e) {
             redirect(errorUrl);
-            return;
+            throw e; // Make TS happy. Even though it will never be reached.
         }
 
-        setPercentComplete(data.message.percent);
+        setPercentComplete(percent);
 
-        if (data.message.percent === 100) {
+        if (percent === 100) {
             const hasCallbackUrl = callbackUrlOnComplete !== "";
             const resultRedirect = hasCallbackUrl
                 ? callbackUrlOnComplete.replace("{fileId}", fileId)
@@ -325,7 +327,36 @@ function startValidationProgress(params: ValidationProgressParams) {
             redirect(resultRedirect);
             return;
         }
-    });
+    }, pollingIntervalMS);
+
+    setTimeout(() => {
+        clearTimeout(intervalTimer);
+        redirect(errorUrl);
+    }, timeoutMS);
+}
+
+async function getValidationProgress(progressCheckUrl: string, fileId: string): Promise<number> {
+    const MAX_RETRIES = 3;
+    let retries = 0;
+
+    while (retries < MAX_RETRIES) {
+        try {
+            const resp = await fetch(`${progressCheckUrl}/${fileId}`);
+            if (!resp.ok) {
+                throw new Error(`HTTP error! status: ${resp.status}`);
+            }
+            const data = await resp.json();
+            return data.progress;
+        } catch (error) {
+            console.error(`Attempt ${retries + 1} failed: ${error.message}`);
+            retries += 1;
+            if (retries === MAX_RETRIES) {
+                throw new Error('Max retries reached, unable to fetch validation progress.');
+            }
+        }
+    }
+
+    throw new Error('Unexpected error');
 }
 
 /**
@@ -401,7 +432,7 @@ export async function submitForm(formId: string, configParams: ConfigParams) {
                 case 500:
                     // falls through
                 default:
-                    console.error(`Recieved unexpected response status when uploading form. Status: ${status}`);
+                    console.error(`Received unexpected response status when uploading form. Status: ${status}`);
                     redirect(errorUrl);
                     break;
         }

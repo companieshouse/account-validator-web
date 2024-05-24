@@ -110,3 +110,6 @@ export const UI_UPDATE_TIMEOUT_MS = parseDuration(
 export const UI_UPDATE_INTERVAL_MS = parseDuration(
     getEnvironmentVariable("ACCOUNT_VALIDATOR_UI_UPDATE_INTERVAL", "10s")
 );
+
+export const MAX_API_CALL_RETRIES = getEnvironmentVariable("MAX_API_CALL_RETRIES", 3);
+export const API_CALL_RETRY_DELAY_MS = getEnvironmentVariable("API_CALL_RETRY_DELAY_MS", 1000);

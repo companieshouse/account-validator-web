@@ -147,10 +147,10 @@ describe("AccountValidator", () => {
         mockPostForValidation.mockResolvedValue(resource);
 
         // When
-        const resp = await accountValidator.submit(file, "UKSEF");
+        const resp = await accountValidator.submit(file, 'uksef');
 
         // Then
-        expect(mockPostForValidation).toHaveBeenCalledWith({ fileName: 'success.xhtml', id: '123', packageType: 'UKSEF' });
+        expect(mockPostForValidation).toHaveBeenCalledWith({ fileName: 'success.xhtml', id: '123', packageType: 'uksef' });
         expect(resp.status).toBe("pending");
         expect(resp.fileId).toBe("fileId");
     });

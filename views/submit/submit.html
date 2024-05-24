@@ -34,10 +34,13 @@
 
             <form id="file-submit-form" method="POST" enctype="multipart/form-data" action="{{submitUrl}}" onsubmit="event.preventDefault(); submitForm('file-submit-form', {
                 resultsBaseUrl: '{{Urls.RESULT}}',
+                progressCheckUrl: '{{Urls.PROGRESS}}',
                 errorUrl: '{{Urls.ERROR}}',
                 timeoutMessage: '{{errorMessage}}',
                 fileInputFieldName: '{{FILE_UPLOAD_FIELD_NAME}}',
-                callbackUrlOnComplete: '{{callback}}'
+                callbackUrlOnComplete: '{{callback}}',
+                pollingIntervalMS: {{pollingIntervalMS}},
+                timeoutMS: {{timeoutMS}}
             });">
                 {{ govukFileUpload({
                     id: FILE_UPLOAD_FIELD_NAME,

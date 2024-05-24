@@ -1,6 +1,6 @@
 import { Resource } from "@companieshouse/api-sdk-node";
 import { AccountValidatorRequest, AccountValidatorResponse } from "private-api-sdk-node/dist/services/account-validator/types";
-import { createPrivateApiKeyClient } from "./api.service";
+import { createPrivateApiKeyClient, makeApiCallWithRetry } from "./api.service";
 import PrivateApiClient from "private-api-sdk-node/dist/client";
 import {
     File,
@@ -207,8 +207,11 @@ export class AccountValidator implements AccountValidationService {
     async check(id: string): Promise<AccountValidationResult> {
         const accountValidatorService =
             this.privateApiClient.accountValidatorService;
-        const accountValidatorResponse =
-            await accountValidatorService.getFileValidationStatus(id);
+
+        const accountValidatorResponse = await makeApiCallWithRetry(async () => {
+            return await accountValidatorService.getFileValidationStatus(id);
+        });
+
         if (accountValidatorResponse.httpStatusCode !== 200) {
             throw accountValidatorResponse; // If the status code is not 200, the return type is ApiErrorResponse
         }
@@ -232,8 +235,9 @@ export class AccountValidator implements AccountValidationService {
 
         const accountValidatorService = this.privateApiClient.accountValidatorService;
 
-        const accountValidatorResponse =
-            await accountValidatorService.postFileForValidation(requestPayload);
+        const accountValidatorResponse = await makeApiCallWithRetry(async () => {
+            return await accountValidatorService.postFileForValidation(requestPayload);
+        });
 
         if (accountValidatorResponse.httpStatusCode !== 200) {
             throw accountValidatorResponse; // If the status code is not 200, the return type is ApiErrorResponse
