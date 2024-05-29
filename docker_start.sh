@@ -1,7 +1,13 @@
 #!/bin/bash
 # Start script for account-validator-web
-# Install specific version only for local docker
-npm i @swc/core-linux-arm64-gnu
-PORT=3000
-export NODE_PORT=${PORT}
-exec npm run dev -- ${PORT}
+
+if [ ! -d "node_modules" ]; then
+    echo "node_modules directory does not exist. Attempting to install dependencies..."
+    if ! npm install; then
+        echo "npm install failed or timed out. Please run 'npm install' in the account-validator-web directory manually before starting the service."
+        exit 1
+    fi
+fi
+
+echo "Starting the account-validator-web service..."
+npm run dev
