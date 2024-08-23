@@ -1,10 +1,10 @@
 {% set html %}
-<h3 class="govuk-notification-banner__heading">
-        Your file is not valid 
-    </h3>
+<h3 class="govuk-notification-banner__heading" id="file-not-valid-title">Your file is not valid</h3>
+
 <p class="govuk-body">
-        Your iXBRL accounts file '{{accountValidationResult.fileName}}' is not valid because:
-    </p>
+    Your iXBRL accounts file '{{accountValidationResult.fileName}}' is not valid because:
+</p>
+
 <ul class="govuk-list govuk-list--bullet">
     {% for reason in accountValidationResult.reasons %}
         <li class="wrap-overflow">{{ reason }}</li>
