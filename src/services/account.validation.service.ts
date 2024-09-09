@@ -1,5 +1,4 @@
 import { Resource } from "@companieshouse/api-sdk-node";
-import { AccountValidatorRequest, AccountValidatorResponse } from "private-api-sdk-node/dist/services/account-validator/types";
 import { createPrivateApiKeyClient, makeApiCallWithRetry } from "./api.service";
 import PrivateApiClient from "private-api-sdk-node/dist/client";
 import {
@@ -13,7 +12,8 @@ import {
     ValidationStatusType,
     ValidationStatusPercents,
 } from "../utils/validationStatusType";
-import { PackageType } from "private-api-sdk-node/dist/services/accounts-filing/types";
+import { PackageType } from "@companieshouse/api-sdk-node/dist/services/accounts-filing/types";
+import { AccountValidatorRequest, AccountValidatorResponse } from "@companieshouse/api-sdk-node/dist/services/account-validator/types";
 
 /**
  * Interface representing the account validation service
@@ -24,7 +24,7 @@ export interface AccountValidationService {
      * @param file The file to be validated
      * @returns Promise<AccountValidationResult> The result of the validation
      */
-    submit(file: Express.Multer.File, packageType?: PackageType): Promise<AccountValidationResult>;
+    submit(file: Express.Multer.File, packageType?: PackageType, companyNumber?: string): Promise<AccountValidationResult>;
 
     /**
      * Check the status of a validation request
@@ -228,10 +228,10 @@ export class AccountValidator implements AccountValidationService {
      * @returns Promise<AccountValidationResult> The result of the validation
      * @throws If the API returns a non-200 status code, the returned value is an instance of `ApiErrorResponse`
      */
-    async submit(file: Express.Multer.File, packageType?: PackageType): Promise<AccountValidationResult> {
+    async submit(file: Express.Multer.File, packageType?: PackageType, companyNumber?: string): Promise<AccountValidationResult> {
         const fileId = (await this.uploadToS3(file)) as Resource<Id>;
 
-        const requestPayload: AccountValidatorRequest = this.createValidatorPayload(fileId, file, packageType);
+        const requestPayload: AccountValidatorRequest = this.createValidatorPayload(fileId, file, packageType, companyNumber);
 
         const accountValidatorService = this.privateApiClient.accountValidatorService;
 
@@ -249,7 +249,7 @@ export class AccountValidator implements AccountValidationService {
 
     }
 
-    private createValidatorPayload(fileId: Resource<Id>, file: Express.Multer.File, packageType: PackageType | undefined) {
+    private createValidatorPayload(fileId: Resource<Id>, file: Express.Multer.File, packageType: PackageType | undefined, companyNumber?: string) {
         if (!fileId.resource?.id) {
             logger.error(
                 `Got unexpected response from file-transfer-service ${JSON.stringify(
@@ -264,6 +264,7 @@ export class AccountValidator implements AccountValidationService {
         const fileIdString = fileId.resource.id;
         const requestPayload: AccountValidatorRequest = {
             fileName: file.originalname,
+            companyNumber,
             id: fileIdString,
         };
 
