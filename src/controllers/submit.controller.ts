@@ -153,6 +153,7 @@ async function submitFileForValidation(
     req.accountValidationResult = await accountValidatorService.submit(
         req.file!, // eslint-disable-line @typescript-eslint/no-non-null-assertion
         req.query?.packageType as PackageType|undefined,
+        req.query?.companyNumber as string|undefined,
     );
     logger.debug(`Response received from account-validator-api`);
 
