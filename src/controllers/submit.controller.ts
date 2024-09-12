@@ -11,7 +11,7 @@ import { logger } from "../utils/logger";
 import { handleErrors } from "../middleware/error.handler";
 import { validateSubmitRequest } from "../middleware/submit.validation.middleware";
 import { timeout } from "../middleware/timeout.middleware";
-import { PackageType } from "private-api-sdk-node/dist/services/accounts-filing/types";
+import { isPackageType, PackageType } from "@companieshouse/api-sdk-node/dist/services/accounts-filing/types";
 
 export interface SubmitPageRequest extends Request {
     formValidationResult?: ValidationResult;
@@ -63,11 +63,7 @@ function renderSubmitPage(req: SubmitPageRequest, res: Response) {
         res.status(400);
     }
 
-    const packageType = req.query?.packageType as string|undefined;
-
-    validatePackageType(packageType);
-
-    const submitUrl = packageType !== undefined ? `${Urls.SUBMIT}/?packageType=${req.query.packageType}` : Urls.SUBMIT;
+    const submitUrl = Urls.SUBMIT + getSubmitQueryParams(req);
 
     return res.render(Templates.SUBMIT, {
         templateName: Templates.SUBMIT,
@@ -87,10 +83,58 @@ function renderSubmitPage(req: SubmitPageRequest, res: Response) {
 
 function validatePackageType(packageType: string| undefined): void {
     // IS "packageType=[anything]" present AND type is not valid -> fail
-    if (packageType !== undefined && !PackageType.includes(packageType)){
+    if (packageType !== undefined && !isPackageType(packageType)){
         logger.error(`An invalid package type has been entered. Does not match any of the validate type allowed.`);
         throw new Error("Invalid package type");
     }
+}
+
+/**
+ * Regular expression pattern for validating UK Companies House company numbers.
+ *
+ * This pattern matches the following formats:
+ * - 8 digits for companies registered in England and Wales
+ * - 2 letters followed by 6 digits for other types of registrations:
+ *   SC: Scotland
+ *   NI: Northern Ireland
+ *   OC: LLPs in England and Wales
+ *   SO: LLPs in Scotland
+ *   NC: LLPs in Northern Ireland
+ *   FC: Overseas companies
+ *   NF: Overseas companies not required to register
+ *   GE: European Economic Interest Groupings (EEIGs)
+ */
+const companyNumberPattern = /^(([0-9]{8})|([A-Z]{2}[0-9]{6}))$/;
+
+function validateCompanyNumber(companyNumber: string | undefined): void {
+    if (companyNumber !== undefined && !companyNumberPattern.test(companyNumber)) {
+        logger.error(`An invalid company number has been entered. Does not match the required format.`);
+        throw new Error("Invalid company number");
+    }
+}
+
+function getSubmitQueryParams(req: Request) {
+    const packageType = req.query?.packageType as string|undefined;
+    validatePackageType(packageType);
+
+    const companyNumber = req.query?.companyNumber as string|undefined;
+    validateCompanyNumber(companyNumber);
+
+    const queryParams = new URLSearchParams();
+
+    if (packageType !== undefined) {
+        queryParams.append('packageType', packageType);
+    }
+
+    if (companyNumber !== undefined) {
+        queryParams.append('companyNumber', companyNumber);
+    }
+
+    if (queryParams.size === 0) {
+        return '';
+    }
+
+    return `?${queryParams.toString()}`;
 }
 
 async function submitFileForValidation(
@@ -109,6 +153,7 @@ async function submitFileForValidation(
     req.accountValidationResult = await accountValidatorService.submit(
         req.file!, // eslint-disable-line @typescript-eslint/no-non-null-assertion
         req.query?.packageType as PackageType|undefined,
+        req.query?.companyNumber as string|undefined,
     );
     logger.debug(`Response received from account-validator-api`);
 

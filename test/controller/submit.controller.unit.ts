@@ -32,7 +32,7 @@ describe("Submit controller tests", () => {
         expect(response.text).toContain(fileUploadHtml);
         const hiddenPendingPage = `id="pending" class="govuk-grid-row govuk-!-display-none"`;
         expect(response.text).toContain(hiddenPendingPage);
-        const submitUrl = `action="/xbrl_validate/submit/?packageType=uksef"`;
+        const submitUrl = `action="/xbrl_validate/submit?packageType=uksef"`;
         expect(response.text).toContain(submitUrl);
     });
 
@@ -46,7 +46,7 @@ describe("Submit controller tests", () => {
         expect(response.text).toContain(fileUploadHtml);
         const hiddenPendingPage = `id="pending" class="govuk-grid-row govuk-!-display-none"`;
         expect(response.text).toContain(hiddenPendingPage);
-        const submitUrl = `action="/xbrl_validate/submit/?packageType=group-package-401"`;
+        const submitUrl = `action="/xbrl_validate/submit?packageType=group-package-401"`;
         expect(response.text).toContain(submitUrl);
     });
 
