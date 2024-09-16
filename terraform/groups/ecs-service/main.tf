@@ -43,8 +43,6 @@ module "ecs-service" {
   lb_listener_arn           = data.aws_lb_listener.filing_maintain_lb_listener.arn
   lb_listener_rule_priority = local.lb_listener_rule_priority
   lb_listener_paths         = local.lb_listener_paths
-  healthcheck_path          = local.healthcheck_path
-  healthcheck_matcher       = local.healthcheck_matcher
 
   # Docker container details
   docker_registry   = var.docker_registry
@@ -57,6 +55,11 @@ module "ecs-service" {
   name_prefix  = local.name_prefix
 
   # Service Healthcheck configuration
+  healthcheck_path                  = local.healthcheck_path
+  healthcheck_matcher               = local.healthcheck_matcher
+  use_task_container_healthcheck    = true
+  health_check_grace_period_seconds = 300
+  healthcheck_healthy_threshold     = "2"
 
   # Service performance and scaling configs
   desired_task_count                 = var.desired_task_count
