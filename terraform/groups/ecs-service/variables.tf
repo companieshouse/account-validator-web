@@ -79,7 +79,7 @@ variable "service_scaledown_schedule" {
   # Typically used to stop all tasks in a service to save resource costs overnight.
   # E.g. a value of '55 19 * * ? *' would be Mon-Sun 7:55pm.  An empty string indicates that no schedule should be created.
 
-  default     = ""
+  default = ""
 }
 variable "service_scaleup_schedule" {
   type        = string
@@ -87,7 +87,7 @@ variable "service_scaleup_schedule" {
   # Typically used to start all tasks in a service after it has been shutdown overnight.
   # E.g. a value of '5 6 * * ? *' would be Mon-Sun 6:05am.  An empty string indicates that no schedule should be created.
 
-  default     = ""
+  default = ""
 }
 
 # ----------------------------------------------------------------------
