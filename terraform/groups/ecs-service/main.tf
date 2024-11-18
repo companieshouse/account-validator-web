@@ -29,12 +29,12 @@ module "secrets" {
 }
 
 module "ecs-service" {
-  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/ecs-service?ref=1.0.287"
+  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/ecs-service?ref=1.0.294"
 
   # Environmental configuration
-  environment = var.environment
-  aws_region  = var.aws_region
-  aws_profile = var.aws_profile
+  environment             = var.environment
+  aws_region              = var.aws_region
+  aws_profile             = var.aws_profile
   vpc_id                  = data.aws_vpc.vpc.id
   ecs_cluster_id          = data.aws_ecs_cluster.ecs_cluster.id
   task_execution_role_arn = data.aws_iam_role.ecs_cluster_iam_role.arn
@@ -45,10 +45,11 @@ module "ecs-service" {
   lb_listener_paths         = local.lb_listener_paths
 
   # Docker container details
-  docker_registry   = var.docker_registry
-  docker_repo       = local.docker_repo
-  container_version = var.account_validator_web_version
-  container_port    = local.container_port
+  docker_registry           = var.docker_registry
+  docker_repo               = local.docker_repo
+  container_version         = var.account_validator_web_version
+  container_port            = local.container_port
+  read_only_root_filesystem = true
 
   # Service configuration
   service_name = local.service_name
@@ -63,6 +64,7 @@ module "ecs-service" {
 
   # Service performance and scaling configs
   desired_task_count                 = var.desired_task_count
+  min_task_count                     = var.min_task_count
   max_task_count                     = var.max_task_count
   required_cpus                      = var.required_cpus
   required_memory                    = var.required_memory

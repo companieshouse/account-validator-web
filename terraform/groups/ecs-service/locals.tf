@@ -12,14 +12,14 @@ locals {
   healthcheck_path          = "/xbrl_validate/healthcheck" #healthcheck path for account-validator-web
   healthcheck_matcher       = "200"                        # no explicit healthcheck in this service yet, change this when added!
 
-  kms_alias       = "alias/${var.aws_profile}/environment-services-kms"
-  vpc_name        = local.service_secrets["vpc_name"]
+  kms_alias                  = "alias/${var.aws_profile}/environment-services-kms"
+  vpc_name                   = local.service_secrets["vpc_name"]
   app_environment_filename   = "account-validator-web.env"
   use_set_environment_files  = var.use_set_environment_files
   application_subnet_ids     = data.aws_subnets.application.ids
   application_subnet_pattern = local.stack_secrets["application_subnet_pattern"]
-  service_secrets = jsondecode(data.vault_generic_secret.service_secrets.data_json)
-  stack_secrets   = jsondecode(data.vault_generic_secret.stack_secrets.data_json)
+  service_secrets            = jsondecode(data.vault_generic_secret.service_secrets.data_json)
+  stack_secrets              = jsondecode(data.vault_generic_secret.stack_secrets.data_json)
 
   # create a map of secret name => secret arn to pass into ecs service module
   # using the trimprefix function to remove the prefixed path from the secret name
