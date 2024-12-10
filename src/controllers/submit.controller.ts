@@ -76,7 +76,8 @@ function renderSubmitPage(req: SubmitPageRequest, res: Response) {
         backUrl: req.query.backUrl ?? Urls.BASE,
         submitUrl: submitUrl,
         pollingIntervalMS: UI_UPDATE_INTERVAL_MS,
-        timeoutMS: UI_UPDATE_TIMEOUT_MS
+        timeoutMS: UI_UPDATE_TIMEOUT_MS,
+        sizeLimit: MAX_FILE_SIZE_MB,
     });
 }
 

@@ -23,6 +23,10 @@
     }) }}
 {% endblock %}
 
+{% set uploadText %}
+Upload your accounts file, then select continue. Your file must be smaller than {{sizeLimit}}MB. 
+{% endset %}
+
 {% block content %}
     <div id="submit" class="govuk-grid-row" aria-hidden="false">
         <div class="govuk-grid-column-two-thirds">
@@ -47,7 +51,7 @@
                     name: FILE_UPLOAD_FIELD_NAME,
                     errorMessage: formValidationResult.getErrorForField(FILE_UPLOAD_FIELD_NAME),
                     label: {
-                        text: "Upload your accounts file, then select continue. Your file must be smaller than 300MB."
+                        text: uploadText
                     }
                 }) }}
 

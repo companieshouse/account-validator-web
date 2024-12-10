@@ -22,6 +22,16 @@ describe("Submit controller tests", () => {
         expect(response.text).toContain(submitUrl);
     });
 
+    it("Should render with the max file size notice the same as MAX_FILE_SIZE_MB", async () => {
+        const response = await request(app).
+            get(Urls.SUBMIT);
+
+        expect(response.status).toBe(200);
+
+        const sizeLimitNotice = `${MAX_FILE_SIZE_MB}MB`;
+        expect(response.text).toContain(sizeLimitNotice);
+    });
+
     it("Should render the submit page with package type uksef", async () => {
         const response = await request(app).
             get(Urls.SUBMIT + "/?packageType=uksef");
