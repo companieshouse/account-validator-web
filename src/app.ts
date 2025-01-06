@@ -1,12 +1,12 @@
 import express from "express";
 import * as nunjucks from "nunjucks";
 import * as path from "path";
-import { router } from "./routes/routes";
+import router from "./routes/routes";
 import cookieParser from "cookie-parser";
 import { logger } from "./utils/logger";
 import { errorHandler } from "./middleware/error.handler";
 import { Urls } from "./constants";
-import { CDN_HOST, CHS_URL, SURVEY_LINK, NUNJUCKS_RELOAD } from "./config";
+import { CDN_HOST, CHS_URL, SURVEY_LINK, NUNJUCKS_RELOAD, SIGN_OUT } from "./config";
 
 const app = express();
 app.disable("x-powered-by");
@@ -30,6 +30,7 @@ nunjucksEnv.addGlobal("assetPath", CDN_HOST);
 nunjucksEnv.addGlobal("CHS_URL", CHS_URL);
 nunjucksEnv.addGlobal("Urls", Urls);
 nunjucksEnv.addGlobal("SURVEY_LINK", SURVEY_LINK);
+nunjucksEnv.addGlobal("signoutURL", SIGN_OUT);
 
 app.enable("trust proxy");
 app.use(express.json());
