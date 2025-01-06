@@ -1,16 +1,25 @@
+import { mockSession, resetMockSession } from '../mocks/session.middleware.mock';
 import { mockedValidatorService } from '../mocks/account.validator.service.mock';
 
 import request from "supertest";
 import app from '../../src/app';
 import { Urls, FILE_UPLOAD_FIELD_NAME, ErrorMessages } from '../../src/constants';
 import { AccountValidationResult } from '../../src/services/account.validation.service';
-import { MAX_FILE_SIZE, MAX_FILE_SIZE_MB } from '../../src/config';
+import { COOKIE_NAME, COOKIE_SECRET, MAX_FILE_SIZE, MAX_FILE_SIZE_MB } from '../../src/config';
 import { SubmittedFileValidationRequest } from '../../src/validation/submit.controller.validation';
+import { getSessionRequest } from '../mocks/session.mock';
 
 describe("Submit controller tests", () => {
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+        resetMockSession();
+    });
+
+    const zipFileMagicBytes = "PK\u0003\u0004";
+
     it("Should render the submit page", async () => {
-        const response = await request(app).
-            get(Urls.SUBMIT);
+        const response = await getRequestWithCookie(Urls.SUBMIT);
 
         expect(response.status).toBe(200);
 
@@ -23,8 +32,7 @@ describe("Submit controller tests", () => {
     });
 
     it("Should render with the max file size notice the same as MAX_FILE_SIZE_MB", async () => {
-        const response = await request(app).
-            get(Urls.SUBMIT);
+        const response = await getRequestWithCookie(Urls.SUBMIT);
 
         expect(response.status).toBe(200);
 
@@ -33,8 +41,8 @@ describe("Submit controller tests", () => {
     });
 
     it("Should render the submit page with package type uksef", async () => {
-        const response = await request(app).
-            get(Urls.SUBMIT + "/?packageType=uksef");
+        Object.assign(mockSession, getSessionRequest());
+        const response = await getRequestWithCookie(Urls.SUBMIT + "/?packageType=uksef");
 
         expect(response.status).toBe(200);
 
@@ -47,8 +55,8 @@ describe("Submit controller tests", () => {
     });
 
     it("Should render the submit page with package type group-package-401", async () => {
-        const response = await request(app).
-            get(Urls.SUBMIT + "/?packageType=group-package-401");
+        Object.assign(mockSession, getSessionRequest());
+        const response = await getRequestWithCookie(Urls.SUBMIT + "/?packageType=group-package-401");
 
         expect(response.status).toBe(200);
 
@@ -60,14 +68,20 @@ describe("Submit controller tests", () => {
         expect(response.text).toContain(submitUrl);
     });
 
+    it("Should render the submit page with package type group-package-5 not signed in", async () => {
+
+        const response = await getRequestWithCookie(Urls.SUBMIT + "/?packageType=group-package-5");
+
+        expect(response.status).toBe(302);
+    });
+
     it("Should render the submit page with package type group-package-5", async () => {
-        const response = await request(app).
-            get(Urls.SUBMIT + "/?packageType=group-package-5");
+        Object.assign(mockSession, getSessionRequest());
+        const response = await getRequestWithCookie(Urls.SUBMIT + "/?packageType=group-package-5");
 
         expect(response.status).toBe(500);
     });
 
-    const zipFileMagicBytes = "PK\u0003\u0004";
     it("Should return 200 OK and no HTML when validating a file input", async () => {
         const payload: SubmittedFileValidationRequest = {
             file: {
@@ -78,6 +92,7 @@ describe("Submit controller tests", () => {
 
         const response = await request(app)
             .post(Urls.SUBMIT_VALIDATE)
+            .set("Cookie", setCookie())
             .send(payload)
             .set('Content-Type', 'application/json');
 
@@ -91,6 +106,7 @@ describe("Submit controller tests", () => {
 
         const response = await request(app)
             .post(Urls.SUBMIT_VALIDATE)
+            .set("Cookie", setCookie())
             .send(payload)
             .set('Content-Type', 'application/json');
 
@@ -107,7 +123,7 @@ describe("Submit controller tests", () => {
         };
 
         const response = await request(app)
-            .post(Urls.SUBMIT_VALIDATE)
+            .post(Urls.SUBMIT_VALIDATE).set("Cookie", setCookie())
             .send(payload)
             .set('Content-Type', 'application/json');
 
@@ -124,7 +140,7 @@ describe("Submit controller tests", () => {
         };
 
         const response = await request(app)
-            .post(Urls.SUBMIT_VALIDATE)
+            .post(Urls.SUBMIT_VALIDATE).set("Cookie", setCookie())
             .send(payload)
             .set('Content-Type', 'application/json');
 
@@ -138,7 +154,7 @@ describe("Submit controller tests", () => {
         mockSubmit.mockResolvedValue(mockValue as AccountValidationResult);
 
         const response = await request(app)
-            .post(Urls.SUBMIT)
+            .post(Urls.SUBMIT).set("Cookie", setCookie())
             .attach(FILE_UPLOAD_FIELD_NAME, Buffer.from(`PK\u0003\u0004`), { filename: 'test_file.zip' });
 
         expect(response.status).toBe(200);
@@ -150,7 +166,7 @@ describe("Submit controller tests", () => {
 
     it('Should reject post submissions with no file', async () => {
         const response = await request(app)
-            .post(Urls.SUBMIT)
+            .post(Urls.SUBMIT).set("Cookie", setCookie())
             .attach(FILE_UPLOAD_FIELD_NAME, Buffer.from([]));
 
         expect(response.status).toBe(400);
@@ -158,9 +174,8 @@ describe("Submit controller tests", () => {
     });
 
     it('Should error when package type is not valid', async () => {
-        const response = await request(app).
-            get(Urls.SUBMIT + "/?packageType=not_valid");
-
+        Object.assign(mockSession, getSessionRequest());
+        const response = await getRequestWithCookie(Urls.SUBMIT + "/?packageType=not_valid");
         expect(response.status).toBe(500);
     });
 
@@ -236,3 +251,11 @@ describe("Submit controller tests", () => {
     // });
 });
 
+function getRequestWithCookie(uri: string, agent = app) {
+    return request.agent(agent).set("Cookie", setCookie()).get(uri);
+}
+
+
+export const setCookie = () => {
+    return [COOKIE_NAME + '=' + COOKIE_SECRET];
+};
