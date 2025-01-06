@@ -1,9 +1,10 @@
 import { Templates } from "../constants";
-import { Router } from "express";
+import { Request, Response, Router } from "express";
 
 export const startController = Router();
 
-startController.get('/', (req, res) => {
+startController.get('/', (req: Request, res: Response) => {
+
     return res.render(Templates.START, {
         templateName: Templates.START,
     });
