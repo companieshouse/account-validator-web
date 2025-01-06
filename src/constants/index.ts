@@ -35,3 +35,5 @@ export const ErrorMessages = {
 };
 
 export const FILE_UPLOAD_FIELD_NAME = "file";
+
+export const PACKAGE_TYPE_KEY = "packageType";

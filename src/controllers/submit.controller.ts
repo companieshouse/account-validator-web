@@ -1,6 +1,6 @@
 import { Response, Request, Router, NextFunction } from "express";
 import { MAX_FILE_SIZE, MAX_FILE_SIZE_MB, UI_UPDATE_INTERVAL_MS, UI_UPDATE_TIMEOUT_MS } from "../config";
-import { ErrorMessages, FILE_UPLOAD_FIELD_NAME, Templates, errorMessage, Urls } from "../constants";
+import { ErrorMessages, FILE_UPLOAD_FIELD_NAME, Templates, errorMessage, Urls, PACKAGE_TYPE_KEY } from "../constants";
 import multer from "multer";
 import { ValidationResult } from "../validation/validation.result";
 import {
@@ -30,6 +30,13 @@ function addFormValidationResult(
 }
 
 function multerMiddleware(req: SubmitPageRequest, res: Response, next: NextFunction) {
+    const packageType: string | undefined = req.query?.[PACKAGE_TYPE_KEY] as string | undefined;
+    const sessionPackageType: string | undefined = req.session?.getExtraData<string>(PACKAGE_TYPE_KEY);
+
+    if (packageType !== undefined && packageType?.toLowerCase() !== sessionPackageType?.toLowerCase()) {
+        throw `Query package type does not match session package type.`;
+    }
+
     const upload = multer({
         limits: {
             fileSize: MAX_FILE_SIZE,
@@ -62,6 +69,11 @@ function renderSubmitPage(req: SubmitPageRequest, res: Response) {
     if (req.formValidationResult?.hasErrors) {
         res.status(400);
     }
+    let userEmail: string | undefined = undefined;
+    const packageType: string | undefined = req.query?.[PACKAGE_TYPE_KEY] as string | undefined;
+    if (packageType !== undefined && typeof(packageType) === "string" && packageType.trim().length > 0) {
+        userEmail = req.session?.data.signin_info?.user_profile?.email;
+    }
 
     const submitUrl = Urls.SUBMIT + getSubmitQueryParams(req);
 
@@ -78,6 +90,7 @@ function renderSubmitPage(req: SubmitPageRequest, res: Response) {
         pollingIntervalMS: UI_UPDATE_INTERVAL_MS,
         timeoutMS: UI_UPDATE_TIMEOUT_MS,
         sizeLimit: MAX_FILE_SIZE_MB,
+        userEmail
     });
 }
 
