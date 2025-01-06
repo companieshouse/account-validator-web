@@ -3,7 +3,7 @@ import { mockedValidatorService } from '../mocks/account.validator.service.mock'
 
 import request from "supertest";
 import app from '../../src/app';
-import { Urls, FILE_UPLOAD_FIELD_NAME, ErrorMessages } from '../../src/constants';
+import { Urls, FILE_UPLOAD_FIELD_NAME, ErrorMessages, PACKAGE_TYPE_KEY } from '../../src/constants';
 import { AccountValidationResult } from '../../src/services/account.validation.service';
 import { COOKIE_NAME, COOKIE_SECRET, MAX_FILE_SIZE, MAX_FILE_SIZE_MB } from '../../src/config';
 import { SubmittedFileValidationRequest } from '../../src/validation/submit.controller.validation';
@@ -175,8 +175,33 @@ describe("Submit controller tests", () => {
 
     it('Should error when package type is not valid', async () => {
         Object.assign(mockSession, getSessionRequest());
+        mockSession.setExtraData(PACKAGE_TYPE_KEY, "uksef");
         const response = await getRequestWithCookie(Urls.SUBMIT + "/?packageType=not_valid");
         expect(response.status).toBe(500);
+    });
+
+    it('Should error when package type query does not match session', async () => {
+
+        Object.assign(mockSession, getSessionRequest());
+        mockSession.setExtraData(PACKAGE_TYPE_KEY, "welsh");
+        const response = await request(app)
+            .post(Urls.SUBMIT + "/?packageType=uksef").set("Cookie", setCookie())
+            .attach(FILE_UPLOAD_FIELD_NAME, Buffer.from(`PK\u0003\u0004`), { filename: 'test_file.zip' });
+        expect(response.status).toBe(500);
+    });
+
+    it('Should pass when package type query does match session', async () => {
+
+        const mockSubmit = jest.spyOn(mockedValidatorService, 'submit');
+        const mockValue = { status: 'pending', fileId: '12345', fileName: '' };
+        mockSubmit.mockResolvedValue(mockValue as AccountValidationResult);
+
+        Object.assign(mockSession, getSessionRequest());
+        mockSession.setExtraData(PACKAGE_TYPE_KEY, "uksef");
+        const response = await request(app)
+            .post(Urls.SUBMIT + "/?packageType=uksef").set("Cookie", setCookie())
+            .attach(FILE_UPLOAD_FIELD_NAME, Buffer.from(`PK\u0003\u0004`), { filename: 'test_file.zip' });
+        expect(response.status).toBe(200);
     });
 
     // it(`Should reject post submissions with a file that isn't XBRL or ZIP`, async () => {

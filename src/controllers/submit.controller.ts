@@ -34,7 +34,7 @@ function multerMiddleware(req: SubmitPageRequest, res: Response, next: NextFunct
     const sessionPackageType: string | undefined = req.session?.getExtraData<string>(PACKAGE_TYPE_KEY);
 
     if (packageType !== undefined && packageType?.toLowerCase() !== sessionPackageType?.toLowerCase()) {
-        throw `Query package type does not match session package type.`;
+        throw new Error(`Query package type does not match session package type.`);
     }
 
     const upload = multer({
