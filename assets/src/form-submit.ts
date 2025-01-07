@@ -183,7 +183,7 @@ function getFirstBytes(file: File, n = 50): Promise<string> {
  */
 function setPercentComplete(percentComplete: number) {
     const percentageElement = mustGetById(PERCENTAGE_ID);
-    percentageElement.innerText = `Validation in progress (${percentComplete}% complete):`;
+    percentageElement.innerText = `${percentComplete}% complete`;
 }
 
 /**
