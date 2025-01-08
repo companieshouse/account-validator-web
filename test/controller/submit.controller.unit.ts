@@ -22,7 +22,7 @@ describe("Submit controller tests", () => {
         const response = await getRequestWithCookie(Urls.SUBMIT);
 
         expect(response.status).toBe(200);
-
+        expect(response.text).toContain("Upload your accounts file");
         const fileUploadHtml = `<input class="govuk-file-upload" id="file" name="file" type="file">`;
         expect(response.text).toContain(fileUploadHtml);
         const hiddenPendingPage = `id="pending" class="govuk-grid-row govuk-!-display-none"`;
@@ -45,7 +45,7 @@ describe("Submit controller tests", () => {
         const response = await getRequestWithCookie(Urls.SUBMIT + "/?packageType=uksef");
 
         expect(response.status).toBe(200);
-
+        expect(response.text).toContain("Upload your package accounts zip file then select validate");
         const fileUploadHtml = `<input class="govuk-file-upload" id="file" name="file" type="file">`;
         expect(response.text).toContain(fileUploadHtml);
         const hiddenPendingPage = `id="pending" class="govuk-grid-row govuk-!-display-none"`;
@@ -59,7 +59,7 @@ describe("Submit controller tests", () => {
         const response = await getRequestWithCookie(Urls.SUBMIT + "/?packageType=group-package-401");
 
         expect(response.status).toBe(200);
-
+        expect(response.text).toContain("Upload your package accounts zip file then select validate");
         const fileUploadHtml = `<input class="govuk-file-upload" id="file" name="file" type="file">`;
         expect(response.text).toContain(fileUploadHtml);
         const hiddenPendingPage = `id="pending" class="govuk-grid-row govuk-!-display-none"`;

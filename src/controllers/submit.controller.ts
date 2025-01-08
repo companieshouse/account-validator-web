@@ -76,9 +76,15 @@ function renderSubmitPage(req: SubmitPageRequest, res: Response) {
     }
 
     const submitUrl = Urls.SUBMIT + getSubmitQueryParams(req);
-
-    return res.render(Templates.SUBMIT, {
-        templateName: Templates.SUBMIT,
+    const packageType = req.query?.packageType as string|undefined;
+    let submitPage;
+    if (packageType !== undefined) {
+        submitPage = Templates.SUBMIT_PACKAGE_ACCOUNT;
+    } else {
+        submitPage = Templates.SUBMIT;
+    }
+    return res.render(submitPage, {
+        templateName: submitPage,
         formValidationResult: req.formValidationResult,
         accountValidationResult: req.accountValidationResult,
         fileName: req.file?.originalname,

@@ -1,0 +1,77 @@
+{% extends "layout.html" %}
+{% from "govuk/components/file-upload/macro.njk" import govukFileUpload %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+
+{% block pageTitle %}
+  XBRL Company Accounts Validator
+{% endblock %}
+
+<!-- No service name header-->
+{% block header %}
+    {{ govukHeader({
+    homepageUrl: "https://www.gov.uk",
+    containerClasses: "govuk-width-container"})
+  }}
+{% endblock %}
+
+{% block backLink %}
+    {# Go back to the start page #}
+    {{ govukBackLink({
+    text: "Back",
+    href: backUrl
+    }) }}
+{% endblock %}
+
+{% set uploadText %}
+Upload your package accounts zip file then select validate. Your file must be smaller than {{sizeLimit}}MB. 
+{% endset %}
+
+{% block content %}
+    <div id="submit" class="govuk-grid-row" aria-hidden="false">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">
+                Upload your package accounts
+            </h1>
+
+            {{ errorSummary() }}
+
+            <form id="file-submit-form" method="POST" enctype="multipart/form-data" action="{{submitUrl}}" onsubmit="event.preventDefault(); submitForm('file-submit-form', {
+                resultsBaseUrl: '{{Urls.RESULT}}',
+                progressCheckUrl: '{{Urls.PROGRESS}}',
+                errorUrl: '{{Urls.ERROR}}',
+                timeoutMessage: '{{errorMessage}}',
+                fileInputFieldName: '{{FILE_UPLOAD_FIELD_NAME}}',
+                callbackUrlOnComplete: '{{callback}}',
+                pollingIntervalMS: {{pollingIntervalMS}},
+                timeoutMS: {{timeoutMS}}
+            });">
+                {{ govukFileUpload({
+                    id: FILE_UPLOAD_FIELD_NAME,
+                    name: FILE_UPLOAD_FIELD_NAME,
+                    errorMessage: formValidationResult.getErrorForField(FILE_UPLOAD_FIELD_NAME),
+                    label: {
+                        text: uploadText
+                    }
+                }) }}
+
+                <p class="govuk-body">We’ll need to check the file to make sure it’s valid. This can take up to 15 minutes.</p>
+
+                {{ govukButton({
+                    id: "submit-button",
+                    text: "Validate",
+                    type: "submit"
+                }) }}
+            </form>
+
+            {# // TODO: remove this? #}
+            <div id="progress"></div>
+        </div>
+    </div>
+
+    <div id="pending" class="govuk-grid-row govuk-!-display-none" aria-hidden="true">
+        {% include "result/account.validation.pending.html" %}
+    </div>
+
+    <script src="{{assetPath}}/javascripts/app/account-validation-web/form-submit.js"></script>
+{% endblock %}
