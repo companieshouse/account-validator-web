@@ -1,6 +1,7 @@
 export enum Templates {
     START = "start/start",
     SUBMIT = "submit/submit",
+    SUBMIT_PACKAGE_ACCOUNT = "submit/submit-package-account",
     ERROR = "error/service-offline",
     STATUS = "start/status",
     RESULT = "result/result",

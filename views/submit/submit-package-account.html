@@ -24,14 +24,14 @@
 {% endblock %}
 
 {% set uploadText %}
-Upload your accounts file, then select continue. Your file must be smaller than {{sizeLimit}}MB. 
+Upload your package accounts zip file then select validate. Your file must be smaller than {{sizeLimit}}MB. 
 {% endset %}
 
 {% block content %}
     <div id="submit" class="govuk-grid-row" aria-hidden="false">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl">
-                Upload your accounts file
+                Upload your package accounts
             </h1>
 
             {{ errorSummary() }}
@@ -55,7 +55,7 @@ Upload your accounts file, then select continue. Your file must be smaller than 
                     }
                 }) }}
 
-                <p class="govuk-body">The validation process may take a few minutes.</p>
+                <p class="govuk-body">We’ll need to check the file to make sure it’s valid. This can take up to 15 minutes.</p>
 
                 {{ govukButton({
                     id: "submit-button",
