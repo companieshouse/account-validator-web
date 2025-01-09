@@ -76,7 +76,6 @@ function renderSubmitPage(req: SubmitPageRequest, res: Response) {
     }
 
     const submitUrl = Urls.SUBMIT + getSubmitQueryParams(req);
-    const packageType = req.query?.packageType as string|undefined;
     let submitPage;
     if (packageType !== undefined) {
         submitPage = Templates.SUBMIT_PACKAGE_ACCOUNT;
