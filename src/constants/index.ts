@@ -13,8 +13,10 @@ export enum Templates {
 export enum Urls {
     BASE = "/xbrl_validate",
     RENDER = `/xbrl_validate/render`,
-    SUBMIT_SUFFIX = "/submit",
-    SUBMIT = "/xbrl_validate/submit",
+    SUBMIT_SUFFIX = "/submit-accounts",
+    SUBMIT = "/xbrl_validate/submit-accounts",
+    SUBMIT_PACKAGE_SUFFIX = "/submit",
+    SUBMIT_PACKAGE = "/xbrl_validate/submit",
     SUBMIT_VALIDATE_SUFFIX = "/submit/validate",
     SUBMIT_VALIDATE = "/xbrl_validate/submit/validate",
     RESULT_SUFFIX = "/result",

@@ -27,7 +27,7 @@ describe("Submit controller tests", () => {
         expect(response.text).toContain(fileUploadHtml);
         const hiddenPendingPage = `id="pending" class="govuk-grid-row govuk-!-display-none"`;
         expect(response.text).toContain(hiddenPendingPage);
-        const submitUrl = `action="/xbrl_validate/submit"`;
+        const submitUrl = `action="/xbrl_validate/submit-accounts"`;
         expect(response.text).toContain(submitUrl);
     });
 
@@ -42,7 +42,7 @@ describe("Submit controller tests", () => {
 
     it("Should render the submit page with package type uksef", async () => {
         Object.assign(mockSession, getSessionRequest());
-        const response = await getRequestWithCookie(Urls.SUBMIT + "/?packageType=uksef");
+        const response = await getRequestWithCookie(Urls.SUBMIT_PACKAGE + "/?packageType=uksef");
 
         expect(response.status).toBe(200);
         expect(response.text).toContain("Upload your package accounts zip file then select validate");
@@ -56,7 +56,7 @@ describe("Submit controller tests", () => {
 
     it("Should render the submit page with package type group-package-401", async () => {
         Object.assign(mockSession, getSessionRequest());
-        const response = await getRequestWithCookie(Urls.SUBMIT + "/?packageType=group-package-401");
+        const response = await getRequestWithCookie(Urls.SUBMIT_PACKAGE + "/?packageType=group-package-401");
 
         expect(response.status).toBe(200);
         expect(response.text).toContain("Upload your package accounts zip file then select validate");
@@ -70,14 +70,14 @@ describe("Submit controller tests", () => {
 
     it("Should render the submit page with package type group-package-5 not signed in", async () => {
 
-        const response = await getRequestWithCookie(Urls.SUBMIT + "/?packageType=group-package-5");
+        const response = await getRequestWithCookie(Urls.SUBMIT_PACKAGE + "/?packageType=group-package-5");
 
         expect(response.status).toBe(302);
     });
 
     it("Should render the submit page with package type group-package-5", async () => {
         Object.assign(mockSession, getSessionRequest());
-        const response = await getRequestWithCookie(Urls.SUBMIT + "/?packageType=group-package-5");
+        const response = await getRequestWithCookie(Urls.SUBMIT_PACKAGE + "/?packageType=group-package-5");
 
         expect(response.status).toBe(500);
     });
@@ -176,7 +176,7 @@ describe("Submit controller tests", () => {
     it('Should error when package type is not valid', async () => {
         Object.assign(mockSession, getSessionRequest());
         mockSession.setExtraData(PACKAGE_TYPE_KEY, "uksef");
-        const response = await getRequestWithCookie(Urls.SUBMIT + "/?packageType=not_valid");
+        const response = await getRequestWithCookie(Urls.SUBMIT_PACKAGE + "/?packageType=not_valid");
         expect(response.status).toBe(500);
     });
 
@@ -185,7 +185,7 @@ describe("Submit controller tests", () => {
         Object.assign(mockSession, getSessionRequest());
         mockSession.setExtraData(PACKAGE_TYPE_KEY, "welsh");
         const response = await request(app)
-            .post(Urls.SUBMIT + "/?packageType=uksef").set("Cookie", setCookie())
+            .post(Urls.SUBMIT_PACKAGE + "/?packageType=uksef").set("Cookie", setCookie())
             .attach(FILE_UPLOAD_FIELD_NAME, Buffer.from(`PK\u0003\u0004`), { filename: 'test_file.zip' });
         expect(response.status).toBe(500);
     });
@@ -199,7 +199,7 @@ describe("Submit controller tests", () => {
         Object.assign(mockSession, getSessionRequest());
         mockSession.setExtraData(PACKAGE_TYPE_KEY, "uksef");
         const response = await request(app)
-            .post(Urls.SUBMIT + "/?packageType=uksef").set("Cookie", setCookie())
+            .post(Urls.SUBMIT_PACKAGE + "/?packageType=uksef").set("Cookie", setCookie())
             .attach(FILE_UPLOAD_FIELD_NAME, Buffer.from(`PK\u0003\u0004`), { filename: 'test_file.zip' });
         expect(response.status).toBe(200);
     });
