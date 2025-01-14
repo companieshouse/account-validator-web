@@ -7,7 +7,7 @@ locals {
   service_name              = "account-validator-web"
   container_port            = "3000" # default node port required here until prod docker container is built allowing port change via env var
   docker_repo               = "account-validator-web"
-  lb_listener_rule_priority = 16
+  lb_listener_rule_priority = 25
   lb_listener_paths         = ["/xbrl_validate", "/xbrl_validate/*"]
   healthcheck_path          = "/xbrl_validate/healthcheck" #healthcheck path for account-validator-web
   healthcheck_matcher       = "200"                        # no explicit healthcheck in this service yet, change this when added!
