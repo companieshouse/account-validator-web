@@ -75,11 +75,13 @@ function renderSubmitPage(req: SubmitPageRequest, res: Response) {
         userEmail = req.session?.data.signin_info?.user_profile?.email;
     }
 
-    const submitUrl = Urls.SUBMIT + getSubmitQueryParams(req);
+    let submitUrl;
     let submitPage;
     if (packageType !== undefined) {
+        submitUrl = Urls.SUBMIT_PACKAGE + getSubmitQueryParams(req);
         submitPage = Templates.SUBMIT_PACKAGE_ACCOUNT;
     } else {
+        submitUrl = Urls.SUBMIT + getSubmitQueryParams(req);
         submitPage = Templates.SUBMIT;
     }
     return res.render(submitPage, {

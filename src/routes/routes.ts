@@ -26,7 +26,8 @@ router.use(Urls.HEALTH_CHECK_SUFFIX, healthCheckController);
 
 router.use('/', startController);
 router.use('/render/:id', renderController);
-router.use(Urls.SUBMIT_SUFFIX, sessionMiddleware(sessionStore), EnsureSessionCookiePresentMiddleware(COOKIE_CONFIG), authenticationMiddleware, submitController);
+router.use(Urls.SUBMIT_SUFFIX, submitController);
+router.use(Urls.SUBMIT_PACKAGE_SUFFIX, sessionMiddleware(sessionStore), EnsureSessionCookiePresentMiddleware(COOKIE_CONFIG), authenticationMiddleware, submitController);
 router.use(`${Urls.RESULT_SUFFIX}/:id`, resultController);
 router.use(Urls.PROGRESS_SUFFIX, progressController);
 router.use(Urls.ERROR_SUFFIX, errorController);
