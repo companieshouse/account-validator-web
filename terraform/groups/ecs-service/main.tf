@@ -89,6 +89,7 @@ module "ecs-service" {
 
   # Cloudwatch
   cloudwatch_alarms_enabled = var.cloudwatch_alarms_enabled
+  multilb_cloudwatch_alarms_enabled = var.multilb_cloudwatch_alarms_enabled
 
   # Service environment variable and secret configs
   task_environment          = local.task_environment
