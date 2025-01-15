@@ -4,6 +4,7 @@ import { resultController } from "../controllers/result.controller";
 import { startController } from "../controllers/start.controller";
 import { renderController } from "../controllers/render.controller";
 import { submitController } from "../controllers/submit.controller";
+import { submitValidateController } from "../controllers/submit.validate.controller";
 import { healthCheckController } from "../controllers/health.check.controller";
 import { errorController } from "../controllers/error.controller";
 import { Urls } from "../constants";
@@ -26,6 +27,7 @@ router.use(Urls.HEALTH_CHECK_SUFFIX, healthCheckController);
 
 router.use('/', startController);
 router.use('/render/:id', renderController);
+router.use(Urls.SUBMIT_VALIDATE_SUFFIX, submitValidateController);
 router.use(Urls.SUBMIT_SUFFIX, submitController);
 router.use(Urls.SUBMIT_PACKAGE_SUFFIX, sessionMiddleware(sessionStore), EnsureSessionCookiePresentMiddleware(COOKIE_CONFIG), authenticationMiddleware, submitController);
 router.use(`${Urls.RESULT_SUFFIX}/:id`, resultController);
