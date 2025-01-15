@@ -14,11 +14,9 @@ export let mockSession = new Session();
 export const mockRequestSession = () => mockSession = getSessionRequest();
 
 // tell the mock what to return
-mockSessionMiddleware.mockImplementation((_) => {
-    return (req: Request, res: Response, next: NextFunction) => {
-        req.session = mockSession;
-        next();
-    };
+mockSessionMiddleware.mockImplementation((req: Request, res: Response, next: NextFunction) => {
+    req.session = mockSession;
+    next();
 });
 
 export function resetMockSession() {
