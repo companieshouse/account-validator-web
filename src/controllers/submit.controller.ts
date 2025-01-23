@@ -12,6 +12,8 @@ import { handleErrors } from "../middleware/error.handler";
 import { validateSubmitRequest } from "../middleware/submit.validation.middleware";
 import { timeout } from "../middleware/timeout.middleware";
 import { isPackageType, PackageType } from "@companieshouse/api-sdk-node/dist/services/accounts-filing/types";
+import { PIWIK_START_GOAL_ID } from "../config";
+
 
 export interface SubmitPageRequest extends Request {
     formValidationResult?: ValidationResult;
@@ -86,6 +88,7 @@ function renderSubmitPage(req: SubmitPageRequest, res: Response) {
     }
     return res.render(submitPage, {
         templateName: submitPage,
+        PIWIK_START_GOAL_ID,
         formValidationResult: req.formValidationResult,
         accountValidationResult: req.accountValidationResult,
         fileName: req.file?.originalname,
