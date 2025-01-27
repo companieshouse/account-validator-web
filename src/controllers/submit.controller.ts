@@ -1,5 +1,5 @@
 import { Response, Request, Router, NextFunction } from "express";
-import { MAX_FILE_SIZE, MAX_FILE_SIZE_MB, UI_UPDATE_INTERVAL_MS, UI_UPDATE_TIMEOUT_MS } from "../config";
+import { MAX_FILE_SIZE, MAX_FILE_SIZE_MB, UI_UPDATE_INTERVAL_MS, UI_UPDATE_TIMEOUT_MS, PIWIK_START_GOAL_ID } from "../config";
 import { ErrorMessages, FILE_UPLOAD_FIELD_NAME, Templates, errorMessage, Urls, PACKAGE_TYPE_KEY } from "../constants";
 import multer from "multer";
 import { ValidationResult } from "../validation/validation.result";
@@ -12,7 +12,6 @@ import { handleErrors } from "../middleware/error.handler";
 import { validateSubmitRequest } from "../middleware/submit.validation.middleware";
 import { timeout } from "../middleware/timeout.middleware";
 import { isPackageType, PackageType } from "@companieshouse/api-sdk-node/dist/services/accounts-filing/types";
-import { PIWIK_START_GOAL_ID } from "../config";
 
 
 export interface SubmitPageRequest extends Request {
