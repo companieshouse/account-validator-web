@@ -1,5 +1,5 @@
 import { Response, Request, Router, NextFunction } from "express";
-import { MAX_FILE_SIZE, MAX_FILE_SIZE_MB, UI_UPDATE_INTERVAL_MS, UI_UPDATE_TIMEOUT_MS, PIWIK_START_GOAL_ID } from "../config";
+import { MAX_FILE_SIZE, MAX_FILE_SIZE_MB, UI_UPDATE_INTERVAL_MS, UI_UPDATE_TIMEOUT_MS } from "../config";
 import { ErrorMessages, FILE_UPLOAD_FIELD_NAME, Templates, errorMessage, Urls, PACKAGE_TYPE_KEY } from "../constants";
 import multer from "multer";
 import { ValidationResult } from "../validation/validation.result";
@@ -87,7 +87,6 @@ function renderSubmitPage(req: SubmitPageRequest, res: Response) {
     }
     return res.render(submitPage, {
         templateName: submitPage,
-        PIWIK_START_GOAL_ID,
         formValidationResult: req.formValidationResult,
         accountValidationResult: req.accountValidationResult,
         fileName: req.file?.originalname,

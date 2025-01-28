@@ -15,5 +15,4 @@ export default () => {
     process.env.API_CALL_RETRY_DELAY_MS = "0";
     process.env.PIWIK_URL = "https://www.matomo.com";
     process.env.PIWIK_SITE_ID = "99";
-    process.env.PIWIK_START_GOAL_ID = "90";
 };
