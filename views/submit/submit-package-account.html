@@ -19,7 +19,10 @@
     {# Go back to the start page #}
     {{ govukBackLink({
     text: "Back",
-    href: backUrl
+    href: backUrl,
+    attributes: {
+        "data-event-id": "back-link"
+      }
     }) }}
 {% endblock %}
 

@@ -6,7 +6,7 @@ import cookieParser from "cookie-parser";
 import { logger } from "./utils/logger";
 import { errorHandler } from "./middleware/error.handler";
 import { Urls } from "./constants";
-import { CDN_HOST, CHS_URL, SURVEY_LINK, NUNJUCKS_RELOAD, SIGN_OUT } from "./config";
+import { CDN_HOST, CHS_URL, SURVEY_LINK, NUNJUCKS_RELOAD, SIGN_OUT, PIWIK_URL, PIWIK_SITE_ID, PIWIK_START_GOAL_ID } from "./config";
 
 const app = express();
 app.disable("x-powered-by");
@@ -31,6 +31,9 @@ nunjucksEnv.addGlobal("CHS_URL", CHS_URL);
 nunjucksEnv.addGlobal("Urls", Urls);
 nunjucksEnv.addGlobal("SURVEY_LINK", SURVEY_LINK);
 nunjucksEnv.addGlobal("signoutURL", SIGN_OUT);
+nunjucksEnv.addGlobal("PIWIK_URL", PIWIK_URL);
+nunjucksEnv.addGlobal("PIWIK_SITE_ID", PIWIK_SITE_ID);
+nunjucksEnv.addGlobal("PIWIK_START_GOAL_ID", PIWIK_START_GOAL_ID);
 
 app.enable("trust proxy");
 app.use(express.json());
