@@ -1,4 +1,3 @@
-import PrivateApiClient from "private-api-sdk-node/dist/client";
 import {
     AccountValidationService,
     AccountValidator,
@@ -6,23 +5,22 @@ import {
 } from "../../src/services/account.validation.service";
 import { Resource } from "@companieshouse/api-sdk-node";
 import { ApiErrorResponse } from "@companieshouse/api-sdk-node/dist/services/resource";
-import { AccountValidatorResponse } from "private-api-sdk-node/dist/services/account-validator/types";
 import { Id } from "private-api-sdk-node/dist/services/file-transfer/types";
+import { AccountValidatorService as PrivateApiAccountValidatorService } from "private-api-sdk-node/dist/services/account-validator";
+import { AccountValidatorResponse } from "private-api-sdk-node/dist/services/account-validator/types";
+import FileTransferService from "private-api-sdk-node/dist/services/file-transfer/services";
 
-const mockPrivateApiClient = {
-    accountValidatorService: {
-        postFileForValidation: jest.fn(),
-        getFileValidationStatus: jest.fn(),
-
-    },
-    fileTransferService: {
-        upload: () => {
-            return Promise.resolve(
-                    { resource: { id: "123" } } as unknown as Resource<Id>
-            );
-        }
+const mockAccountValidatorService = {
+    postFileForValidation: jest.fn(),
+    getFileValidationStatus: jest.fn(),
+} as unknown as PrivateApiAccountValidatorService;
+const mockFileTransferService = {
+    upload: () => {
+        return Promise.resolve(
+                { resource: { id: "123" } } as unknown as Resource<Id>
+        );
     }
-} as unknown as PrivateApiClient;
+} as unknown as FileTransferService;
 
 function createAccountValidatorResponse(
     httpStatusCode: number,
@@ -89,13 +87,11 @@ describe("validFileForRendering", () => {
 });
 
 let accountValidator: AccountValidationService;
-const mockPostForValidation = mockPrivateApiClient.accountValidatorService
-    .postFileForValidation as jest.Mock;
-const mockGetFileValidationStatus = mockPrivateApiClient.accountValidatorService
-    .getFileValidationStatus as jest.Mock;
+const mockPostForValidation = mockAccountValidatorService.postFileForValidation as jest.Mock;
+const mockGetFileValidationStatus = mockAccountValidatorService.getFileValidationStatus as jest.Mock;
 describe("AccountValidator", () => {
     beforeEach(() => {
-        accountValidator = new AccountValidator(mockPrivateApiClient);
+        accountValidator = new AccountValidator(mockAccountValidatorService, mockFileTransferService);
     });
 
     it("should submit a file to the api for validation", async () => {

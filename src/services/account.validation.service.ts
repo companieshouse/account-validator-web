@@ -1,6 +1,8 @@
 import { Resource } from "@companieshouse/api-sdk-node";
 import { createPrivateApiKeyClient, makeApiCallWithRetry } from "./api.service";
 import PrivateApiClient from "private-api-sdk-node/dist/client";
+import { AccountValidatorService } from "private-api-sdk-node/dist/services/account-validator";
+import FileTransferService from "private-api-sdk-node/dist/services/file-transfer/services";
 import {
     File,
     Id,
@@ -14,6 +16,7 @@ import {
 } from "../utils/validationStatusType";
 import { PackageType } from "@companieshouse/api-sdk-node/dist/services/accounts-filing/types";
 import { AccountValidatorRequest, AccountValidatorResponse } from "@companieshouse/api-sdk-node/dist/services/account-validator/types";
+import { FILE_TRANSFER_API_URL } from "../config";
 
 /**
  * Interface representing the account validation service
@@ -189,14 +192,26 @@ export function validFileForRendering(fileName: string) {
  * making API calls to the `account-validator-api`.
  */
 export class AccountValidator implements AccountValidationService {
+    private accountValidatorService: AccountValidatorService;
+    private fileTransferService: FileTransferService;
+
     /**
      * Constructor for the AccountValidator class
-     * @param apiClient The API client to use for making requests. This parameter is for dependency injection.
-     * The default value is automatically configured from the environment.
+     * @param customAccountValidatorService AccountValidatorService instance. This parameter is for dependency injection in tests.
+     * @param customFileTransferService FileTransferService instance. This parameter is for dependency injection in tests.
+     * The default values are automatically configured from the environment.
      */
     constructor(
-        private privateApiClient: PrivateApiClient = createPrivateApiKeyClient()
-    ) { }
+        customAccountValidatorService?: AccountValidatorService,
+        customFileTransferService?: FileTransferService
+    ) {
+        const { accountValidatorService }: PrivateApiClient = createPrivateApiKeyClient();
+        this.accountValidatorService = customAccountValidatorService ?? accountValidatorService;
+
+
+        const { fileTransferService }: PrivateApiClient = createPrivateApiKeyClient(FILE_TRANSFER_API_URL);
+        this.fileTransferService = customFileTransferService ?? fileTransferService;
+    }
 
     /**
      * Check the status of a validation request
@@ -205,11 +220,8 @@ export class AccountValidator implements AccountValidationService {
      * @throws If the API returns a non-200 status code, the returned value is an instance of `ApiErrorResponse`
      */
     async check(id: string): Promise<AccountValidationResult> {
-        const accountValidatorService =
-            this.privateApiClient.accountValidatorService;
-
         const accountValidatorResponse = await makeApiCallWithRetry(async () => {
-            return await accountValidatorService.getFileValidationStatus(id);
+            return await this.accountValidatorService.getFileValidationStatus(id);
         });
 
         if (accountValidatorResponse.httpStatusCode !== 200) {
@@ -233,10 +245,8 @@ export class AccountValidator implements AccountValidationService {
 
         const requestPayload: AccountValidatorRequest = this.createValidatorPayload(fileId, file, packageType, companyNumber);
 
-        const accountValidatorService = this.privateApiClient.accountValidatorService;
-
         const accountValidatorResponse = await makeApiCallWithRetry(async () => {
-            return await accountValidatorService.postFileForValidation(requestPayload);
+            return await this.accountValidatorService.postFileForValidation(requestPayload);
         });
 
         if (accountValidatorResponse.httpStatusCode !== 200) {
@@ -292,10 +302,9 @@ export class AccountValidator implements AccountValidationService {
             extension: ".xtml",
         };
 
-        const fileTransferService = this.privateApiClient.fileTransferService;
         logger.debug(`Uploading file ${fileDetails.fileName} to S3.`);
 
-        const fileId = await fileTransferService.upload(fileDetails);
+        const fileId = await this.fileTransferService.upload(fileDetails);
 
         logger.debug(
             `File ${fileDetails.fileName} has been uploaded to S3 with ID ${fileId["resource"]["id"]}`
