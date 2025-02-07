@@ -36,6 +36,7 @@ export const NUNJUCKS_RELOAD = getEnvironmentVariable("NUNJUCKS_RELOAD", "0") ==
 export const SIGN_OUT = getEnvironmentVariable("SIGN_OUT_URL", "/signout");
 export const PIWIK_URL = getEnvironmentVariable("PIWIK_URL");
 export const PIWIK_SITE_ID = getEnvironmentVariable("PIWIK_SITE_ID");
+export const FILE_TRANSFER_API_URL = getEnvironmentVariable("FILE_TRANSFER_API_URL");
 
 /**
  * Parses a file size string and returns the equivalent number of bytes.

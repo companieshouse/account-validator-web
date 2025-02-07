@@ -26,7 +26,7 @@ export const createPublicApiKeyClient = (): ApiClient => {
     return createApiClient(CHS_API_KEY, undefined, API_URL);
 };
 
-export const createPrivateApiKeyClient = (): PrivateApiClient => {
+export const createPrivateApiKeyClient = (basePath: string = INTERNAL_API_URL): PrivateApiClient => {
     logger.info(
         `Creating private API client with key ${maskString(
             CHS_INTERNAL_API_KEY
@@ -36,7 +36,7 @@ export const createPrivateApiKeyClient = (): PrivateApiClient => {
     const sdkClient =  createPrivateApiClient(
         CHS_INTERNAL_API_KEY,
         undefined,
-        INTERNAL_API_URL
+        basePath
     );
 
     const apiClient = new LargeBodyRequestClient(sdkClient.apiClient as RequestClient, base64Size(MAX_FILE_SIZE));
