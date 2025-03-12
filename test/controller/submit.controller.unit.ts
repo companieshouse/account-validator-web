@@ -99,7 +99,7 @@ describe("Submit controller tests", () => {
         expect(response.status).toBe(200);
     });
 
-    it("Should return 400 when validting and there is no file", async () => {
+    it("Should return 400 when validating and there is no file", async () => {
         const payload: SubmittedFileValidationRequest = {
             file: null
         };
@@ -114,7 +114,7 @@ describe("Submit controller tests", () => {
         expect(response.text).toContain(ErrorMessages.NO_FILE);
     });
 
-    it("Should return 400 when validting and the file is too big", async () => {
+    it("Should return 400 when validating and the file is too big", async () => {
         const payload: SubmittedFileValidationRequest = {
             file: {
                 size: MAX_FILE_SIZE + 1,
@@ -131,7 +131,7 @@ describe("Submit controller tests", () => {
         expect(response.text).toContain(ErrorMessages.FILE_TOO_LARGE(MAX_FILE_SIZE_MB));
     });
 
-    it("Should return 400 when validting and the file not a valid type", async () => {
+    it("Should return 400 when validating and the file not a valid type", async () => {
         const payload: SubmittedFileValidationRequest = {
             file: {
                 size: 42,
