@@ -306,9 +306,15 @@ export class AccountValidator implements AccountValidationService {
 
         const fileId = await this.fileTransferService.upload(fileDetails);
 
-        logger.debug(
-            `File ${fileDetails.fileName} has been uploaded to S3 with ID ${fileId["resource"]["id"]}`
-        );
+        if ( fileId.httpStatusCode === 200 ) {
+            logger.debug(
+                `File ${fileDetails.fileName} has been uploaded to S3 with ID ${fileId["resource"]["id"]}`
+            );
+        } else {
+            logger.error(
+                `File ${fileDetails.fileName} upload to S3 failed with HTTP status ${fileId.httpStatusCode}`
+            );
+        }
         return fileId;
     }
 }
