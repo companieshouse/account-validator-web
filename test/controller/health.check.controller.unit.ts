@@ -2,6 +2,8 @@ import request from "supertest";
 import app from '../../src/app';
 import { Urls } from "../../src/constants";
 
+jest.mock("ioredis");
+
 describe('Health check controller tests', () => {
 
     it('should return 200', async () => {

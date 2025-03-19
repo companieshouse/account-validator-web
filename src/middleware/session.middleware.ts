@@ -1,9 +1,7 @@
 import { SessionMiddleware, SessionStore } from "@companieshouse/node-session-handler";
-import { CACHE_SERVER, COOKIE_DOMAIN, COOKIE_NAME, COOKIE_SECRET } from "../config";
+import { COOKIE_DOMAIN, COOKIE_NAME, COOKIE_SECRET } from "../config";
 import { PACKAGE_TYPE_KEY } from "../constants";
 import { NextFunction, Request, Response } from "express";
-import Redis from "ioredis";
-
 
 export const COOKIE_CONFIG = {
     cookieDomain: COOKIE_DOMAIN,
@@ -13,21 +11,17 @@ export const COOKIE_CONFIG = {
     cookieTimeToLiveInSeconds: undefined
 };
 
-const setupSessionStore = () => {
-    const redis = new Redis(`redis://${CACHE_SERVER}`);
-    return new SessionStore(redis);
-};
+// export const createSessionMiddleware = (sessionStore: SessionStore) => SessionMiddleware(COOKIE_CONFIG, sessionStore, true);
 
-const sessionStore = setupSessionStore();
+export const createSessionMiddleware = (sessionStore: SessionStore) => {
+    return (req: Request, res: Response, next: NextFunction) => {
+        const packageType: string | undefined = req.query?.[PACKAGE_TYPE_KEY] as string| undefined;
 
-export const sessionMiddleware = (req: Request, res: Response, next: NextFunction) => {
+        if (packageType === undefined || packageType.trim().length === 0) {
+            next();
+            return;
+        }
 
-    const packageType: string | undefined = req.query?.[PACKAGE_TYPE_KEY] as string| undefined;
-
-    if (packageType === undefined || packageType.trim().length === 0) {
-        next();
-        return;
-    }
-
-    return SessionMiddleware(COOKIE_CONFIG, sessionStore, true)(req, res, next);
+        return SessionMiddleware(COOKIE_CONFIG, sessionStore, true)(req, res, next);
+    };
 };

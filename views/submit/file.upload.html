@@ -5,6 +5,7 @@
 {{ errorSummary() }}
 
 <form method="POST" enctype="multipart/form-data" action="{{Urls.SUBMIT}}">
+    {% include "includes/csrf-token.njk" %}
     {{ govukFileUpload({
             id: "{{FILE_UPLOAD_FIELD_NAME}}",
             name: "{{FILE_UPLOAD_FIELD_NAME}}",

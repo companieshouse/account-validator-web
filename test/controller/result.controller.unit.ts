@@ -2,6 +2,7 @@ import request from "supertest";
 import app from '../../src/app';
 import { accountValidatorService } from '../../src/services/account.validation.service';
 
+jest.mock("ioredis");
 jest.mock('../../src/services/account.validation.service');
 
 describe('Result controller tests', () => {

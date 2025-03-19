@@ -27,7 +27,7 @@
 {% endblock %}
 
 {% set uploadText %}
-Upload your package accounts zip file then select validate. Your file must be smaller than {{sizeLimit}}MB. 
+Upload your package accounts zip file then select validate. Your file must be smaller than {{sizeLimit}}MB.
 {% endset %}
 
 {% block content %}
@@ -49,6 +49,7 @@ Upload your package accounts zip file then select validate. Your file must be sm
                 pollingIntervalMS: {{pollingIntervalMS}},
                 timeoutMS: {{timeoutMS}}
             });">
+                {% include "includes/csrf-token.njk" %}
                 {{ govukFileUpload({
                     id: FILE_UPLOAD_FIELD_NAME,
                     name: FILE_UPLOAD_FIELD_NAME,

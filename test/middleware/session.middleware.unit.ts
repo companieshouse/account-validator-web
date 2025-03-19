@@ -1,7 +1,16 @@
 import { Request, Response } from "express";
-import { sessionMiddleware } from "../../src/middleware/session.middleware";
+import { createSessionMiddleware } from "../../src/middleware/session.middleware";
+
+jest.mock("ioredis");
 
 describe("Submit session middleware", () => {
+
+    const mockSessionStore = jest.fn();
+    let sessionMiddleware: ReturnType<typeof createSessionMiddleware>;
+
+    beforeEach(() => {
+        sessionMiddleware = createSessionMiddleware(mockSessionStore);
+    });
 
     it("it should return before hitting SessionMiddleware if packageType is not set", () => {
         const req = {} as Request;

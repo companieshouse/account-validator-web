@@ -1,9 +1,15 @@
 import { EnsureSessionCookiePresentMiddleware } from "@companieshouse/node-session-handler";
-import { COOKIE_CONFIG } from "./session.middleware";
+import { COOKIE_DOMAIN, COOKIE_NAME, COOKIE_SECRET } from "../config";
 import { PACKAGE_TYPE_KEY } from "../constants";
 import { Request, Response, NextFunction } from "express";
 
-
+const COOKIE_CONFIG = {
+    cookieDomain: COOKIE_DOMAIN,
+    cookieName: COOKIE_NAME,
+    cookieSecret: COOKIE_SECRET,
+    cookieSecureFlag: undefined,
+    cookieTimeToLiveInSeconds: undefined
+};
 
 export const cookieCheckMiddleware = (req: Request, res: Response, next: NextFunction) => {
 
