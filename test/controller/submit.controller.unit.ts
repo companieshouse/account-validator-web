@@ -284,9 +284,9 @@ describe("Submit controller tests", () => {
 });
 
 function getRequestWithCookie(uri: string, agent = app) {
-    console.log('NSDBG getRequestWithCookie session '+JSON.stringify(request.session));
-    console.log('NSDBG getRequestWithCookie uri '+uri);
-    console.log('NSDBG getRequestWithCookie agent '+JSON.stringify(agent));
+    console.log('NSDBG getRequestWithCookie session ' + JSON.stringify(request.session));
+    console.log('NSDBG getRequestWithCookie uri ' + uri);
+    console.log('NSDBG getRequestWithCookie agent ' + JSON.stringify(agent));
     return request.agent(agent).set("Cookie", setCookie()).get(uri);
 }
 

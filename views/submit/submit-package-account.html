@@ -39,7 +39,7 @@ Upload your package accounts zip file then select validate. Your file must be sm
 
             {{ errorSummary() }}
 
-            <form id="file-submit-form" method="POST" enctype="multipart/form-data" action="{{submitUrl}}" onsubmit="event.preventDefault(); submitForm('file-submit-form', {
+            <form id="file-submit-form" method="POST" enctype="multipart/form-data" action="{{submitUrl}}" NSDBGonsubmit="event.preventDefault(); submitForm('file-submit-form', {
                 resultsBaseUrl: '{{Urls.RESULT}}',
                 progressCheckUrl: '{{Urls.PROGRESS}}',
                 errorUrl: '{{Urls.ERROR}}',

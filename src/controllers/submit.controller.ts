@@ -67,6 +67,7 @@ function multerMiddleware(req: SubmitPageRequest, res: Response, next: NextFunct
 }
 
 function renderSubmitPage(req: SubmitPageRequest, res: Response) {
+    console.log("NSDBG renderSubmitPage enter");
     if (req.formValidationResult?.hasErrors) {
         res.status(400);
     }
@@ -85,6 +86,7 @@ function renderSubmitPage(req: SubmitPageRequest, res: Response) {
         submitUrl = Urls.SUBMIT + getSubmitQueryParams(req);
         submitPage = Templates.SUBMIT;
     }
+    console.log("NSDBG renderSubmitPage render submitUrl: " + submitUrl);
     return res.render(submitPage, {
         templateName: submitPage,
         formValidationResult: req.formValidationResult,
