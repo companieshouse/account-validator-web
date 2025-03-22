@@ -12,7 +12,7 @@ import { authenticationMiddleware } from "../middleware/authentication.middlewar
 import { createSessionMiddleware } from "../middleware/session.middleware";
 import { cookieCheckMiddleware } from "../middleware/cookie.check.middleware";
 import { createCsrfProtectionMiddleware } from "../middleware/csrf.middleware";
-import { multipartMiddleware } from "../middleware/multipart.middleware";
+// import { multipartMiddleware } from "../middleware/multipart.middleware";
 import { SessionStore } from "@companieshouse/node-session-handler";
 import { CACHE_SERVER } from "../config";
 import Redis from "ioredis";

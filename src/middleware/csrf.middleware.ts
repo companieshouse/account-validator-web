@@ -42,15 +42,15 @@ export const createCsrfProtectionMiddleware = (sessionStore: SessionStore) => {
             next();
         });
     };
-    //return CsrfProtectionMiddleware({
+    // return CsrfProtectionMiddleware({
     //    sessionStore: sessionStore,
     //    enabled: true,
     //    sessionCookieName: COOKIE_NAME
-    //});
+    // });
 };
 
-//export const createCsrfProtectionMiddleware = (sessionStore: SessionStore) => CsrfProtectionMiddleware({
+// export const createCsrfProtectionMiddleware = (sessionStore: SessionStore) => CsrfProtectionMiddleware({
 //    sessionStore: sessionStore,
 //    enabled: true,
 //    sessionCookieName: COOKIE_NAME
-//});
+// });

@@ -1,6 +1,6 @@
 import { SessionMiddleware, SessionStore } from "@companieshouse/node-session-handler";
 import { COOKIE_DOMAIN, COOKIE_NAME, COOKIE_SECRET } from "../config";
-import { PACKAGE_TYPE_KEY } from "../constants";
+// import { PACKAGE_TYPE_KEY } from "../constants";
 import { NextFunction, Request, Response } from "express";
 
 export const COOKIE_CONFIG = {
@@ -15,14 +15,14 @@ export const COOKIE_CONFIG = {
 
 export const createSessionMiddleware = (sessionStore: SessionStore) => {
     return (req: Request, res: Response, next: NextFunction) => {
-        const packageType: string | undefined = req.query?.[PACKAGE_TYPE_KEY] as string| undefined;
+        // const packageType: string | undefined = req.query?.[PACKAGE_TYPE_KEY] as string| undefined;
 
         console.log('NSDBG SM enter url: ' + req.originalUrl);
-        //if (packageType === undefined || packageType.trim().length === 0) {
+        // if (packageType === undefined || packageType.trim().length === 0) {
         //    next();
         //    console.log('NSDBG SM no pkg return');
         //    return;
-        //}
+        // }
 
         console.log('NSDBG SM session contents: ' + JSON.stringify(req.session));
         console.log('NSDBG SM Session Store: ' + JSON.stringify(sessionStore));

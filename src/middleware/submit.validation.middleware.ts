@@ -47,8 +47,4 @@ function getSubmitForValidationRequestFromRequest(req: SubmitPageRequest): Submi
     };
 }
 
-//NSDBG validateSubmitRequest enter
-//NSDBG validateSubmitRequest multipart/form-data submit=getSubmit(req)
-//NSDBG getSubmitForValidationRequestFromRequest
-//NSDBG validateSubmitRequest validateRequest
 
