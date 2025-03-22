@@ -55,21 +55,35 @@ and then run:
 
 ### Endpoints
 
-Method | Path | Description
---- | --- | ---
-GET | `/xbrl_validate/` | Returns the landing page for account validator service
+Method   | Path                                      | Description
+---------|-------------------------------------------|--------------------------------------------------------------------
+GET      | `/xbrl_validate/healthcheck`              | Healthcheck endpoint
+GET      | `/xbrl_validate`                          | Returns the landing page for account validator service
+GET      | `/xbrl_validate/submit-accounts`          | Returns the accounts file upload page ( sessionless )
+POST     | `/xbrl_validate/submit-accounts`          | Submit the selected accounts file ( javascript disabled )
+POST     | `/xbrl_validate/submit-accounts/validate` | Submit the selected accounts file ( javascript enabled )
+GET      | `/xbrl_validate/submit`                   | Returns the accounts file upload page ( with session, part of filing journey )
+POST     | `/xbrl_validate/submit`                   | Submit the selected accounts file ( javascript disabled )
+POST     | `/xbrl_validate/submit/validate`          | Submit the selected accounts file ( javascript enabled )
+GET      | `/xbrl_validate/progress/:id`             | Returns the progress page
+GET      | `/xbrl_validate/result/:id`               | Returns the results page
+GET      | `/xbrl_validate/render/:id`               | Returns the pdf render page
+GET      | `/xbrl_validate/error`                    | Returns the error page
+
+---
+**Note:** /submit-accounts and /submit paths differ in the middleware applied
+**Note:** GET for /submit-accounts and /submit will display different templates if packageType parameter such as 'cic' is provided
 
 ### Config variables
 
-
-Key             | Example Value   | Description
-----------------|---------------- |------------------------------------
-CDN_HOST | //$CDN_HOST | Path to CH styling for frontend
-LOG_LEVEL | trace |
-ACCOUNT_VALIDATOR_MAX_FILE_SIZE | 30MB | Max file size
-ACCOUNT_VALIDATOR_UI_UPDATE_INTERVAL | 10s | Time interval
-ACCOUNT_VALIDATOR_UI_UPDATE_TIMEOUT | 15m | 
-RESULT_RELOAD_DURATION_SECONDS | 5 |
+Key                                  | Example Value    | Description
+-------------------------------------|------------------|-------------------------------------
+CDN_HOST                             | //$CDN_HOST      | Path to CH styling for frontend
+LOG_LEVEL                            | trace            |
+ACCOUNT_VALIDATOR_MAX_FILE_SIZE      | 30MB             | Max file size
+ACCOUNT_VALIDATOR_UI_UPDATE_INTERVAL | 10s              | Time interval
+ACCOUNT_VALIDATOR_UI_UPDATE_TIMEOUT  | 15m              |
+RESULT_RELOAD_DURATION_SECONDS       | 5                |
 
 
 ### Further Information
