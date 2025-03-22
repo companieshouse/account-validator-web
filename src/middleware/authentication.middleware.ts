@@ -4,7 +4,6 @@ import { CHS_URL } from "../config";
 import { PACKAGE_TYPE_KEY } from "../constants";
 
 export const authenticationMiddleware = (req: Request, res: Response, next: NextFunction) => {
-    console.log("NSDBG AM");
     const authMiddlewareConfig: AuthOptions = {
         chsWebUrl: CHS_URL,
         returnUrl: req.originalUrl

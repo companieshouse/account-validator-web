@@ -7,7 +7,7 @@ import { logger } from "./utils/logger";
 import { errorHandler } from "./middleware/error.handler";
 import { Urls } from "./constants";
 import { CDN_HOST, CHS_URL, SURVEY_LINK, NUNJUCKS_RELOAD, SIGN_OUT, PIWIK_URL, PIWIK_SITE_ID } from "./config";
-// import { csrfErrorHandler } from "./middleware/csrf.middleware";
+import { csrfErrorHandler } from "./middleware/csrf.middleware";
 
 const app = express();
 app.disable("x-powered-by");
@@ -48,11 +48,7 @@ app.set("view engine", "html");
 app.use(cookieParser());
 
 app.use(Urls.BASE, router);
-app.use((req, res, next) => {
-    console.log("NSDBG CSRF Token in res.locals:", res.locals._csrf);
-    next();
-});
-// app.use(csrfErrorHandler);
+app.use(csrfErrorHandler);
 app.use(errorHandler); // Needs to be after the router so that it is the final handler in the chain
 
 logger.info("Account Validator Web has started");

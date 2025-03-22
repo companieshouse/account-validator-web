@@ -12,7 +12,6 @@ export const testUserProfile: IUserProfile = { id: 'someId' };
 export const testAccessToken: IAccessToken = { access_token: 'accessToken' };
 
 export function getSessionRequest(): Session {
-    console.log('NSDBG getSessionRequest');
     return new Session({
         [SessionKey.SignInInfo]: {
             [SignInInfoKeys.SignedIn]: testSignedIn,

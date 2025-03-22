@@ -19,7 +19,6 @@ import Redis from "ioredis";
 
 const redis = new Redis(`redis://${CACHE_SERVER}`);
 const sessionStore = new SessionStore(redis);
-console.log("NSDBG original sessionStore: " + sessionStore);
 const sessionMiddleware = createSessionMiddleware(sessionStore);
 const csrfProtectionMiddleware = createCsrfProtectionMiddleware(sessionStore);
 const router = Router();
@@ -30,12 +29,10 @@ router.use('/', sessionMiddleware, csrfProtectionMiddleware, startController);
 router.use('/render/:id', renderController);
 
 // /submit-accounts - start here http://chs.local/xbrl_validate
-router.use(Urls.SUBMIT_SUFFIX, sessionMiddleware, /* multipartMiddleware,*/ csrfProtectionMiddleware, submitController);
-// router.use(Urls.SUBMIT_SUFFIX, submitController); // original
+router.use(Urls.SUBMIT_SUFFIX, /* sessionMiddleware, multipartMiddleware, csrfProtectionMiddleware, */ submitController);
 
 // /submit - start here http://chs.local/accounts-filing
-router.use(Urls.SUBMIT_PACKAGE_SUFFIX, sessionMiddleware, /* multipartMiddleware,*/ csrfProtectionMiddleware, cookieCheckMiddleware, authenticationMiddleware, submitController);
-// router.use(Urls.SUBMIT_PACKAGE_SUFFIX, sessionMiddleware, cookieCheckMiddleware, authenticationMiddleware, submitController); // original
+router.use(Urls.SUBMIT_PACKAGE_SUFFIX, sessionMiddleware, /* multipartMiddleware,*/ cookieCheckMiddleware, csrfProtectionMiddleware, authenticationMiddleware, submitController);
 router.use(`${Urls.RESULT_SUFFIX}/:id`, resultController);
 router.use(Urls.PROGRESS_SUFFIX, progressController);
 router.use(Urls.ERROR_SUFFIX, errorController);

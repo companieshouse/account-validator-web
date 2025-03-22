@@ -1,8 +1,6 @@
 import { mockSession, resetMockSession } from '../mocks/session.middleware.mock';
 import { mockedValidatorService } from '../mocks/account.validator.service.mock';
 import "../mocks/csrf.middleware.mock";
-// import { mockCreateSessionMiddleware, mockSessionStore } from "./session.middleware.mock";
-// import { mockCreateCsrfProtectionMiddleware, mockCsrfErrorHandler } from "./csrf.middleware.mock";
 
 import request from "supertest";
 import app from '../../src/app';
@@ -44,11 +42,7 @@ describe("Submit controller tests", () => {
     });
 
     it("Should render the submit page with package type uksef", async () => {
-        console.log('NSDBG before assign session ' + JSON.stringify(mockSession));
         Object.assign(mockSession, getSessionRequest());
-        console.log('NSDBG after assign session ' + JSON.stringify(mockSession));
-        console.log('NSDBG after assign URL ' + Urls.SUBMIT_PACKAGE);
-
         const response = await getRequestWithCookie(Urls.SUBMIT_PACKAGE + "/?packageType=uksef");
 
         expect(response.status).toBe(200);
@@ -284,9 +278,6 @@ describe("Submit controller tests", () => {
 });
 
 function getRequestWithCookie(uri: string, agent = app) {
-    console.log('NSDBG getRequestWithCookie session ' + JSON.stringify(request.session));
-    console.log('NSDBG getRequestWithCookie uri ' + uri);
-    console.log('NSDBG getRequestWithCookie agent ' + JSON.stringify(agent));
     return request.agent(agent).set("Cookie", setCookie()).get(uri);
 }
 
