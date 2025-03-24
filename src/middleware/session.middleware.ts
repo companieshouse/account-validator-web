@@ -16,8 +16,8 @@ export const createSessionMiddleware = (sessionStore: SessionStore) => {
         const packageType: string | undefined = req.query?.[PACKAGE_TYPE_KEY] as string| undefined;
 
         if (packageType === undefined || packageType.trim().length === 0) {
-           next();
-           return;
+            next();
+            return;
         }
 
         return SessionMiddleware(COOKIE_CONFIG, sessionStore, true)(req, res, next);
