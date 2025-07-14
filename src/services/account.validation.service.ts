@@ -294,8 +294,14 @@ export class AccountValidator implements AccountValidationService {
         // TODO: Change body type to string
         const body = file.buffer.toString("base64");
         logger.debug(`Body size: ${body.length} Sample ${body.slice(0, 10)}`);
+
+        // TEMPORARY: URL-encode the filename to handle non-ASCII characters
+        // This is a workaround for S3 metadata limitations (which only supports ASCII)
+        // TODO: Remove once file-transfer-service handles encoding on its end
+        const encodedFileName = encodeURIComponent(file.originalname);
+
         const fileDetails: File = {
-            fileName: file.originalname,
+            fileName: encodedFileName,
             body: body,
             mimeType: file.mimetype,
             size: file.size,
