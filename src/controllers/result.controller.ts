@@ -13,6 +13,10 @@ async function renderResultsPage(req: Request, res: Response) {
         throw `Error validating file. Redirecting to error handler.`;
     }
 
+    // TEMPORARY: Decoding filename to show in the UI. Decodes encoding done in AccountValidator.uploadToS3.
+    // TODO: Remove once file-transfer-service handles encoding on its end
+    accountValidationResult.fileName = decodeURIComponent(accountValidationResult.fileName);
+
     return res.render(Templates.RESULT, {
         fileId: fileId,
         templateName: Templates.RESULT,
