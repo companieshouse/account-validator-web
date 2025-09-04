@@ -319,9 +319,9 @@ export class AccountValidator implements AccountValidationService {
         logger.debug(
             JSON.stringify({
                 event: "FILE_UPLOADED",
-                fileId: ${fileId["resource"]["id"]},
-                fileName: ${fileDetails.fileName},
-                actualFileSize: ${fileDetails.size},
+                fileId: fileId["resource"]["id"],
+                fileName: fileDetails.fileName,
+                actualFileSize: fileDetails.size,
                 timestamp: new Date().toISOString()
             })
         );
