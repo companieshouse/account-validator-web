@@ -315,6 +315,16 @@ export class AccountValidator implements AccountValidationService {
         logger.debug(
             `File ${fileDetails.fileName} has been uploaded to S3 with ID ${fileId["resource"]["id"]}`
         );
+
+        logger.debug(
+            JSON.stringify({
+                event: "FILE_UPLOADED",
+                fileId: fileId["resource"]["id"],
+                fileName: fileDetails.fileName,
+                actualFileSize: fileDetails.size,
+                timestamp: new Date().toISOString()
+            })
+        );
         return fileId;
     }
 }
