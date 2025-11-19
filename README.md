@@ -11,7 +11,6 @@ In order to run the service locally you will need the following:
 - [NodeJS](https://nodejs.org/en/)
 - [Git](https://git-scm.com/downloads)
 - [Docker](https://www.docker.com/)
-- [Tilt](https://tilt.dev/)
 - [Typescript](https://www.typescriptlang.org/)
 - [NunJucks](https://mozilla.github.io/nunjucks)
 - [ExpressJS](https://expressjs.com/)
@@ -20,14 +19,13 @@ In order to run the service locally you will need the following:
 
 ## Running locally on Docker env
 
-The only local development mode available, using development orchestrator service in [Docker CHS Development](https://github.com/companieshouse/docker-chs-development), that uses [tilt](https://tilt.dev/).
+The only local development mode available, using development orchestrator service in [Docker CHS Development](https://github.com/companieshouse/docker-chs-development).
 
 1. Clone [Docker CHS Development](https://github.com/companieshouse/docker-chs-development) and follow the steps in the README.
 2. Run `./bin/chs-dev modules enable accounts`
 3. Run `./bin/chs-dev development enable account-validator-web` (this will allow you to make changes in real time).
-4. Run docker using `tilt up` in the docker-chs-development directory.
-5. Use spacebar in the command line to open tilt window - wait for account-validator-web to become green.(If you have credential errors then  you may not be logged into `eu-west-2`.)
-6. Open your browser and go to page <http://chs.local/xbrl_validate/>
+4. Run docker using `chs-dev up` in the docker-chs-development directory.
+5. Open your browser and go to page <http://chs.local/xbrl_validate/>
 
 Environment variables used to configure this service in docker are located in the file `services/modules/accounts/account-validator-web.docker-compose.yaml`
 
