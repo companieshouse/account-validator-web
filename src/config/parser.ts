@@ -30,7 +30,11 @@ export function parseFileSize(size: string): number {
  * @returns The duration in milliseconds.
  */
 export function parseDuration(duration: string): number {
-    const durationRegex = /(\d+)(h|m|s)/g;
+    if (duration.includes(".")) {
+        throw new Error(`Error parsing duration string [${duration}]. Decimal values are not supported.`);
+    }
+
+    const durationRegex = /(\d+)([hms])/gi;
     let match: RegExpExecArray | null;
     let milliseconds = 0;
 
@@ -43,7 +47,7 @@ export function parseDuration(duration: string): number {
         }
 
         const value = Number(match[1]);
-        const unit = match[2];
+        const unit = match[2].toLowerCase();
 
         switch (unit) {
                 case "h":

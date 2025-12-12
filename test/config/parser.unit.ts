@@ -77,5 +77,18 @@ describe('config/parser', () => {
             const parts = '1s'.repeat(12);
             expect(() => parseDuration(parts)).toThrow(/Maximum iterations reached/);
         });
+
+        test('accepts uppercase units when case-insensitive', () => {
+            // Uppercase units should be accepted if parser is case-insensitive.
+            expect(parseDuration('1H')).toBe(60 * 60 * 1000);
+        });
+
+        test('decimal values cause regex to match integer adjacent to unit', () => {
+            expect(() => parseDuration('1.5h')).toThrow(/Decimal values are not supported/);
+        });
+
+        test('leading zeros parsed correctly', () => {
+            expect(parseDuration('01m')).toBe(1 * 60 * 1000);
+        });
     });
 });
