@@ -31,15 +31,17 @@ Environment variables used to configure this service in docker are located in th
 
 ### Requirements
 
-1. node v18 (Concourse pipeline builds using Node 18 and live runs on Node 18)
-2. npm 8.6+
+1. node v24 (Concourse pipeline builds using Node 24 and live runs on Node 24)
+2. npm 10.8+
 3. Docker
 
 ### Build and Test changes
 
-1. To compile the project use `make build`
-2. To test the project use `make test`
-3. or `make clean build test`
+Use the `Makefile` targets which wrap the repository's npm commands.
+
+- Build: `make build` (runs `npm ci` then `npm run build`)
+- Test: `make test` (runs `npm run coverage`)
+- Clean + build + test: `make clean build test`
 
 ### Endpoints
 
