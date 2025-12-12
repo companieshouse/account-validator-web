@@ -140,8 +140,8 @@ export async function makeApiCallWithRetry<T extends ApiErrorResponse>(fn: () =>
     let resp: T | undefined = undefined;
     let error: any = undefined;
 
-    const maxRetries = parseInt(MAX_API_CALL_RETRIES);
-    const retryDelay = parseInt(API_CALL_RETRY_DELAY_MS);
+    const maxRetries = Number.parseInt(MAX_API_CALL_RETRIES);
+    const retryDelay = Number.parseInt(API_CALL_RETRY_DELAY_MS);
 
     for (let i = 0; i < maxRetries; i++) {
         try {

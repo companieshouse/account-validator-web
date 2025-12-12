@@ -41,16 +41,6 @@ Environment variables used to configure this service in docker are located in th
 2. To test the project use `make test`
 3. or `make clean build test`
 
-### To build the Docker container
-
-Ensure that you are logged into the AWS eu-west-2 region:
-
-`aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 416670754337.dkr.ecr.eu-west-2.amazonaws.com`
-
-and then run:
-
-`DOCKER_BUILDKIT=0 docker build --build-arg SSH_PRIVATE_KEY="$(cat ~/.ssh/id_rsa)" --build-arg SSH_PRIVATE_KEY_PASSPHRASE -t 416670754337.dkr.ecr.eu-west-2.amazonaws.com/account-validator-web .`
-
 ### Endpoints
 
 Method   | Path                                      | Description
