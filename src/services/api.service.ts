@@ -5,7 +5,7 @@ import {
     CHS_INTERNAL_API_KEY,
     INTERNAL_API_URL,
     MAX_API_CALL_RETRIES,
-    MAX_FILE_SIZE,
+    MAX_FILE_SIZE
 } from "../config";
 import {
     RequestClient,
