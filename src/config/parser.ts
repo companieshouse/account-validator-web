@@ -8,8 +8,8 @@
  */
 export function parseFileSize(size: string): number {
     const units = ["B", "KB", "MB", "GB", "TB"];
-    const regex = new RegExp(`^(\\d*\\.?\\d*)(${units.join("|")})$`, "i");
-    const matches = size.match(regex);
+    const regex = new RegExp(String.raw`^(\d*\.?\d*)(${units.join("|")})$`, "i");
+    const matches = new RegExp(regex).exec(size);
     if (!matches) {
         throw new Error(
             `Error parsing file size "${size}". File size must be a positive decimal number followed by one of the following units: B, KB, MB, GB, TB (e.g. "123MB").`
