@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import { CHS_INTERNAL_API_KEY, INTERNAL_API_URL } from "../config";
 
 
@@ -32,7 +32,7 @@ export class ArrayBufferRequestClient {
 
             // any errors (including status code errors) are thrown as exceptions and
             // will be caught in the catch block.
-            const resp = await axios(options) as AxiosResponse;
+            const resp = await axios(options);
             return {
                 status: resp.status,
                 body: resp.data,

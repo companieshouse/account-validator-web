@@ -31,25 +31,17 @@ Environment variables used to configure this service in docker are located in th
 
 ### Requirements
 
-1. node v18 (Concourse pipeline builds using Node 18 and live runs on Node 18)
-2. npm 8.6+
+1. node v24 (Concourse pipeline builds using Node 24 and live runs on Node 24)
+2. npm 10.8+
 3. Docker
 
 ### Build and Test changes
 
-1. To compile the project use `make build`
-2. To test the project use `make test`
-3. or `make clean build test`
+Use the `Makefile` targets which wrap the repository's npm commands.
 
-### To build the Docker container
-
-Ensure that you are logged into the AWS eu-west-2 region:
-
-`aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 416670754337.dkr.ecr.eu-west-2.amazonaws.com`
-
-and then run:
-
-`DOCKER_BUILDKIT=0 docker build --build-arg SSH_PRIVATE_KEY="$(cat ~/.ssh/id_rsa)" --build-arg SSH_PRIVATE_KEY_PASSPHRASE -t 416670754337.dkr.ecr.eu-west-2.amazonaws.com/account-validator-web .`
+- Build: `make build` (runs `npm ci` then `npm run build`)
+- Test: `make test` (runs `npm run coverage`)
+- Clean + build + test: `make clean build test`
 
 ### Endpoints
 
