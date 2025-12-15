@@ -32,9 +32,12 @@ export function parseFileSize(size: string): number {
 export function parseDuration(duration: string): number {
 
     const maxIterations = 10; // Bound the loop to stop infinite looping.
-    const maxIterationsTimeRegex = new RegExp(String.raw`^\s*(?:\d+\s*[hms]\s*){1,${maxIterations}}$`, "i");
 
-    if (maxIterationsTimeRegex.test(duration) === false) {
+    const tokenPattern = String.raw`\d+[hms]`; // one or more digits followed by a unit
+    const fullPattern = String.raw`^\s*(?:${tokenPattern}\s*){1,${maxIterations}}$`; // full string from start (^) to end ($)
+    const fullDurationRegex = new RegExp(fullPattern, "i");
+
+    if (!fullDurationRegex.test(duration)) {
         throw new Error(`Error parsing duration string [${duration}]. Invalid format.`);
     }
 
