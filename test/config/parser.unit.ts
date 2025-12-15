@@ -63,9 +63,12 @@ describe('config/parser', () => {
             expect(parseDuration('2m 5s')).toBe((2 * 60 + 5) * 1000);
         });
 
-        test('ignores unknown tokens and returns 0 for empty', () => {
-            expect(parseDuration('')).toBe(0);
-            expect(parseDuration('xyz')).toBe(0);
+        test('throws on empty input', () => {
+            expect(() => parseDuration('')).toThrow(/Invalid format/);
+        });
+
+        test('throws on unknown tokens', () => {
+            expect(() => parseDuration('xyz')).toThrow(/Invalid format/);
         });
 
         test('handles multiple occurrences of same unit', () => {
@@ -75,7 +78,7 @@ describe('config/parser', () => {
         test('throws if loop runs too many iterations', () => {
             // Build a string with many small tokens to exceed the maxIterations (10)
             const parts = '1s'.repeat(12);
-            expect(() => parseDuration(parts)).toThrow(/Maximum iterations reached/);
+            expect(() => parseDuration(parts)).toThrow(/Invalid format/);
         });
 
         test('accepts uppercase units when case-insensitive', () => {
@@ -84,7 +87,7 @@ describe('config/parser', () => {
         });
 
         test('decimal values cause regex to match integer adjacent to unit', () => {
-            expect(() => parseDuration('1.5h')).toThrow(/Decimal values are not supported/);
+            expect(() => parseDuration('1.5h')).toThrow(/Invalid format/);
         });
 
         test('leading zeros parsed correctly', () => {

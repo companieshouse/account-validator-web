@@ -30,8 +30,12 @@ export function parseFileSize(size: string): number {
  * @returns The duration in milliseconds.
  */
 export function parseDuration(duration: string): number {
-    if (duration.includes(".")) {
-        throw new Error(`Error parsing duration string [${duration}]. Decimal values are not supported.`);
+
+    const maxIterations = 10; // Bound the loop to stop infinite looping.
+    const maxIterationsTimeRegex = new RegExp(String.raw`^\s*(?:\d+\s*[hms]\s*){1,${maxIterations}}$`, "i");
+
+    if (maxIterationsTimeRegex.test(duration) === false) {
+        throw new Error(`Error parsing duration string [${duration}]. Invalid format.`);
     }
 
     const durationRegex = /(\d+)([hms])/gi;
@@ -39,7 +43,7 @@ export function parseDuration(duration: string): number {
     let milliseconds = 0;
 
     let iterations = 0;
-    const maxIterations = 10; // Bound the loop to stop infinite looping.
+
 
     while ((match = durationRegex.exec(duration)) !== null) {
         if (++iterations > maxIterations) {
