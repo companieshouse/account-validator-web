@@ -70,6 +70,6 @@
         "@swc/core-linux-arm64-gnu": "^1.4.2"
     },
     "overrides": {
-        "minimatch": "^10.0.0"
+        "minimatch": "8.0.7"
     }
 }
