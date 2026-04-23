@@ -78,4 +78,3 @@ RESULT_RELOAD_DURATION_SECONDS       | 5                |
 
 ### Further Information
 For further information on running building and testing ch node js apps see the [Node Web Starter](https://github.com/companieshouse/node-web-starter/blob/master/README.md) page.
-
