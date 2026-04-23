@@ -24,7 +24,7 @@
         "@companieshouse/api-sdk-node": "^2.0.219",
         "@companieshouse/node-session-handler": "^5.2.0",
         "@companieshouse/structured-logging-node": "^2.0.1",
-        "@companieshouse/web-security-node": "^4.4.4",
+        "@companieshouse/web-security-node": "^2.0.5",
         "axios": "^1.6.5",
         "cookie-parser": "^1.4.7",
         "express": "^4.21.2",
@@ -37,7 +37,7 @@
         "nunjucks": "^3.2.4",
         "private-api-sdk-node": "github:companieshouse/private-api-sdk-node#1.0.59",
         "reflect-metadata": "^0.1.13",
-        "uuid": "^9.0.1"
+        "uuid": "^14.0.0"
     },
     "devDependencies": {
         "@swc/core": "^1.4.2",
