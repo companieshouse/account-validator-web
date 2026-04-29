@@ -241,7 +241,7 @@ export class AccountValidator implements AccountValidationService {
      * @throws If the API returns a non-200 status code, the returned value is an instance of `ApiErrorResponse`
      */
     async submit(file: Express.Multer.File, packageType?: PackageType, companyNumber?: string): Promise<AccountValidationResult> {
-        const fileId = (await this.uploadToS3(file)) as Resource<Id>;
+        const fileId = (await this.uploadToS3(file, packageType)) as Resource<Id>;
 
         const requestPayload: AccountValidatorRequest = this.createValidatorPayload(fileId, file, packageType, companyNumber);
 
@@ -289,7 +289,7 @@ export class AccountValidator implements AccountValidationService {
      * @returns string The id of the uploaded file
      */
     private async uploadToS3(
-        file: Express.Multer.File
+        file: Express.Multer.File, packageType: PackageType | undefined
     ): Promise<Resource<Id> | ApiErrorResponse> {
         // TODO: Change body type to string
         const body = file.buffer.toString("base64");
@@ -316,10 +316,13 @@ export class AccountValidator implements AccountValidationService {
             `File ${fileDetails.fileName} has been uploaded to S3 with ID ${fileId["resource"]["id"]}`
         );
 
+        const isZipPortalSubmission = packageType !== undefined;
+
         logger.debug(
             JSON.stringify({
                 event: "FILE_UPLOADED",
-                packageType: fileId["resource"]["packageType"],
+                isZipPortalSubmission: isZipPortalSubmission,
+                packageType: packageType ?? null,
                 fileId: fileId["resource"]["id"],
                 fileName: fileDetails.fileName,
                 actualFileSize: fileDetails.size,
