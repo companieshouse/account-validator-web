@@ -289,7 +289,7 @@ export class AccountValidator implements AccountValidationService {
      * @returns string The id of the uploaded file
      */
     private async uploadToS3(
-        file: Express.Multer.File, packageType: PackageType | undefined
+        file: Express.Multer.File, packageType?: PackageType
     ): Promise<Resource<Id> | ApiErrorResponse> {
         // TODO: Change body type to string
         const body = file.buffer.toString("base64");
@@ -316,7 +316,7 @@ export class AccountValidator implements AccountValidationService {
             `File ${fileDetails.fileName} has been uploaded to S3 with ID ${fileId["resource"]["id"]}`
         );
 
-        const isZipPortalSubmission = packageType !== undefined;
+        const isZipPortalSubmission = packageType !== null;
 
         logger.debug(
             JSON.stringify({
