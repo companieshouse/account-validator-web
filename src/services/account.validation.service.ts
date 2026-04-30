@@ -14,7 +14,7 @@ import {
     ValidationStatusType,
     ValidationStatusPercents,
 } from "../utils/validationStatusType";
-import { PackageType } from "@companieshouse/api-sdk-node/dist/services/accounts-filing/types";
+import { isPackageType, PackageType } from "@companieshouse/api-sdk-node/dist/services/accounts-filing/types";
 import { AccountValidatorRequest, AccountValidatorResponse } from "@companieshouse/api-sdk-node/dist/services/account-validator/types";
 import { FILE_TRANSFER_API_URL } from "../config";
 
@@ -316,7 +316,7 @@ export class AccountValidator implements AccountValidationService {
             `File ${fileDetails.fileName} has been uploaded to S3 with ID ${fileId["resource"]["id"]}`
         );
 
-        const isZipPortalSubmission = packageType !== null;
+        const isZipPortalSubmission = packageType !== undefined && isPackageType(packageType);
 
         logger.debug(
             JSON.stringify({
