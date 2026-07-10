@@ -12,12 +12,13 @@
 {% from "govuk/components/radios/macro.njk"                 import govukRadios %}
 {% from "govuk/components/table/macro.njk"                  import govukTable %}
 {% from "govuk/components/tag/macro.njk"                    import govukTag %}
+{% import "add-lang-to-url.njk" as lang2url %}
 
 {% block head %}
     <!--[if !IE 8]><!-->
     <link href="{{assetPath}}/stylesheets/govuk-frontend/v4.6.0/govuk-frontend-4.6.0.min.css" rel="stylesheet"/>
     <!--<![endif]-->
-
+    <link href="{{assetPath}}/stylesheets/extensions/languages-nav.css" rel="stylesheet"/>
     <style>
         @font-face {
       font-family: "GDS Transport";
@@ -26,7 +27,7 @@
       font-style: normal;
       font-display: fallback;
     }
-  
+
     @font-face {
       font-family: "GDS Transport";
       src: url("{{assetPath}}/fonts/bold-b542beb274-v2.woff2") format("woff2"), url("{{ cdnHost }}/fonts/bold-affa96571d-v2.woff") format("woff");
@@ -34,7 +35,7 @@
       font-style: normal;
       font-display: fallback;
     }
-  
+
     .govuk-footer__copyright-logo {
         background-image: url("{{assetPath}}/images/govuk-crest-2x.png");
     }
@@ -51,7 +52,7 @@
         background-color: #f3f2f1
     }
 
-  
+
     </style>
 
     {# For Internet Explorer 8, you need to compile specific stylesheet #}
@@ -89,11 +90,18 @@
     html: 'This is a new service' + survey_link_html
   }) }}
 
+
+
+<!--<span>{{ i18n.new_service_prefix }}</span>-->
   {% if userEmail %}
       <div class="govuk-grid-row">
           <div class="govuk-grid-column-one-half">
   {% endif %}
-            {% block backLink %}{% endblock %}
+
+      <div class="govuk-grid-column-one-half">
+         {% block backLink %}{% endblock %} &nbsp;
+      </div>
+
   {% if userEmail %}
           </div>
           {% set email = userEmail | default("Not signed in") %}
@@ -103,7 +111,15 @@
           </div>
       </div>
       <div class="govuk-section-break govuk-section-break--visible"></div>
-  {% endif %}
+<div class="govuk-grid-column-one-half">
+     &nbsp;
+</div>
+
+{% endif %}
+<div class="govuk-grid-column-one-half">
+    {% include "locales-banner.njk" %}
+</div>
+
 {% endblock %}
 
 {% set mainClasses = mainClasses | default("govuk-main-wrapper--auto-spacing govuk-body") %}
