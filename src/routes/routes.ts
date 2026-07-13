@@ -18,10 +18,13 @@ const router = Router();
 
 router.use(Urls.HEALTH_CHECK_SUFFIX, healthCheckController);
 
+router.use(sessionMiddleware);
+router.use(localeMiddleware);
+
 router.use('/', startController);
 router.use('/render/:id', renderController);
 router.use(Urls.SUBMIT_SUFFIX, submitController);
-router.use(Urls.SUBMIT_PACKAGE_SUFFIX, sessionMiddleware, localeMiddleware, cookieCheckMiddleware, authenticationMiddleware, submitController);
+router.use(Urls.SUBMIT_PACKAGE_SUFFIX, cookieCheckMiddleware, authenticationMiddleware, submitController);
 router.use(`${Urls.RESULT_SUFFIX}/:id`, resultController);
 router.use(Urls.PROGRESS_SUFFIX, progressController);
 router.use(Urls.ERROR_SUFFIX, errorController);

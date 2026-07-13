@@ -26,10 +26,6 @@
     }) }}
 {% endblock %}
 
-{% set uploadText %}
-    {{ i18n.upload_label }}{{sizeLimit}}MB.
-{% endset %}
-
 {% block content %}
     <div id="submit" class="govuk-grid-row" aria-hidden="false">
         <div class="govuk-grid-column-two-thirds">
@@ -54,7 +50,7 @@
                     name: FILE_UPLOAD_FIELD_NAME,
                     errorMessage: formValidationResult.getErrorForField(FILE_UPLOAD_FIELD_NAME),
                     label: {
-                        text: uploadText
+                        text: i18n.upload_label + sizeLimit + "MB"
                     }
                 }) }}
 
