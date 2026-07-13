@@ -19,7 +19,7 @@ export const selectLang = (lang: any): Language => {
 
 const createUrlWithLang = (url: string, lang: string | undefined, encodeURI: boolean = false): string => {
     let urlWithLang: string;
-    if (lang === undefined || lang === "") {
+    if (lang === undefined || lang === "" || url.includes("lang=")) {
         return url;
     }
     if (url.includes("?")) {

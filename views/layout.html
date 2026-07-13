@@ -92,33 +92,29 @@
 
 
 
-<!--<span>{{ i18n.new_service_prefix }}</span>-->
   {% if userEmail %}
       <div class="govuk-grid-row">
           <div class="govuk-grid-column-one-half">
   {% endif %}
 
-      <div class="govuk-grid-column-one-half">
-         {% block backLink %}{% endblock %} &nbsp;
-      </div>
+         {% block backLink %}{% endblock %}
 
   {% if userEmail %}
           </div>
           {% set email = userEmail | default("Not signed in") %}
           <div class="govuk-grid-column-one-half govuk-!-text-align-right govuk-!-static-margin-top-3">
               <span class="govuk-body-s govuk-!-margin-2" id="signed-in-user">{{ email }}</span>
-              <a class="govuk-link" href="{{ signoutURL }}" data-event-id="signout" id="user-signout">Sign out</a>
+              <a class="govuk-link" href="{{ signoutURL }}" data-event-id="signout" id="user-signout">{{ i18n.sign_out}}</a>
           </div>
       </div>
       <div class="govuk-section-break govuk-section-break--visible"></div>
-<div class="govuk-grid-column-one-half">
-     &nbsp;
-</div>
-
+        <div class="govuk-grid-column-one-half">
+             &nbsp;
+        </div>
+        <div class="govuk-grid-column-one-half">
+            {% include "locales-banner.njk" %}
+        </div>
 {% endif %}
-<div class="govuk-grid-column-one-half">
-    {% include "locales-banner.njk" %}
-</div>
 
 {% endblock %}
 
@@ -163,7 +159,7 @@
 {% macro errorSummary() %}
     {% if formValidationResult.hasErrors %}
         {{ govukErrorSummary({
-            titleText: "There is a problem",
+            titleText:  i18n.there_is_a_problem,
             errorList: formValidationResult.errors
         }) }}
     {% endif %}

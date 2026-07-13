@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { Language, getLocaleInfo, getLocalesService, selectLang } from "../utils/localise";
+import { Language, getLocaleInfo, getLocalesService, selectLang, addLangToUrl } from "../utils/localise";
 
 const QUERY_LANG = "lang";
 
@@ -17,6 +17,6 @@ export function localeMiddleware(req: Request, res: Response, next: NextFunction
     }
 
     Object.assign(res.locals, getLocaleInfo(locales, lang as Language));
-    res.locals.currentUrl = req.originalUrl.split("?")[0];
+    res.locals.currentUrl = addLangToUrl(req.originalUrl, lang);
     next();
 }

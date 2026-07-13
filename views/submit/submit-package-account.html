@@ -18,7 +18,7 @@
 {% block backLink %}
     {# Go back to the start page #}
     {{ govukBackLink({
-    text: "Back",
+    text: i18n.back,
     href: backUrl,
     attributes: {
         "data-event-id": "back-link"
@@ -27,14 +27,14 @@
 {% endblock %}
 
 {% set uploadText %}
-Upload your package accounts zip file then select validate. Your file must be smaller than {{sizeLimit}}MB. 
+    {{ i18n.upload_label }}{{sizeLimit}}MB.
 {% endset %}
 
 {% block content %}
     <div id="submit" class="govuk-grid-row" aria-hidden="false">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl">
-                Upload your package accounts
+                {{ i18n.upload_title }}
             </h1>
 
             {{ errorSummary() }}
@@ -58,11 +58,11 @@ Upload your package accounts zip file then select validate. Your file must be sm
                     }
                 }) }}
 
-                <p class="govuk-body">We’ll need to check the file to make sure it’s valid. This can take up to 15 minutes.</p>
+                <p class="govuk-body">{{ i18n.upload_check }}</p>
 
                 {{ govukButton({
                     id: "submit-button",
-                    text: "Validate",
+                    text: i18n.upload_validate,
                     type: "submit"
                 }) }}
             </form>
