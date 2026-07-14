@@ -16,7 +16,7 @@ export function localeMiddleware(req: Request, res: Response, next: NextFunction
         req.session.setExtraData(QUERY_LANG, lang);
     }
 
-    Object.assign(res.locals, getLocaleInfo(locales, lang as Language));
+    Object.assign(res.locals, getLocaleInfo(locales, lang));
     res.locals.currentUrl = addLangToUrl(req.originalUrl, lang);
     next();
 }

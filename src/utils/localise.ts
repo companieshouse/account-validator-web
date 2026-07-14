@@ -17,13 +17,13 @@ export const selectLang = (lang: any): Language => {
     }
 };
 
-const createUrlWithLang = (url: string, lang: string | undefined, encodeURI: boolean = false): string => {
+const createUrlWithLang = (url: string, lang: string | undefined, encode: boolean = false): string => {
     let urlWithLang: string;
     if (lang === undefined || lang === "" || url.includes("lang=")) {
         return url;
     }
     if (url.includes("?")) {
-        if (encodeURI){
+        if (encode){
             urlWithLang = url + encodeURIComponent("&lang=") + lang.toLowerCase();
         } else {
             urlWithLang = url + "&lang=" + lang.toLowerCase();
