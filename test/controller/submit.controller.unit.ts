@@ -99,7 +99,7 @@ describe("Submit controller tests", () => {
         expect(response.status).toBe(200);
     });
 
-    it("Should return 400 when validting and there is no file", async () => {
+    it("Should return 400 when validating and there is no file", async () => {
         const payload: SubmittedFileValidationRequest = {
             file: null
         };
@@ -114,7 +114,7 @@ describe("Submit controller tests", () => {
         expect(response.text).toContain(ErrorMessages.NO_FILE);
     });
 
-    it("Should return 400 when validting and the file is too big", async () => {
+    it("Should return 400 when validating and the file is too big", async () => {
         const payload: SubmittedFileValidationRequest = {
             file: {
                 size: MAX_FILE_SIZE + 1,
@@ -131,7 +131,7 @@ describe("Submit controller tests", () => {
         expect(response.text).toContain(ErrorMessages.FILE_TOO_LARGE(MAX_FILE_SIZE_MB));
     });
 
-    it("Should return 400 when validting and the file not a valid type", async () => {
+    it("Should return 400 when validating and the file not a valid type", async () => {
         const payload: SubmittedFileValidationRequest = {
             file: {
                 size: 42,
@@ -149,9 +149,8 @@ describe("Submit controller tests", () => {
     });
 
     it("Should return file ID as JSON when successfully submitted", async () => {
-        const mockSubmit = jest.spyOn(mockedValidatorService, 'submit');
-        const mockValue = { status: 'pending', fileId: '12345', fileName: '' };
-        mockSubmit.mockResolvedValue(mockValue as AccountValidationResult);
+        const mockValue: AccountValidationResult = { status: 'pending', fileId: '12345', fileName: '', percent: 0 };
+        mockedValidatorService.submit.mockResolvedValueOnce(mockValue);
 
         const response = await request(app)
             .post(Urls.SUBMIT).set("Cookie", setCookie())
@@ -192,9 +191,8 @@ describe("Submit controller tests", () => {
 
     it('Should pass when package type query does match session', async () => {
 
-        const mockSubmit = jest.spyOn(mockedValidatorService, 'submit');
-        const mockValue = { status: 'pending', fileId: '12345', fileName: '' };
-        mockSubmit.mockResolvedValue(mockValue as AccountValidationResult);
+        const mockValue: AccountValidationResult = { status: 'pending', fileId: '12345', fileName: '', percent: 0 };
+        mockedValidatorService.submit.mockResolvedValueOnce(mockValue);
 
         Object.assign(mockSession, getSessionRequest());
         mockSession.setExtraData(PACKAGE_TYPE_KEY, "uksef");

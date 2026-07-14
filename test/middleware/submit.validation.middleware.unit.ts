@@ -21,8 +21,7 @@ describe("Submit validation middleware", () => {
             method: "POST",
             is: (ct) => ct === 'application/json',
             body: "not the right type"
-        } as SubmitPageRequest;
-
+        } as unknown as SubmitPageRequest;
 
         const res = {} as Response;
         res.status = jest.fn().mockReturnValue(res);

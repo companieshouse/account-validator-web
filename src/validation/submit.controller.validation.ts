@@ -1,6 +1,8 @@
 import { MAX_FILE_SIZE, MAX_FILE_SIZE_MB } from "../config";
-import { ErrorMessages, FILE_UPLOAD_FIELD_NAME } from "../constants";
+import { FILE_UPLOAD_FIELD_NAME } from "../constants";
 import { ValidationResult } from "./validation.result";
+import { getLocalesField } from "../utils/localise";
+import type { SubmitPageRequest } from "../controllers/submit.controller";
 
 export interface FileMetaData {
     size: number
@@ -47,20 +49,20 @@ function isTooLarge(fileSize: number): boolean {
     return fileSize > MAX_FILE_SIZE;
 }
 
-export function validateRequest(req: SubmittedFileValidationRequest): ValidationResult {
+export function validateRequest(validationRequest: SubmittedFileValidationRequest, req: SubmitPageRequest): ValidationResult {
     const validationResult = new ValidationResult();
 
-    if (req.file === null) {
-        validationResult.addError(FILE_UPLOAD_FIELD_NAME, ErrorMessages.NO_FILE);
+    if (validationRequest.file === null) {
+        validationResult.addError(FILE_UPLOAD_FIELD_NAME, getLocalesField("no_file", req));
         return validationResult;
     }
 
-    if (!isValidFileType(req.file.firstBytes)) {
-        validationResult.addError(FILE_UPLOAD_FIELD_NAME, ErrorMessages.INVALID_FILE_TYPE);
+    if (!isValidFileType(validationRequest.file.firstBytes)) {
+        validationResult.addError(FILE_UPLOAD_FIELD_NAME, getLocalesField("invalid_file_type", req));
     }
 
-    if (isTooLarge(req.file.size)) {
-        validationResult.addError(FILE_UPLOAD_FIELD_NAME, ErrorMessages.FILE_TOO_LARGE(MAX_FILE_SIZE_MB));
+    if (isTooLarge(validationRequest.file.size)) {
+        validationResult.addError(FILE_UPLOAD_FIELD_NAME, getLocalesField("file_too_large", req) + MAX_FILE_SIZE_MB + "MB");
     }
 
     return validationResult;
