@@ -38,10 +38,10 @@
             <form id="file-submit-form" method="POST" enctype="multipart/form-data" action="{{submitUrl}}" onsubmit="event.preventDefault(); submitForm('file-submit-form', {
                 resultsBaseUrl: '{{Urls.RESULT}}',
                 progressCheckUrl: '{{Urls.PROGRESS}}',
-                errorUrl: '{{Urls.ERROR}}',
+                errorUrl: '{{Urls.ERROR}}?lang={{lang}}',
                 timeoutMessage: '{{errorMessage}}',
                 fileInputFieldName: '{{FILE_UPLOAD_FIELD_NAME}}',
-                callbackUrlOnComplete: '{{callback}}',
+                callbackUrlOnComplete: '{{callback}}?lang={{lang}}',
                 pollingIntervalMS: {{pollingIntervalMS}},
                 timeoutMS: {{timeoutMS}}
             });">
