@@ -1,3 +1,4 @@
+import { resetMockSession } from '../mocks/session.middleware.mock';
 import request from "supertest";
 import app from '../../src/app';
 import { accountValidatorService } from '../../src/services/account.validation.service';
@@ -5,10 +6,11 @@ import { accountValidatorService } from '../../src/services/account.validation.s
 jest.mock('../../src/services/account.validation.service');
 
 describe('Result controller tests', () => {
-    afterEach(() => {
-        jest.useRealTimers();
-        jest.resetAllMocks();
+    beforeEach(() => {
+        jest.clearAllMocks();
+        resetMockSession();
     });
+
 
     it('should render the results page', async () => {
         const fileId = 'file123';
@@ -29,7 +31,7 @@ describe('Result controller tests', () => {
         expect(response.text).toContain(mockResult.fileName);
     });
 
-    it('Should render the error template when an excpetion is thrown', async () => {
+    it('Should render the error template when an exception is thrown', async () => {
         const fileId = 'file123';
 
         (accountValidatorService.check as jest.Mock).mockImplementation(() => {

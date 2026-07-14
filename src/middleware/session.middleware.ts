@@ -20,14 +20,5 @@ const setupSessionStore = () => {
 const sessionStore = setupSessionStore();
 
 export const sessionMiddleware = (req: Request, res: Response, next: NextFunction) => {
-
-    // TBD confirm for removal
-    // const packageType: string | undefined = req.query?.[PACKAGE_TYPE_KEY] as string| undefined;
-    //
-    // if (packageType === undefined || packageType.trim().length === 0) {
-    //     next();
-    //     return;
-    // }
-
     return SessionMiddleware(COOKIE_CONFIG, sessionStore, true)(req, res, next);
 };

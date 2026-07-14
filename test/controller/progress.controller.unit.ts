@@ -1,3 +1,4 @@
+import { resetMockSession } from '../mocks/session.middleware.mock';
 import request from "supertest";
 import app from '../../src/app';
 import { accountValidatorService } from '../../src/services/account.validation.service';
@@ -5,10 +6,10 @@ import { accountValidatorService } from '../../src/services/account.validation.s
 jest.mock('../../src/services/account.validation.service');
 
 describe('Result controller tests', () => {
-    afterEach(() => {
-        jest.useRealTimers();
-        jest.resetAllMocks();
+    beforeEach(() => {
+        resetMockSession();
     });
+
 
     it("Should return 404 if no fileId in path", async () => {
         const response = await request(app)
