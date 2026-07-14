@@ -28,11 +28,6 @@ function mockLocalesMessage(message: string) {
 }
 
 describe("File submission form validation", () => {
-
-    // beforeEach(() => {
-    //     jest.clearAllMocks();
-    //     resetMockSession();
-    // });
     it("Should allow zip files that are under the size limit", () => {
         const req: SubmittedFileValidationRequest = {
             file: {
@@ -51,7 +46,7 @@ describe("File submission form validation", () => {
             file: null
         };
 
-        mockLocalesMessage("Select an accounts file.");
+        mockLocalesMessage(ErrorMessages.NO_FILE);
 
         const validationResult = validateRequest(req, mockReq);
 
@@ -67,7 +62,7 @@ describe("File submission form validation", () => {
             }
         };
 
-        mockLocalesMessage("The selected file must be smaller than ");
+        mockLocalesMessage(ErrorMessages.FILE_TOO_LARGE(MAX_FILE_SIZE_MB));
         const validationResult = validateRequest(req, mockReq);
 
         expect(validationResult.hasErrors).toBe(true);
@@ -82,7 +77,7 @@ describe("File submission form validation", () => {
             }
         };
 
-        mockLocalesMessage("The selected file must be a XHTML or ZIP.");
+        mockLocalesMessage(ErrorMessages.INVALID_FILE_TYPE);
         const validationResult = validateRequest(req, mockReq);
 
         expect(validationResult.hasErrors).toBe(true);
