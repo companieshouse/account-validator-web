@@ -181,6 +181,9 @@ function getFirstBytes(file: File, n = 50): Promise<string> {
  * default value is "complete" but can be overridden by the submitForm function
  */
 let completeMessage: string = "complete";
+/**
+ * Language of the complete message. default value is "en" but can be overridden by the submitForm function
+ */
 let completeLanguage: string = "en";
 
 /**
