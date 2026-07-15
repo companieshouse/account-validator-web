@@ -110,10 +110,11 @@ function handleErrorUploading(responseHTML: string): void {
  *
  * @param fileInput An HTMLInputElement that represents the file input on the form. It's expected to
  *                  contain the file that needs to be validated.
+ * @param validateUrl Callback url for form validation
  * @returns A Promise that resolves to a string. If validation fails (response status 400),
  *          it returns the HTML containing the field error messages. Otherwise, it returns an empty string.
  */
-async function validateForm(fileInput: HTMLInputElement): Promise<string> {
+async function validateForm(fileInput: HTMLInputElement, validateUrl: string): Promise<string> {
     const req: SubmittedFileValidationRequest = {
         file: null,
     };
@@ -130,7 +131,7 @@ async function validateForm(fileInput: HTMLInputElement): Promise<string> {
     }
 
     // Submit to server
-    const response = await fetch("/xbrl_validate/submit/validate", {
+    const response = await fetch(validateUrl, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -176,6 +177,13 @@ function getFirstBytes(file: File, n = 50): Promise<string> {
 }
 
 /**
+ * Message displayed when the upload is complete.
+ * default value is "complete" but can be overridden by the submitForm function
+ */
+let completeMessage: string = "complete";
+let completeLanguage: string = "en";
+
+/**
  * Sets the text content of the element with ID PERCENTAGE_ID
  * to display the given completion percentage.
  *
@@ -183,7 +191,11 @@ function getFirstBytes(file: File, n = 50): Promise<string> {
  */
 function setPercentComplete(percentComplete: number) {
     const percentageElement = mustGetById(PERCENTAGE_ID);
-    percentageElement.innerText = `${percentComplete}% complete`;
+    if (completeLanguage.toLowerCase() === "cy") {
+        percentageElement.innerText = `${completeMessage} ${percentComplete}% `;
+    } else {
+        percentageElement.innerText = `${percentComplete}% ${completeMessage}`;
+    }
 }
 
 /**
@@ -242,6 +254,9 @@ interface ConfigParams {
     callbackUrlOnComplete: string;
     pollingIntervalMS: number;
     timeoutMS: number;
+    validateUrl: string;
+    completeText: string;
+    lang: string;
 }
 
 /**
@@ -263,7 +278,10 @@ function isConfigParams(obj: any): obj is ConfigParams {
         "fileInputFieldName",
         "callbackUrlOnComplete",
         "pollingIntervalMS",
-        "timeoutMS"
+        "timeoutMS",
+        "validateUrl",
+        "completeText",
+        "lang"
     ];
 
     return requiredProps.every((prop) => prop in obj);
@@ -379,8 +397,7 @@ interface UploadResponse {
  *         or upload, or if the response status from the upload is not as expected.
  */
 export async function submitForm(formId: string, configParams: ConfigParams) {
-    const { errorUrl, fileInputFieldName } = configParams;
-
+    const { errorUrl, fileInputFieldName, validateUrl, completeText, lang } = configParams;
     if (!isConfigParams(configParams)) {
         const msg = `Submit form arguments are of the wrong type. Args: ${JSON.stringify(
             configParams
@@ -389,6 +406,8 @@ export async function submitForm(formId: string, configParams: ConfigParams) {
         redirect(errorUrl);
         return;
     }
+    completeMessage = completeText;
+    completeLanguage = lang;
 
     const fileInput = document.getElementById(fileInputFieldName);
     if (fileInput === null) {
@@ -398,7 +417,7 @@ export async function submitForm(formId: string, configParams: ConfigParams) {
         return;
     }
 
-    const resp = await validateForm(fileInput as HTMLInputElement);
+    const resp = await validateForm(fileInput as HTMLInputElement, validateUrl);
     if (resp !== "") {
         handleErrorUploading(resp);
         return;

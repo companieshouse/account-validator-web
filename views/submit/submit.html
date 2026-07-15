@@ -4,7 +4,7 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 
 {% block pageTitle %}
-    {{ i18n.service_name }}
+  XBRL Company Accounts Validator
 {% endblock %}
 
 <!-- No service name header-->
@@ -23,11 +23,15 @@
     }) }}
 {% endblock %}
 
+{% set uploadText %}
+Upload your accounts file, then select validate. Your file must be smaller than {{sizeLimit}}MB.
+{% endset %}
+
 {% block content %}
     <div id="submit" class="govuk-grid-row" aria-hidden="false">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl">
-                {{ i18n.accounts_upload_title }}
+                Upload your accounts file
             </h1>
 
             {{ errorSummary() }}
@@ -39,6 +43,9 @@
                 timeoutMessage: '{{errorMessage}}',
                 fileInputFieldName: '{{FILE_UPLOAD_FIELD_NAME}}',
                 callbackUrlOnComplete: '{{callback}}',
+                validateUrl:'{{Urls.SUBMIT_VALIDATE}}',
+                completeText: 'complete',
+                lang:'en',
                 pollingIntervalMS: {{pollingIntervalMS}},
                 timeoutMS: {{timeoutMS}}
             });">
@@ -47,15 +54,15 @@
                     name: FILE_UPLOAD_FIELD_NAME,
                     errorMessage: formValidationResult.getErrorForField(FILE_UPLOAD_FIELD_NAME),
                     label: {
-                        text: i18n.accounts_upload_label + sizeLimit + "MB."
+                        text: uploadText
                     }
                 }) }}
 
-                <p class="govuk-body">{{ i18n.accounts_upload_check }}</p>
+                <p class="govuk-body">The validation process may take a few minutes.</p>
 
                 {{ govukButton({
                     id: "submit-button",
-                    text: i18n.upload_validate,
+                    text: "Validate",
                     type: "submit"
                 }) }}
             </form>
