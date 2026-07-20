@@ -42,6 +42,7 @@ endif
 	# mkdir $(tmpdir)/api-enumerations
 	# cp ./api-enumerations/*.yml $(tmpdir)/api-enumerations
 	cp -r ./dist/* $(tmpdir)
+	cp -r ./locales $(tmpdir)
 	cp -r ./package.json $(tmpdir)
 	cp -r ./package-lock.json $(tmpdir)
 	cp -r ./.git $(tmpdir)
