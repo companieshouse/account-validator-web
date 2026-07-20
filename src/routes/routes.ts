@@ -19,9 +19,9 @@ const router = Router();
 router.use(Urls.HEALTH_CHECK_SUFFIX, healthCheckController);
 router.use('/render/:id', renderController);
 
-router.use(Urls.SUBMIT_PACKAGE_SUFFIX, sessionMiddleware, localeMiddleware, cookieCheckMiddleware, authenticationMiddleware, submitController);
 router.use(localeMiddleware);
 
+router.use(Urls.SUBMIT_PACKAGE_SUFFIX, sessionMiddleware, cookieCheckMiddleware, authenticationMiddleware, submitController);
 router.use('/', startController);
 router.use(Urls.SUBMIT_SUFFIX, submitController);
 router.use(`${Urls.RESULT_SUFFIX}/:id`, resultController);

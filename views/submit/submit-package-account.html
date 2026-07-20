@@ -19,7 +19,7 @@
     {# Go back to the start page #}
     {{ govukBackLink({
     text: i18n.back,
-    href: backUrl,
+    href: backUrl + "?lang=" + lang,
     attributes: {
         "data-event-id": "back-link"
       }
