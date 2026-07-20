@@ -24,7 +24,7 @@
 {% endblock %}
 
 {% set uploadText %}
-Upload your accounts file, then select validate. Your file must be smaller than {{sizeLimit}}MB. 
+Upload your accounts file, then select validate. Your file must be smaller than {{sizeLimit}}MB.
 {% endset %}
 
 {% block content %}
@@ -43,6 +43,9 @@ Upload your accounts file, then select validate. Your file must be smaller than 
                 timeoutMessage: '{{errorMessage}}',
                 fileInputFieldName: '{{FILE_UPLOAD_FIELD_NAME}}',
                 callbackUrlOnComplete: '{{callback}}',
+                validateUrl:'{{Urls.SUBMIT_VALIDATE}}',
+                completeText: 'complete',
+                lang:'en',
                 pollingIntervalMS: {{pollingIntervalMS}},
                 timeoutMS: {{timeoutMS}}
             });">

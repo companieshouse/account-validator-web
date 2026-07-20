@@ -12,12 +12,13 @@
 {% from "govuk/components/radios/macro.njk"                 import govukRadios %}
 {% from "govuk/components/table/macro.njk"                  import govukTable %}
 {% from "govuk/components/tag/macro.njk"                    import govukTag %}
+{% import "add-lang-to-url.njk" as lang2url %}
 
 {% block head %}
     <!--[if !IE 8]><!-->
     <link href="{{assetPath}}/stylesheets/govuk-frontend/v4.6.0/govuk-frontend-4.6.0.min.css" rel="stylesheet"/>
     <!--<![endif]-->
-
+    <link href="{{assetPath}}/stylesheets/extensions/languages-nav.css" rel="stylesheet"/>
     <style>
         @font-face {
       font-family: "GDS Transport";
@@ -26,7 +27,7 @@
       font-style: normal;
       font-display: fallback;
     }
-  
+
     @font-face {
       font-family: "GDS Transport";
       src: url("{{assetPath}}/fonts/bold-b542beb274-v2.woff2") format("woff2"), url("{{ cdnHost }}/fonts/bold-affa96571d-v2.woff") format("woff");
@@ -34,7 +35,7 @@
       font-style: normal;
       font-display: fallback;
     }
-  
+
     .govuk-footer__copyright-logo {
         background-image: url("{{assetPath}}/images/govuk-crest-2x.png");
     }
@@ -51,7 +52,7 @@
         background-color: #f3f2f1
     }
 
-  
+
     </style>
 
     {# For Internet Explorer 8, you need to compile specific stylesheet #}
@@ -86,51 +87,79 @@
     tag: {
       text: "beta"
     },
-    html: 'This is a new service' + survey_link_html
+    html: i18n.new_service_prefix + survey_link_html
   }) }}
 
-  {% if userEmail %}
-      <div class="govuk-grid-row">
-          <div class="govuk-grid-column-one-half">
-  {% endif %}
-            {% block backLink %}{% endblock %}
-  {% if userEmail %}
-          </div>
-          {% set email = userEmail | default("Not signed in") %}
-          <div class="govuk-grid-column-one-half govuk-!-text-align-right govuk-!-static-margin-top-3">
-              <span class="govuk-body-s govuk-!-margin-2" id="signed-in-user">{{ email }}</span>
-              <a class="govuk-link" href="{{ signoutURL }}" data-event-id="signout" id="user-signout">Sign out</a>
-          </div>
-      </div>
-      <div class="govuk-section-break govuk-section-break--visible"></div>
-  {% endif %}
+
+
+{% if userEmail %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-half">
+        {% endif %}
+
+        <div class="govuk-grid-column-one-half">
+            {% block backLink %}{% endblock %} &nbsp;
+        </div>
+
+        {% if userEmail %}
+    </div>
+    {% set email = userEmail | default("Not signed in") %}
+    <div class="govuk-grid-column-one-half govuk-!-text-align-right govuk-!-static-margin-top-3">
+        <span class="govuk-body-s govuk-!-margin-2" id="signed-in-user">{{ email }}</span>
+        <a class="govuk-link" href="{{ signoutURL }}" data-event-id="signout" id="user-signout">{{i18n.sign_out}}</a>
+    </div>
+</div>
+<div class="govuk-section-break govuk-section-break--visible"></div>
+<div class="govuk-grid-column-one-half">
+    &nbsp;
+</div>
+<div class="govuk-grid-column-one-half">
+    {% include "locales-banner.njk" %}
+</div>
+
+{% endif %}
+
 {% endblock %}
 
 {% set mainClasses = mainClasses | default("govuk-main-wrapper--auto-spacing govuk-body") %}
 
 {% block footer %}
-    {{ govukFooter({
-    meta: {
-      items: [
-        {
-          href: "http://resources.companieshouse.gov.uk/legal/termsAndConditions.shtml",
-          text: "Policies"
-        },
-        {
-          href: "https://find-and-update.company-information.service.gov.uk/help/cookies",
-          text: "Cookies"
-        },
-        {
-          href: "https://www.gov.uk/government/organisations/companies-house#org-contacts",
-          text: "Contact us"
-        },
-        {
-          href: "https://developer.companieshouse.gov.uk/",
-          text: "Developers"
-        }
-      ]
-    }
-  }) }}
+<footer class="govuk-footer">
+    <div class="govuk-width-container">
+        <div class="govuk-footer__meta">
+            <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
+                <h2 class="govuk-visually-hidden">{{ i18n.support_links }}</h2>
+                <ul class="govuk-footer__inline-list govuk-!-display-none-print">
+                    <li class="govuk-footer__inline-list-item">
+                        <a class="govuk-footer__link" href="http://resources.companieshouse.gov.uk/legal/termsAndConditions.shtml">{{ i18n.policies }}</a>
+                    </li>
+                    <li class="govuk-footer__inline-list-item">
+                        <a class="govuk-footer__link" href="/help/cookies">{{ i18n.cookies }}</a>
+                    </li>
+                    <li class="govuk-footer__inline-list-item">
+                        <a class="govuk-footer__link" href="https://www.gov.uk/government/organisations/companies-house#org-contacts">{{ i18n.contact_us }}</a>
+                    </li>
+                    <li class="govuk-footer__inline-list-item">
+                        <a class="govuk-footer__link" href="/help/accessibility-statement">{{ i18n.accessibility_statement }}</a>
+                    </li>
+                    <li class="govuk-footer__inline-list-item">
+                        <a class="govuk-footer__link" href="https://developer.companieshouse.gov.uk/">{{ i18n.developers }}</a>
+                    </li>
+                </ul>
+                <svg aria-hidden="true" focusable="false" class="govuk-footer__licence-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 483.2 195.7" height="17" width="41">
+                    <path fill="currentColor" d="M421.5 142.8V.1l-50.7 32.3v161.1h112.4v-50.7zm-122.3-9.6A47.12 47.12 0 0 1 221 97.8c0-26 21.1-47.1 47.1-47.1 16.7 0 31.4 8.7 39.7 21.8l42.7-27.2A97.63 97.63 0 0 0 268.1 0c-36.5 0-68.3 20.1-85.1 49.7A98 98 0 0 0 97.8 0C43.9 0 0 43.9 0 97.8s43.9 97.8 97.8 97.8c36.5 0 68.3-20.1 85.1-49.7a97.76 97.76 0 0 0 149.6 25.4l19.4 22.2h3v-87.8h-80l24.3 27.5zM97.8 145c-26 0-47.1-21.1-47.1-47.1s21.1-47.1 47.1-47.1 47.2 21 47.2 47S123.8 145 97.8 145"></path>
+                </svg>
+                <span class="govuk-footer__licence-description">
+          {{ i18n.content_info_pre_link }}
+          <a class="govuk-footer__link" href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">{{ i18n.open_gov_licence }}</a>{{ i18n.content_info_post_link }}
+        </span>
+            </div>
+            <div class="govuk-footer__meta-item">
+                <a class="govuk-footer__link govuk-footer__copyright-logo" href="https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/">© {{ i18n.crown_copyright }}</a>
+            </div>
+        </div>
+    </div>
+</footer>
 {% endblock %}
 
 {% block bodyEnd %}
@@ -147,7 +176,7 @@
 {% macro errorSummary() %}
     {% if formValidationResult.hasErrors %}
         {{ govukErrorSummary({
-            titleText: "There is a problem",
+            titleText:  i18n.there_is_a_problem,
             errorList: formValidationResult.errors
         }) }}
     {% endif %}

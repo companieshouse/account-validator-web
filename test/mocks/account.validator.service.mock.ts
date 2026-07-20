@@ -7,19 +7,22 @@ const mockFiles: Record<string, AccountValidationResult> = {
     'success.xhtml': {
         status: 'success',
         fileName: 'success.xhtml',
-        fileId: 'successs'
+        fileId: 'successs',
+        percent: 0
     },
     'success_with_image.xhtml': {
         status: 'success',
         imageUrl: 'image.jpeg',
         fileName: 'success_with_image.xhtml',
-        fileId: 'success_with_image'
+        fileId: 'success_with_image',
+        percent: 0
     },
     'failure_duplicate_facts.xhtml': {
         status: 'failure',
         fileId: 'failure_duplicate_facts',
         fileName: 'failure_duplicate_facts.xhtml',
-        reasons: [ 'failure reason' ]
+        reasons: [ 'failure reason' ],
+        percent: 0
     }
 };
 

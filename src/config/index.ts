@@ -57,3 +57,6 @@ export const UI_UPDATE_INTERVAL_MS = parseDuration(
 
 export const MAX_API_CALL_RETRIES = getEnvironmentVariable("MAX_API_CALL_RETRIES", 3);
 export const API_CALL_RETRY_DELAY_MS = getEnvironmentVariable("API_CALL_RETRY_DELAY_MS", 1000);
+
+export const LOCALES_PATH = getEnvironmentVariable("LOCALES_PATH", "locales");
+export const LOCALES_ENABLED = getEnvironmentVariable("LOCALES_ENABLED", "false") === "true";

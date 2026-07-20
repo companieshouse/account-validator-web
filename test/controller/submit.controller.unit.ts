@@ -149,9 +149,8 @@ describe("Submit controller tests", () => {
     });
 
     it("Should return file ID as JSON when successfully submitted", async () => {
-        const mockSubmit = jest.spyOn(mockedValidatorService, 'submit');
-        const mockValue = { status: 'pending', fileId: '12345', fileName: '' };
-        mockSubmit.mockResolvedValue(mockValue as AccountValidationResult);
+        const mockValue: AccountValidationResult = { status: 'pending', fileId: '12345', fileName: '', percent: 0 };
+        mockedValidatorService.submit.mockResolvedValueOnce(mockValue);
 
         const response = await request(app)
             .post(Urls.SUBMIT).set("Cookie", setCookie())
@@ -192,9 +191,8 @@ describe("Submit controller tests", () => {
 
     it('Should pass when package type query does match session', async () => {
 
-        const mockSubmit = jest.spyOn(mockedValidatorService, 'submit');
-        const mockValue = { status: 'pending', fileId: '12345', fileName: '' };
-        mockSubmit.mockResolvedValue(mockValue as AccountValidationResult);
+        const mockValue: AccountValidationResult = { status: 'pending', fileId: '12345', fileName: '', percent: 0 };
+        mockedValidatorService.submit.mockResolvedValueOnce(mockValue);
 
         Object.assign(mockSession, getSessionRequest());
         mockSession.setExtraData(PACKAGE_TYPE_KEY, "uksef");

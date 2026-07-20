@@ -1,5 +1,5 @@
 {
-  "exec": "ts-node ./src/bin/nodemon-entry.ts",
+  "exec": "node --require ts-node/register --inspect=0.0.0.0:9233 ./src/bin/nodemon-entry.ts",
   "ext": "ts,html",
   "watch": ["./src", "./views"],
   "events": {

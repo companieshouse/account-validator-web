@@ -22,7 +22,7 @@ export function validateSubmitRequest(req: SubmitPageRequest, res: Response, nex
         submitForValidationRequest = getSubmitForValidationRequestFromRequest(req);
     }
 
-    req.formValidationResult = validateRequest(submitForValidationRequest);
+    req.formValidationResult = validateRequest(submitForValidationRequest, req);
     next();
 }
 

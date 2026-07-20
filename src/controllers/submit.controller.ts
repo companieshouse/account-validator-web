@@ -78,15 +78,18 @@ function renderSubmitPage(req: SubmitPageRequest, res: Response) {
 
     let submitUrl;
     let submitPage;
+    let validateUrl: string = Urls.SUBMIT_VALIDATE;
     if (packageType !== undefined) {
         submitUrl = Urls.SUBMIT_PACKAGE + getSubmitQueryParams(req);
         submitPage = Templates.SUBMIT_PACKAGE_ACCOUNT;
+        validateUrl = validateUrl + "?" + req.originalUrl.split("?")[1];
     } else {
         submitUrl = Urls.SUBMIT + getSubmitQueryParams(req);
         submitPage = Templates.SUBMIT;
     }
     return res.render(submitPage, {
         templateName: submitPage,
+        validateUrl: validateUrl,
         formValidationResult: req.formValidationResult,
         accountValidationResult: req.accountValidationResult,
         fileName: req.file?.originalname,
