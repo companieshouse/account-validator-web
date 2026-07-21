@@ -281,10 +281,7 @@ function isConfigParams(obj: any): obj is ConfigParams {
         "fileInputFieldName",
         "callbackUrlOnComplete",
         "pollingIntervalMS",
-        "timeoutMS",
-        "validateUrl",
-        "completeText",
-        "lang"
+        "timeoutMS"
     ];
 
     return requiredProps.every((prop) => prop in obj);
@@ -409,8 +406,13 @@ export async function submitForm(formId: string, configParams: ConfigParams) {
         redirect(errorUrl);
         return;
     }
-    completeMessage = completeText;
-    completeLanguage = lang;
+
+    if (completeText) {
+        completeMessage = completeText;
+    }
+    if (lang) {
+        completeLanguage = lang;
+    }
 
     const fileInput = document.getElementById(fileInputFieldName);
     if (fileInput === null) {
@@ -420,7 +422,8 @@ export async function submitForm(formId: string, configParams: ConfigParams) {
         return;
     }
 
-    const resp = await validateForm(fileInput as HTMLInputElement, validateUrl);
+    const  validateUrlTarget: string = validateUrl || "/xbrl_validate/submit/validate";
+    const resp = await validateForm(fileInput as HTMLInputElement, validateUrlTarget);
     if (resp !== "") {
         handleErrorUploading(resp);
         return;
